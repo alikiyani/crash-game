@@ -1,0 +1,8 @@
+*.py
+*.db
+*.save
+.cache/
+.ssh/
+.termux/
+storage/
+.git/

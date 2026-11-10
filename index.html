@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بازی انفجار</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+body{margin:0;background:#0f1923;color:white;font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh}
+#multiplier{font-size:4rem;font-weight:bold;color:#00e676}
+#cashout-btn{width:80%;padding:15px;border:none;border-radius:12px;background:#00e676;color:#0f1923;font-size:1.2rem;font-weight:bold;margin-top:30px;opacity:0.5;pointer-events:none}
+#cashout-btn.enabled{opacity:1;pointer-events:all}
+#status{margin-top:15px;opacity:0.8}
+</style>
+</head>
+<body>
+<div id="multiplier">1.00x</div>
+<button id="cashout-btn">برداشت سود</button>
+<div id="status">در انتظار...</div>
+<script>
+const tg=window.Telegram.WebApp;tg.expand();
+let cur=1,crash=0,run=false,cashed=false;
+const bet=100;
+function genCrash(){const r=Math.random();return Math.min(Math.max(1,0.99/(1-r)),100)}
+function start(){
+crash=genCrash();cur=1;run=true;cashed=false;
+document.getElementById('multiplier').className='';
+document.getElementById('cashout-btn').classList.add('enabled');
+document.getElementById('status').innerText='موشک در حال پرواز...';
+let t=Date.now();
+function loop(){
+const e=(Date.now()-t)/1000;
+cur=Math.pow(Math.E,0.06*e);
+if(cur>=crash){end(false)}
+else{document.getElementById('multiplier').innerText=cur.toFixed(2)+'x';requestAnimationFrame(loop)}
+}
+loop();
+}
+function cashOut(){
+cashed=true;
+document.getElementById('cashout-btn').classList.remove('enabled');
+document.getElementById('cashout-btn').innerText='برداشت: '+(bet*cur).toFixed(0)+' T';
+tg.sendData(JSON.stringify({action:'cashout',userId:tg.initDataUnsafe?.user?.id,profit:bet*cur}));
+}
+function end(won){
+run=false;
+document.getElementById('multiplier').className='crashed';
+document.getElementById('cashout-btn').classList.remove('enabled');
+document.getElementById('status').innerText=won?'بردی!':'انفجار! باختی';
+}
+document.getElementById('cashout-btn').onclick=cashOut;
+setTimeout(start,500);
+</script>
+</body>
+</html>
