@@ -3,34 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>مرکز بازی‌های تلگرامی | Game Hub</title>
+  <title>مرکز بازی‌های اکشن و رکوردی</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg: #0b0f19;
-      --card-bg: #151c2e;
-      --card-border: #232d42;
-      --text: #f3f4f6;
-      --text-muted: #9ca3af;
-      --primary: #10b981;
-      --primary-hover: #059669;
-      --danger: #ef4444;
-      --accent: #f59e0b;
-      --rocket: #6366f1;
+      --bg: #090d16;
+      --card: #131b2e;
+      --border: #24304f;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --primary: #06b6d4;
+      --primary-glow: rgba(6, 182, 212, 0.4);
+      --accent: #f43f5e;
+      --accent-glow: rgba(244, 63, 94, 0.4);
+      --success: #10b981;
+      --gold: #fbbf24;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       user-select: none;
       -webkit-user-select: none;
       -webkit-touch-callout: none;
     }
 
     body {
-      background-color: var(--bg);
+      background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       display: flex;
@@ -39,73 +40,60 @@
       touch-action: manipulation;
     }
 
-    /* Top Bar */
-    .top-bar {
+    /* Top Navigation */
+    header {
+      background: rgba(19, 27, 46, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 18px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 16px;
-      background: var(--card-bg);
-      border-bottom: 1px solid var(--card-border);
       position: sticky;
       top: 0;
-      z-index: 50;
+      z-index: 100;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-weight: 800;
-      font-size: 1.1rem;
-      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      gap: 10px;
+      font-weight: 900;
+      font-size: 1.15rem;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    .balance-box {
+    .header-actions {
       display: flex;
       align-items: center;
-      gap: 6px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--card-border);
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-weight: 700;
-      font-size: 0.95rem;
+      gap: 10px;
     }
 
-    .balance-coin {
-      color: var(--accent);
-      font-size: 1.1rem;
-    }
-
-    .top-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .icon-btn {
-      background: rgba(255, 255, 255, 0.08);
-      border: none;
+    .btn-icon {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
       color: var(--text);
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 1rem;
-      transition: background 0.2s;
+      font-size: 1.1rem;
+      transition: all 0.2s;
     }
-    .icon-btn:active { transform: scale(0.92); }
+    .btn-icon:active { transform: scale(0.92); }
 
-    /* Navigation Tabs */
-    .nav-tabs {
+    /* Game Selector Tabs */
+    .tab-bar {
       display: flex;
-      gap: 8px;
-      padding: 10px 16px;
+      padding: 12px 16px;
+      gap: 10px;
       background: var(--bg);
     }
 
@@ -115,276 +103,182 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 12px;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      color: var(--text-muted);
+      padding: 12px 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 14px;
       font-weight: 700;
       font-size: 0.95rem;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.25s ease;
     }
 
     .tab-btn.active {
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(16, 185, 129, 0.15));
-      border-color: #6366f1;
-      color: var(--text);
+      color: #fff;
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(99, 102, 241, 0.2));
+      border-color: var(--primary);
+      box-shadow: 0 0 20px var(--primary-glow);
     }
 
-    /* Views */
-    .game-view {
-      display: none;
+    /* Main Container */
+    main {
       flex: 1;
-      padding: 12px 16px 24px;
-      flex-direction: column;
-      gap: 12px;
-      max-width: 600px;
-      width: 100%;
-      margin: 0 auto;
-    }
-    .game-view.active { display: flex; }
-
-    /* History Pill list */
-    .history-row {
+      padding: 0 16px 20px;
       display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-      scrollbar-width: none;
-    }
-    .history-row::-webkit-scrollbar { display: none; }
-
-    .history-pill {
-      font-size: 0.78rem;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 12px;
-      white-space: nowrap;
-    }
-    .history-pill.win { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
-    .history-pill.bust { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
-
-    /* Canvas Containers */
-    .canvas-card {
-      background: #0f172a;
-      border: 1px solid var(--card-border);
-      border-radius: 18px;
-      position: relative;
-      overflow: hidden;
+      flex-direction: column;
+      max-width: 600px;
+      margin: 0 auto;
       width: 100%;
-      aspect-ratio: 4 / 3;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .game-section {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .game-section.active {
+      display: flex;
+    }
+
+    /* Canvas Card */
+    .canvas-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      position: relative;
     }
 
     canvas {
-      width: 100%;
-      height: 100%;
       display: block;
+      width: 100%;
+      height: auto;
+      background: #060911;
     }
 
-    /* Crash Game Overlay Over Canvas */
-    .crash-overlay {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-    }
-
-    .crash-mult {
-      font-size: 3.6rem;
-      font-weight: 900;
-      letter-spacing: -1px;
-      color: #38bdf8;
-      text-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
-      transition: color 0.2s;
-    }
-    .crash-mult.crashed {
-      color: var(--danger);
-      text-shadow: 0 0 30px rgba(239, 68, 68, 0.6);
-      animation: shake 0.4s ease-in-out;
-    }
-
-    .crash-status {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      margin-top: -6px;
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translate(0, 0); }
-      20% { transform: translate(-8px, 4px); }
-      40% { transform: translate(8px, -4px); }
-      60% { transform: translate(-5px, 2px); }
-      80% { transform: translate(5px, -2px); }
-    }
-
-    /* Controls Panel */
-    .panel-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
+    /* Stat Badges */
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
 
-    .bet-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .bet-input-box {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 8px 12px;
-    }
-
-    .bet-input-box input {
-      background: transparent;
-      border: none;
-      color: var(--text);
-      font-size: 1.1rem;
-      font-weight: 800;
-      width: 100%;
-      outline: none;
-    }
-
-    .chips-row {
-      display: flex;
-      gap: 6px;
-    }
-
-    .chip-btn {
-      flex: 1;
-      padding: 7px 0;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .chip-btn:active { background: rgba(255, 255, 255, 0.15); }
-
-    /* Action Buttons */
-    .btn-action {
-      width: 100%;
-      padding: 15px;
-      border: none;
+    .stat-badge {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
       border-radius: 14px;
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: white;
-      cursor: pointer;
       display: flex;
       flex-direction: column;
+      gap: 4px;
+    }
+    .stat-title {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .stat-value {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--gold);
+    }
+
+    /* Primary Action Buttons */
+    .action-btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 16px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
       align-items: center;
       justify-content: center;
-      gap: 2px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-      transition: transform 0.1s, opacity 0.2s;
+      gap: 10px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .btn-action:active { transform: scale(0.98); }
+    .action-btn:active {
+      transform: scale(0.97);
+    }
 
-    .btn-start {
+    .btn-launch {
+      background: linear-gradient(135deg, #06b6d4, #3b82f6);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
+    }
+    .btn-escape {
       background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+      animation: pulse 1s infinite alternate;
     }
-    .btn-cashout {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      animation: pulse 1.2s infinite;
-    }
-    .btn-disabled {
-      opacity: 0.5;
-      pointer-events: none;
+    .btn-restart {
+      background: linear-gradient(135deg, #f43f5e, #e11d48);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(244, 63, 94, 0.4);
     }
 
     @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5); }
-      50% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+      0% { transform: scale(1); filter: brightness(1); }
+      100% { transform: scale(1.02); filter: brightness(1.15); }
     }
 
-    /* Chicken Road Controls & Stats */
-    .chicken-stats {
-      display: flex;
-      justify-content: space-between;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 14px;
-      padding: 10px 16px;
-      font-weight: 700;
-    }
-    .stat-item {
+    /* D-PAD for Chicken */
+    .dpad-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-    }
-    .stat-label { font-size: 0.75rem; color: var(--text-muted); }
-    .stat-val { font-size: 1.15rem; color: var(--accent); }
-
-    /* Mobile D-Pad */
-    .dpad-container {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: repeat(2, 54px);
       gap: 8px;
-      max-width: 280px;
-      margin: 8px auto 0;
-      width: 100%;
+      margin-top: 6px;
     }
-
+    .dpad-row {
+      display: flex;
+      gap: 12px;
+    }
     .dpad-btn {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
+      width: 60px;
+      height: 60px;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 16px;
       color: var(--text);
       font-size: 1.4rem;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-      transition: background 0.1s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: all 0.15s;
     }
     .dpad-btn:active {
-      background: rgba(255, 255, 255, 0.2);
-      transform: scale(0.94);
+      background: var(--primary);
+      border-color: #fff;
+      color: #fff;
+      transform: scale(0.9);
     }
-    .dpad-up { grid-column: 2; grid-row: 1; background: #2563eb; color: white; }
-    .dpad-left { grid-column: 1; grid-row: 2; }
-    .dpad-down { grid-column: 2; grid-row: 2; }
-    .dpad-right { grid-column: 3; grid-row: 2; }
 
-    /* Modal / Alert Toast */
+    /* Toast */
     .toast {
       position: fixed;
       bottom: 24px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
-      background: #1e293b;
-      border: 1px solid var(--card-border);
-      color: var(--text);
-      padding: 10px 20px;
+      background: rgba(19, 27, 46, 0.95);
+      border: 1px solid var(--primary);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      padding: 12px 24px;
       border-radius: 30px;
-      font-size: 0.9rem;
       font-weight: 700;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      z-index: 100;
-      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      font-size: 0.95rem;
       pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 1000;
+      text-align: center;
     }
     .toast.show {
       transform: translateX(-50%) translateY(0);
@@ -393,124 +287,90 @@
 </head>
 <body>
 
-  <!-- Top Bar -->
-  <div class="top-bar">
+  <!-- Header -->
+  <header>
     <div class="brand">
-      <span>🎮</span>
-      <span>مینی‌اپ گیمینگ</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="stroke: #38bdf8;">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+      </svg>
+      <span>گیم سنتر آرکید</span>
     </div>
-    <div class="balance-box">
-      <span class="balance-coin">🪙</span>
-      <span id="user-balance">1,000</span>
+    <div class="header-actions">
+      <button class="btn-icon" id="soundToggle" title="صدا">🔊</button>
     </div>
-    <div class="top-actions">
-      <button class="icon-btn" id="sound-btn" title="صدا">🔊</button>
-      <button class="icon-btn" id="refill-btn" title="شارژ مجدد سکه">🔄</button>
-    </div>
-  </div>
+  </header>
 
   <!-- Navigation Tabs -->
-  <div class="nav-tabs">
-    <button class="tab-btn active" id="tab-crash">
-      <span>🚀</span>
-      <span>بازی انفجار</span>
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tabRocketBtn" onclick="switchGame('rocket')">
+      <span>🚀 بازی انفجار موشک</span>
     </button>
-    <button class="tab-btn" id="tab-chicken">
-      <span>🐔</span>
-      <span>مرغ جاده</span>
+    <button class="tab-btn" id="tabChickenBtn" onclick="switchGame('chicken')">
+      <span>🐔 مرغ ماجراجو</span>
     </button>
   </div>
 
-  <!-- GAME 1: CRASH GAME -->
-  <div class="game-view active" id="view-crash">
-    <!-- Multiplier History -->
-    <div class="history-row" id="crash-history">
-      <span class="history-pill win">2.14x</span>
-      <span class="history-pill bust">1.12x</span>
-      <span class="history-pill win">3.45x</span>
-      <span class="history-pill bust">1.02x</span>
-      <span class="history-pill win">1.82x</span>
-    </div>
-
-    <!-- Animated Canvas -->
-    <div class="canvas-card">
-      <canvas id="crash-canvas"></canvas>
-      <div class="crash-overlay">
-        <div class="crash-mult" id="mult-text">1.00x</div>
-        <div class="crash-status" id="crash-sub">آماده پرواز</div>
+  <main>
+    <!-- ROCKET GAME SECTION -->
+    <div id="rocketSection" class="game-section active">
+      <div class="canvas-card">
+        <canvas id="rocketCanvas" width="500" height="340"></canvas>
       </div>
-    </div>
 
-    <!-- Betting Controls -->
-    <div class="panel-card">
-      <div class="bet-row">
-        <span style="font-weight:700; color:var(--text-muted); font-size:0.9rem;">مبلغ شرط (سکه):</span>
-        <div class="bet-input-box">
-          <input type="number" id="bet-amount" value="100" min="10" step="10">
-          <span style="color:var(--accent); font-weight:800; margin-right:4px;">🪙</span>
+      <div class="stats-row">
+        <div class="stat-badge">
+          <span class="stat-title">بالاترین رکورد ضریب</span>
+          <span class="stat-value" id="rocketHighScore">1.00x</span>
+        </div>
+        <div class="stat-badge">
+          <span class="stat-title">آخرین خروج موفق</span>
+          <span class="stat-value" id="rocketLastScore" style="color: var(--primary);">-</span>
         </div>
       </div>
 
-      <div class="chips-row">
-        <button class="chip-btn" data-chip="50">50</button>
-        <button class="chip-btn" data-chip="100">100</button>
-        <button class="chip-btn" data-chip="250">250</button>
-        <button class="chip-btn" data-chip="500">500</button>
-        <button class="chip-btn" data-chip="max">حداکثر</button>
-      </div>
-
-      <button class="btn-action btn-start" id="crash-action-btn">
-        <span id="btn-main-text">شروع پرواز</span>
-        <span id="btn-sub-text" style="font-size:0.8rem; opacity:0.85;">با ۱۰۰ سکه</span>
+      <button id="rocketActionBtn" class="action-btn btn-launch" onclick="handleRocketAction()">
+        <span>پرتاب موشک 🚀</span>
       </button>
     </div>
-  </div>
 
-  <!-- GAME 2: CHICKEN ROAD -->
-  <div class="game-view" id="view-chicken">
-    <!-- Chicken Stats Bar -->
-    <div class="chicken-stats">
-      <div class="stat-item">
-        <span class="stat-label">مسافت</span>
-        <span class="stat-val" id="chicken-score">0 م</span>
+    <!-- CHICKEN ROAD SECTION -->
+    <div id="chickenSection" class="game-section">
+      <div class="canvas-card">
+        <canvas id="chickenCanvas" width="400" height="420"></canvas>
       </div>
-      <div class="stat-item">
-        <span class="stat-label">سکه‌های جمع شده</span>
-        <span class="stat-val" id="chicken-coins">0 🪙</span>
+
+      <div class="stats-row">
+        <div class="stat-badge">
+          <span class="stat-title">بیشترین مسافت پیموده</span>
+          <span class="stat-value" id="chickenHighScore">0 متر</span>
+        </div>
+        <div class="stat-badge">
+          <span class="stat-title">مسافت فعلی</span>
+          <span class="stat-value" id="chickenCurrentScore" style="color: var(--primary);">0 متر</span>
+        </div>
       </div>
-      <div class="stat-item">
-        <span class="stat-label">بهترین رکورد</span>
-        <span class="stat-val" id="chicken-best">0 م</span>
+
+      <div class="dpad-container">
+        <button class="dpad-btn" onclick="moveChicken('up')">⬆️</button>
+        <div class="dpad-row">
+          <button class="dpad-btn" onclick="moveChicken('right')">➡️</button>
+          <button class="dpad-btn" onclick="moveChicken('down')">⬇️</button>
+          <button class="dpad-btn" onclick="moveChicken('left')">⬅️</button>
+        </div>
       </div>
     </div>
+  </main>
 
-    <!-- Chicken Canvas -->
-    <div class="canvas-card" style="aspect-ratio: 1 / 1;">
-      <canvas id="chicken-canvas"></canvas>
-    </div>
-
-    <!-- Mobile D-Pad Controls -->
-    <div class="dpad-container">
-      <button class="dpad-btn dpad-up" id="ch-btn-up">▲</button>
-      <button class="dpad-btn dpad-left" id="ch-btn-left">◀</button>
-      <button class="dpad-btn dpad-down" id="ch-btn-down">▼</button>
-      <button class="dpad-btn dpad-right" id="ch-btn-right">▶</button>
-    </div>
-    <div style="text-align:center; font-size:0.8rem; color:var(--text-muted); margin-top:4px;">
-      با لمس صفحه یا کلیدهای جهت کیبورد نیز می‌توانید مرغ را کنترل کنید.
-    </div>
-  </div>
-
-  <!-- Toast Notification -->
-  <div class="toast" id="toast">پیام</div>
+  <div id="toast" class="toast">پیام سیستم</div>
 
   <script>
-    // --- TELEGRAM WEB APP INIT ---
+    // Telegram Web App Initialization
     const tg = window.Telegram?.WebApp;
     if (tg) {
       tg.ready();
       tg.expand();
-      try { tg.enableClosingConfirmation(); } catch(e) {}
+      if (tg.setHeaderColor) tg.setHeaderColor('#090d16');
+      if (tg.setBackgroundColor) tg.setBackgroundColor('#090d16');
     }
 
     function haptic(type = 'light') {
@@ -522,564 +382,686 @@
           else if (type === 'success') tg.HapticFeedback.notificationOccurred('success');
           else if (type === 'error') tg.HapticFeedback.notificationOccurred('error');
         }
-      } catch(e) {}
+      } catch (e) {}
     }
 
-    // --- SOUND SYNTHESIZER (Web Audio API) ---
-    let soundEnabled = true;
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    // Audio Synthesis (Web Audio API)
     let audioCtx = null;
+    let soundEnabled = true;
 
-    function playTone(freq, type, duration, gainVal = 0.1) {
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    document.getElementById('soundToggle').onclick = () => {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundToggle').textContent = soundEnabled ? '🔊' : '🔇';
+      showToast(soundEnabled ? 'صدا وصل شد' : 'صدا قطع شد');
+    };
+
+    function playTone(freq, type, duration, slideFreq = null) {
       if (!soundEnabled) return;
       try {
-        if (!audioCtx) audioCtx = new AudioCtx();
+        initAudio();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = type;
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+        if (slideFreq) {
+          osc.frequency.exponentialRampToValueAtTime(slideFreq, audioCtx.currentTime + duration);
+        }
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
         osc.stop(audioCtx.currentTime + duration);
-      } catch(e) {}
+      } catch (e) {}
     }
 
-    function soundHop() { playTone(320, 'sine', 0.1, 0.12); }
-    function soundCoin() { playTone(880, 'triangle', 0.15, 0.15); setTimeout(() => playTone(1174, 'triangle', 0.2, 0.15), 80); }
-    function soundCrash() { playTone(120, 'sawtooth', 0.4, 0.25); }
-    function soundCashout() { playTone(523, 'sine', 0.12, 0.2); setTimeout(() => playTone(659, 'sine', 0.15, 0.2), 100); setTimeout(() => playTone(784, 'sine', 0.25, 0.2), 200); }
-
-    document.getElementById('sound-btn').onclick = () => {
-      soundEnabled = !soundEnabled;
-      document.getElementById('sound-btn').innerText = soundEnabled ? '🔊' : '🔇';
-      showToast(soundEnabled ? 'صدا فعال شد' : 'صدا قطع شد');
-    };
-
-    // --- VIRTUAL BALANCE STATE ---
-    let balance = parseInt(localStorage.getItem('game_balance') || '1000', 10);
-    const balanceEl = document.getElementById('user-balance');
-
-    function updateBalance(amt) {
-      balance = Math.max(0, balance + amt);
-      localStorage.setItem('game_balance', balance);
-      balanceEl.innerText = balance.toLocaleString('fa-IR');
+    function soundBeep() { playTone(550, 'sine', 0.08); }
+    function soundJump() { playTone(300, 'triangle', 0.12, 600); }
+    function soundCrash() { playTone(120, 'sawtooth', 0.35, 40); }
+    function soundWin() {
+      playTone(400, 'sine', 0.1, 800);
+      setTimeout(() => playTone(800, 'sine', 0.25, 1200), 100);
     }
-    updateBalance(0);
-
-    document.getElementById('refill-btn').onclick = () => {
-      haptic('success');
-      updateBalance(500);
-      showToast('۵۰۰ سکه هدیه دریافت شد! 🪙');
-    };
 
     function showToast(msg) {
       const toast = document.getElementById('toast');
-      toast.innerText = msg;
+      toast.textContent = msg;
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2200);
+      setTimeout(() => toast.classList.remove('show'), 2500);
     }
 
-    // --- NAVIGATION TABS ---
-    const tabCrash = document.getElementById('tab-crash');
-    const tabChicken = document.getElementById('tab-chicken');
-    const viewCrash = document.getElementById('view-crash');
-    const viewChicken = document.getElementById('view-chicken');
-
-    tabCrash.onclick = () => {
+    // Tab Switching
+    let activeGame = 'rocket';
+    function switchGame(game) {
+      activeGame = game;
+      document.getElementById('tabRocketBtn').classList.toggle('active', game === 'rocket');
+      document.getElementById('tabChickenBtn').classList.toggle('active', game === 'chicken');
+      document.getElementById('rocketSection').classList.toggle('active', game === 'rocket');
+      document.getElementById('chickenSection').classList.toggle('active', game === 'chicken');
       haptic('light');
-      tabCrash.classList.add('active');
-      tabChicken.classList.remove('active');
-      viewCrash.classList.add('active');
-      viewChicken.classList.remove('active');
-    };
 
-    tabChicken.onclick = () => {
-      haptic('light');
-      tabChicken.classList.add('active');
-      tabCrash.classList.remove('active');
-      viewChicken.classList.add('active');
-      viewCrash.classList.remove('active');
-      initChickenGame();
-    };
-
-    // ==========================================
-    // GAME 1: CRASH GAME LOGIC & ANIMATION
-    // ==========================================
-    const crashCanvas = document.getElementById('crash-canvas');
-    const cCtx = crashCanvas.getContext('2d');
-    const multText = document.getElementById('mult-text');
-    const crashSub = document.getElementById('crash-sub');
-    const crashBtn = document.getElementById('crash-action-btn');
-    const btnMainText = document.getElementById('btn-main-text');
-    const btnSubText = document.getElementById('btn-sub-text');
-    const betInput = document.getElementById('bet-amount');
-    const crashHistoryEl = document.getElementById('crash-history');
-
-    function resizeCrashCanvas() {
-      const rect = crashCanvas.parentElement.getBoundingClientRect();
-      crashCanvas.width = rect.width * window.devicePixelRatio;
-      crashCanvas.height = rect.height * window.devicePixelRatio;
-    }
-    window.addEventListener('resize', resizeCrashCanvas);
-    resizeCrashCanvas();
-
-    let crashState = 'idle'; // idle, running, cashed, crashed
-    let currentMult = 1.00;
-    let targetCrash = 2.00;
-    let startTime = 0;
-    let currentBet = 100;
-    let particles = [];
-
-    // Chip buttons
-    document.querySelectorAll('.chip-btn').forEach(btn => {
-      btn.onclick = () => {
-        haptic('light');
-        const v = btn.dataset.chip;
-        if (v === 'max') betInput.value = balance;
-        else betInput.value = v;
-        updateBetDisplay();
-      };
-    });
-
-    betInput.oninput = updateBetDisplay;
-    function updateBetDisplay() {
-      let b = parseInt(betInput.value, 10) || 10;
-      if (crashState === 'idle') {
-        btnSubText.innerText = `با ${b.toLocaleString('fa-IR')} سکه`;
+      if (game === 'chicken' && !chRunning) {
+        initChickenGame();
       }
     }
 
-    function genCrashPoint() {
-      const r = Math.random();
-      // Fair distribution with house edge simulation
-      if (r < 0.05) return 1.00; // instant crash 5%
-      const val = 0.98 / (1 - r);
-      return Math.min(Math.max(1.01, parseFloat(val.toFixed(2))), 120.00);
-    }
+    /* ========================================================
+       ROCKET (CRASH) GAME - Vector & Canvas Enhanced
+    ======================================================== */
+    const rCanvas = document.getElementById('rocketCanvas');
+    const rCtx = rCanvas.getContext('2d');
 
-    function addCrashHistory(m, won) {
-      const pill = document.createElement('span');
-      pill.className = `history-pill ${won ? 'win' : 'bust'}`;
-      pill.innerText = `${m.toFixed(2)}x`;
-      crashHistoryEl.prepend(pill);
-      if (crashHistoryEl.children.length > 10) {
-        crashHistoryEl.removeChild(crashHistoryEl.lastChild);
+    let rState = 'IDLE'; // IDLE, FLYING, CRASHED, ESCAPED
+    let rMultiplier = 1.00;
+    let rTargetCrash = 1.00;
+    let rStartTime = 0;
+    let rAnimId = null;
+    let rHighScore = parseFloat(localStorage.getItem('rocket_hs') || '1.00');
+    document.getElementById('rocketHighScore').textContent = rHighScore.toFixed(2) + 'x';
+
+    // Particle system for rocket smoke & fire
+    let rParticles = [];
+    class RocketParticle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() - 0.5) * 3 - 2;
+        this.vy = (Math.random() - 0.5) * 3 + 2;
+        this.life = 1.0;
+        this.decay = 0.03 + Math.random() * 0.03;
+        this.size = 4 + Math.random() * 6;
+        this.color = Math.random() > 0.4 ? '#f59e0b' : '#ef4444';
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.life -= this.decay;
+      }
+      draw(ctx) {
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, this.life);
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
       }
     }
 
-    function startCrashGame() {
-      currentBet = parseInt(betInput.value, 10) || 10;
-      if (currentBet > balance) {
-        showToast('موجودی سکه کافی نیست!');
-        haptic('error');
-        return;
+    // Stars Background
+    const rStars = Array.from({ length: 45 }, () => ({
+      x: Math.random() * 500,
+      y: Math.random() * 340,
+      size: Math.random() * 1.8 + 0.5,
+      speed: Math.random() * 0.8 + 0.2
+    }));
+
+    function drawRocketBaseScene() {
+      rCtx.fillStyle = '#060913';
+      rCtx.fillRect(0, 0, 500, 340);
+
+      // Starfield
+      rCtx.fillStyle = '#94a3b8';
+      rStars.forEach(s => {
+        if (rState === 'FLYING') {
+          s.x -= s.speed * (1 + (rMultiplier - 1) * 0.8);
+          s.y += s.speed * 0.5;
+          if (s.x < 0) s.x = 500;
+          if (s.y > 340) s.y = 0;
+        }
+        rCtx.beginPath();
+        rCtx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        rCtx.fill();
+      });
+
+      // Neon Grid Coordinates
+      rCtx.strokeStyle = 'rgba(36, 48, 79, 0.4)';
+      rCtx.lineWidth = 1;
+      for (let x = 40; x < 500; x += 50) {
+        rCtx.beginPath();
+        rCtx.moveTo(x, 0);
+        rCtx.lineTo(x, 340);
+        rCtx.stroke();
       }
-      if (currentBet <= 0) return;
-
-      updateBalance(-currentBet);
-      haptic('medium');
-
-      targetCrash = genCrashPoint();
-      currentMult = 1.00;
-      startTime = performance.now();
-      crashState = 'running';
-      particles = [];
-
-      multText.classList.remove('crashed');
-      multText.innerText = '1.00x';
-      crashSub.innerText = 'موشک در حال اوج‌گیری...';
-
-      crashBtn.className = 'btn-action btn-cashout';
-      btnMainText.innerText = 'برداشت سود';
-      btnSubText.innerText = `مبلغ: ${currentBet} سکه`;
-
-      requestAnimationFrame(crashLoop);
-    }
-
-    function cashOut() {
-      if (crashState !== 'running') return;
-      crashState = 'cashed';
-      const winAmt = Math.floor(currentBet * currentMult);
-      updateBalance(winAmt);
-      soundCashout();
-      haptic('success');
-
-      showToast(`برداشت موفق: +${winAmt.toLocaleString('fa-IR')} سکه! 🎉`);
-      crashSub.innerText = `سود برداشت شد در ${currentMult.toFixed(2)}x`;
-      crashBtn.className = 'btn-action btn-disabled';
-      btnMainText.innerText = 'سود دریافت شد';
-      btnSubText.innerText = `+${winAmt} سکه`;
-    }
-
-    function crashEnd() {
-      crashState = 'crashed';
-      soundCrash();
-      haptic('error');
-
-      multText.classList.add('crashed');
-      crashSub.innerText = 'موشک منفجر شد!';
-      addCrashHistory(targetCrash, false);
-
-      // Spawn explosion particles
-      for (let i = 0; i < 40; i++) {
-        particles.push({
-          x: lastRocketPos.x,
-          y: lastRocketPos.y,
-          vx: (Math.random() - 0.5) * 8,
-          vy: (Math.random() - 0.5) * 8,
-          radius: Math.random() * 5 + 2,
-          color: ['#ef4444', '#f59e0b', '#fbbf24', '#ffffff'][Math.floor(Math.random() * 4)],
-          life: 1.0
-        });
+      for (let y = 30; y < 340; y += 45) {
+        rCtx.beginPath();
+        rCtx.moveTo(0, y);
+        rCtx.lineTo(500, y);
+        rCtx.stroke();
       }
-
-      crashBtn.className = 'btn-action btn-start';
-      btnMainText.innerText = 'پرواز مجدد';
-      updateBetDisplay();
     }
 
-    let lastRocketPos = { x: 0, y: 0 };
+    function drawVectorRocket(x, y, angle, isCrashed = false) {
+      rCtx.save();
+      rCtx.translate(x, y);
+      rCtx.rotate(angle);
 
-    function crashLoop(now) {
-      const elapsed = (now - startTime) / 1000;
-      // Exponential curve: speed increases gracefully
-      currentMult = Math.pow(Math.E, 0.08 * elapsed);
-
-      if (currentMult >= targetCrash) {
-        currentMult = targetCrash;
-        multText.innerText = currentMult.toFixed(2) + 'x';
-        drawCrashCanvas();
-        crashEnd();
+      if (isCrashed) {
+        // Boom shockwave
+        rCtx.fillStyle = '#ef4444';
+        for (let i = 0; i < 8; i++) {
+          rCtx.beginPath();
+          rCtx.arc((Math.random() - 0.5) * 30, (Math.random() - 0.5) * 30, Math.random() * 8 + 3, 0, Math.PI * 2);
+          rCtx.fill();
+        }
+        rCtx.restore();
         return;
       }
 
-      multText.innerText = currentMult.toFixed(2) + 'x';
-      if (crashState === 'running') {
-        const potential = Math.floor(currentBet * currentMult);
-        btnSubText.innerText = `دریافت ${potential.toLocaleString('fa-IR')} سکه`;
-      }
+      // Thruster Flame
+      rCtx.fillStyle = '#fbbf24';
+      rCtx.beginPath();
+      rCtx.moveTo(-12, -4);
+      rCtx.lineTo(-24 - Math.random() * 8, 0);
+      rCtx.lineTo(-12, 4);
+      rCtx.closePath();
+      rCtx.fill();
 
-      drawCrashCanvas();
+      // Rocket Body (Aerodynamic vector shuttle)
+      rCtx.fillStyle = '#f8fafc';
+      rCtx.beginPath();
+      rCtx.moveTo(18, 0);
+      rCtx.quadraticCurveTo(0, -9, -12, -7);
+      rCtx.lineTo(-12, 7);
+      rCtx.quadraticCurveTo(0, 9, 18, 0);
+      rCtx.closePath();
+      rCtx.fill();
 
-      if (crashState === 'running' || crashState === 'cashed') {
-        requestAnimationFrame(crashLoop);
-      }
+      // Wing Fins
+      rCtx.fillStyle = '#06b6d4';
+      rCtx.beginPath();
+      rCtx.moveTo(-6, -7);
+      rCtx.lineTo(-14, -14);
+      rCtx.lineTo(-10, -5);
+      rCtx.closePath();
+      rCtx.fill();
+
+      rCtx.beginPath();
+      rCtx.moveTo(-6, 7);
+      rCtx.lineTo(-14, 14);
+      rCtx.lineTo(-10, 5);
+      rCtx.closePath();
+      rCtx.fill();
+
+      // Cockpit Window (Cyan glass)
+      rCtx.fillStyle = '#38bdf8';
+      rCtx.beginPath();
+      rCtx.arc(4, 0, 4, 0, Math.PI * 2);
+      rCtx.fill();
+
+      rCtx.restore();
     }
 
-    function drawCrashCanvas() {
-      const w = crashCanvas.width;
-      const h = crashCanvas.height;
-      cCtx.clearRect(0, 0, w, h);
+    function renderRocketFrame() {
+      drawRocketBaseScene();
 
-      // Grid background
-      cCtx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
-      cCtx.lineWidth = 1;
-      for (let x = 0; x < w; x += 40) {
-        cCtx.beginPath(); cCtx.moveTo(x, 0); cCtx.lineTo(x, h); cCtx.stroke();
-      }
-      for (let y = 0; y < h; y += 40) {
-        cCtx.beginPath(); cCtx.moveTo(0, y); cCtx.lineTo(w, y); cCtx.stroke();
-      }
+      const startX = 40;
+      const startY = 300;
 
-      // Draw trajectory curve
-      const pad = 30;
-      const startX = pad;
-      const startY = h - pad;
+      if (rState === 'IDLE') {
+        drawVectorRocket(startX, startY, -Math.PI / 4);
 
-      const progress = Math.min((currentMult - 1) / (Math.max(targetCrash, 4) - 1), 1);
-      const endX = startX + (w - pad * 2) * progress;
-      const endY = startY - (h - pad * 2) * Math.pow(progress, 1.4);
+        rCtx.fillStyle = '#94a3b8';
+        rCtx.font = 'bold 22px system-ui';
+        rCtx.textAlign = 'center';
+        rCtx.fillText('آماده پرواز', 250, 150);
 
-      lastRocketPos = { x: endX, y: endY };
+        rCtx.font = '14px system-ui';
+        rCtx.fillText('برای شروع دکمه پرتاب را بزن', 250, 185);
+      } else if (rState === 'FLYING' || rState === 'CRASHED' || rState === 'ESCAPED') {
+        const progress = Math.min(1.0, (rMultiplier - 1.0) / 4.0);
+        const curX = startX + (400) * Math.pow(progress, 0.75);
+        const curY = startY - (240) * Math.pow(progress, 0.85);
 
-      // Trajectory gradient line
-      const grad = cCtx.createLinearGradient(startX, startY, endX, endY);
-      grad.addColorStop(0, 'rgba(56, 189, 248, 0.1)');
-      grad.addColorStop(1, '#38bdf8');
+        // Trajectory Glowing Line
+        rCtx.save();
+        rCtx.strokeStyle = rState === 'CRASHED' ? '#ef4444' : '#06b6d4';
+        rCtx.lineWidth = 4;
+        rCtx.shadowColor = rState === 'CRASHED' ? 'rgba(239,68,68,0.8)' : 'rgba(6,182,212,0.8)';
+        rCtx.shadowBlur = 12;
 
-      cCtx.beginPath();
-      cCtx.moveTo(startX, startY);
-      cCtx.quadraticCurveTo(startX + (endX - startX) * 0.5, startY, endX, endY);
-      cCtx.strokeStyle = grad;
-      cCtx.lineWidth = 4 * window.devicePixelRatio;
-      cCtx.stroke();
+        rCtx.beginPath();
+        rCtx.moveTo(startX, startY);
+        rCtx.quadraticCurveTo((startX + curX) / 2, startY, curX, curY);
+        rCtx.stroke();
+        rCtx.restore();
 
-      // Rocket flame particles during flight
-      if (crashState === 'running' || crashState === 'cashed') {
-        particles.push({
-          x: endX - 8,
-          y: endY + 4,
-          vx: -(Math.random() * 2 + 1),
-          vy: Math.random() * 2 - 1,
-          radius: Math.random() * 3 + 1,
-          color: ['#f59e0b', '#ef4444', '#38bdf8'][Math.floor(Math.random() * 3)],
-          life: 0.6
-        });
-      }
-
-      // Draw and update particles
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.life -= 0.02;
-
-        cCtx.beginPath();
-        cCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        cCtx.fillStyle = p.color;
-        cCtx.globalAlpha = Math.max(0, p.life);
-        cCtx.fill();
-        cCtx.globalAlpha = 1;
-
-        if (p.life <= 0) particles.splice(i, 1);
-      }
-
-      // Draw Rocket (if not crashed)
-      if (crashState !== 'crashed') {
-        cCtx.save();
-        cCtx.translate(endX, endY);
-        cCtx.rotate(-0.35); // tilt angle upwards
-        cCtx.font = `${28 * window.devicePixelRatio}px sans-serif`;
-        cCtx.textAlign = 'center';
-        cCtx.textBaseline = 'middle';
-        cCtx.fillText('🚀', 0, 0);
-        cCtx.restore();
-      }
-    }
-
-    crashBtn.onclick = () => {
-      if (crashState === 'idle' || crashState === 'crashed') {
-        startCrashGame();
-      } else if (crashState === 'running') {
-        cashOut();
-      }
-    };
-
-    // ==========================================
-    // GAME 2: CHICKEN ROAD LOGIC & ANIMATION
-    // ==========================================
-    const chCanvas = document.getElementById('chicken-canvas');
-    const chCtx = chCanvas.getContext('2d');
-    const chScoreEl = document.getElementById('chicken-score');
-    const chCoinsEl = document.getElementById('chicken-coins');
-    const chBestEl = document.getElementById('chicken-best');
-
-    let chBest = parseInt(localStorage.getItem('ch_best') || '0', 10);
-    chBestEl.innerText = `${chBest} م`;
-
-    const GRID_SIZE = 40;
-    const COLS = 9;
-    const ROWS = 9;
-
-    let chicken = { x: 4, y: 7, targetX: 4, targetY: 7, hopAnim: 0 };
-    let chickenScore = 0;
-    let chickenCoinsCollected = 0;
-    let lanes = [];
-    let chGameLoopId = null;
-
-    function resizeChickenCanvas() {
-      const rect = chCanvas.parentElement.getBoundingClientRect();
-      chCanvas.width = rect.width * window.devicePixelRatio;
-      chCanvas.height = rect.height * window.devicePixelRatio;
-    }
-    window.addEventListener('resize', resizeChickenCanvas);
-
-    function initChickenGame() {
-      resizeChickenCanvas();
-      chicken = { x: 4, y: 7, targetX: 4, targetY: 7, hopAnim: 0 };
-      chickenScore = 0;
-      chickenCoinsCollected = 0;
-      chScoreEl.innerText = '0 م';
-      chCoinsEl.innerText = '0 🪙';
-
-      lanes = [];
-      // Generate initial lanes (0 is top, 8 is bottom)
-      for (let r = 0; r < ROWS; r++) {
-        lanes.push(createLane(r));
-      }
-
-      if (chGameLoopId) cancelAnimationFrame(chGameLoopId);
-      chGameLoop();
-    }
-
-    function createLane(row) {
-      if (row >= 6) {
-        return { type: 'grass', row, obstacles: [], coins: [] };
-      }
-      const types = ['road', 'road', 'river', 'road', 'grass', 'river'];
-      const type = types[Math.floor(Math.random() * types.length)];
-      const speed = (Math.random() * 1.5 + 0.8) * (Math.random() > 0.5 ? 1 : -1);
-      const obstacles = [];
-      const coins = [];
-
-      // Add obstacles (cars or logs)
-      const count = type === 'river' ? 2 : Math.floor(Math.random() * 2) + 1;
-      for (let i = 0; i < count; i++) {
-        obstacles.push({
-          x: (i * (COLS / count)) + Math.random(),
-          width: type === 'river' ? 2.2 : (type === 'road' ? 1.4 : 1),
-          color: type === 'river' ? '#854d0e' : ['#ef4444', '#3b82f6', '#f59e0b', '#10b981'][Math.floor(Math.random() * 4)]
-        });
-      }
-
-      // 30% chance for a coin on grass or road
-      if (Math.random() < 0.35) {
-        coins.push({ x: Math.floor(Math.random() * COLS), collected: false });
-      }
-
-      return { type, row, speed, obstacles, coins };
-    }
-
-    function moveChicken(dx, dy) {
-      const nx = chicken.x + dx;
-      const ny = chicken.y + dy;
-
-      if (nx >= 0 && nx < COLS) {
-        chicken.x = nx;
-      }
-
-      if (dy < 0) {
-        // Forward jump
-        chickenScore++;
-        chScoreEl.innerText = `${chickenScore} م`;
-        soundHop();
-        haptic('light');
-
-        if (chickenScore > chBest) {
-          chBest = chickenScore;
-          localStorage.setItem('ch_best', chBest);
-          chBestEl.innerText = `${chBest} م`;
+        // Particles update & draw
+        if (rState === 'FLYING') {
+          rParticles.push(new RocketParticle(curX - 10, curY + 6));
+        }
+        for (let i = rParticles.length - 1; i >= 0; i--) {
+          rParticles[i].update();
+          rParticles[i].draw(rCtx);
+          if (rParticles[i].life <= 0) rParticles.splice(i, 1);
         }
 
-        // Scroll world down: push new lane at top, pop bottom
-        lanes.pop();
-        lanes.unshift(createLane(0));
-      } else if (dy > 0 && chicken.y < ROWS - 1) {
-        chicken.y = ny;
-        soundHop();
-      }
+        // Draw the Rocket
+        const angle = -Math.atan2(startY - curY, curX - startX) * 0.7;
+        drawVectorRocket(curX, curY, angle, rState === 'CRASHED');
 
-      // Check coin collection
-      const curLane = lanes[chicken.y];
-      if (curLane && curLane.coins) {
-        curLane.coins.forEach(c => {
-          if (!c.collected && c.x === chicken.x) {
-            c.collected = true;
-            chickenCoinsCollected += 10;
-            updateBalance(10);
-            chCoinsEl.innerText = `${chickenCoinsCollected} 🪙`;
-            soundCoin();
-            haptic('success');
-            showToast('+۱۰ سکه جمع شد! 🪙');
-          }
-        });
+        // Multiplier Digital HUD
+        rCtx.save();
+        rCtx.textAlign = 'center';
+        rCtx.font = '900 48px system-ui';
+        if (rState === 'CRASHED') {
+          rCtx.fillStyle = '#ef4444';
+          rCtx.shadowColor = 'rgba(239, 68, 94, 0.6)';
+          rCtx.shadowBlur = 16;
+          rCtx.fillText('منفجر شد! 💥', 250, 100);
+          rCtx.font = 'bold 24px system-ui';
+          rCtx.fillText(rMultiplier.toFixed(2) + 'x', 250, 145);
+        } else if (rState === 'ESCAPED') {
+          rCtx.fillStyle = '#10b981';
+          rCtx.shadowColor = 'rgba(16, 185, 129, 0.6)';
+          rCtx.shadowBlur = 16;
+          rCtx.fillText('خروج موفقیت‌آمیز! 🎉', 250, 100);
+          rCtx.font = 'bold 26px system-ui';
+          rCtx.fillText('ضریب ذخیره شده: ' + rMultiplier.toFixed(2) + 'x', 250, 145);
+        } else {
+          rCtx.fillStyle = '#38bdf8';
+          rCtx.shadowColor = 'rgba(56, 189, 248, 0.6)';
+          rCtx.shadowBlur = 16;
+          rCtx.fillText(rMultiplier.toFixed(2) + 'x', 250, 110);
+        }
+        rCtx.restore();
       }
     }
 
-    // Touch & D-Pad bindings
-    document.getElementById('ch-btn-up').onclick = () => moveChicken(0, -1);
-    document.getElementById('ch-btn-down').onclick = () => moveChicken(0, 1);
-    document.getElementById('ch-btn-left').onclick = () => moveChicken(-1, 0);
-    document.getElementById('ch-btn-right').onclick = () => moveChicken(1, 0);
+    function rocketLoop() {
+      if (rState === 'FLYING') {
+        const elapsed = (Date.now() - rStartTime) / 1000;
+        // Growth curve
+        rMultiplier = 1.00 + Math.pow(elapsed * 0.9, 1.45);
 
-    // Canvas Tap to jump forward
-    chCanvas.onclick = () => moveChicken(0, -1);
+        if (rMultiplier >= rTargetCrash) {
+          // Crash!
+          rState = 'CRASHED';
+          soundCrash();
+          haptic('heavy');
+          document.getElementById('rocketActionBtn').className = 'action-btn btn-restart';
+          document.getElementById('rocketActionBtn').innerHTML = '<span>شروع مجدد 🔄</span>';
+          showToast('موشک در ضریب ' + rTargetCrash.toFixed(2) + 'x منفجر شد!');
+        }
+      }
+
+      renderRocketFrame();
+      rAnimId = requestAnimationFrame(rocketLoop);
+    }
+    rAnimId = requestAnimationFrame(rocketLoop);
+
+    function handleRocketAction() {
+      initAudio();
+      if (rState === 'IDLE' || rState === 'CRASHED' || rState === 'ESCAPED') {
+        // Start Flight
+        rState = 'FLYING';
+        rMultiplier = 1.00;
+        rParticles = [];
+        rStartTime = Date.now();
+
+        // Calculate random crash point between 1.15 and 8.5
+        const r = Math.random();
+        if (r < 0.25) rTargetCrash = 1.10 + Math.random() * 0.4;
+        else if (r < 0.70) rTargetCrash = 1.50 + Math.random() * 2.0;
+        else if (r < 0.90) rTargetCrash = 3.50 + Math.random() * 3.5;
+        else rTargetCrash = 7.00 + Math.random() * 6.0;
+
+        soundJump();
+        haptic('medium');
+
+        const btn = document.getElementById('rocketActionBtn');
+        btn.className = 'action-btn btn-escape';
+        btn.innerHTML = '<span>خروج با پرش موفق 🪂</span>';
+      } else if (rState === 'FLYING') {
+        // User Cashing Out / Escaping!
+        rState = 'ESCAPED';
+        soundWin();
+        haptic('success');
+
+        const btn = document.getElementById('rocketActionBtn');
+        btn.className = 'action-btn btn-restart';
+        btn.innerHTML = '<span>پرواز بعدی 🚀</span>';
+
+        document.getElementById('rocketLastScore').textContent = rMultiplier.toFixed(2) + 'x';
+
+        if (rMultiplier > rHighScore) {
+          rHighScore = rMultiplier;
+          localStorage.setItem('rocket_hs', rHighScore.toString());
+          document.getElementById('rocketHighScore').textContent = rHighScore.toFixed(2) + 'x';
+          showToast('🔥 رکورد جدید ضریب: ' + rHighScore.toFixed(2) + 'x');
+        } else {
+          showToast('خروج در ضریب ' + rMultiplier.toFixed(2) + 'x ثبت شد!');
+        }
+      }
+    }
+
+    /* ========================================================
+       CHICKEN ROAD GAME - Real Canvas Sprites & Physics
+    ======================================================== */
+    const chCanvas = document.getElementById('chickenCanvas');
+    const chCtx = chCanvas.getContext('2d');
+
+    const GRID_COLS = 9;
+    const GRID_ROWS = 10;
+    const CELL_W = 400 / GRID_COLS;
+    const CELL_H = 420 / GRID_ROWS;
+
+    let chRunning = false;
+    let chAnimId = null;
+    let chickenPos = { x: 4, y: 9 };
+    let chickenTargetPos = { x: 4, y: 9 };
+    let chickenScore = 0;
+    let chickenHighScore = parseInt(localStorage.getItem('chicken_hs') || '0', 10);
+    document.getElementById('chickenHighScore').textContent = chickenHighScore + ' متر';
+
+    let lanes = [];
+
+    function generateLane(y, type) {
+      const speed = (0.015 + Math.random() * 0.035) * (Math.random() > 0.5 ? 1 : -1);
+      const obstacles = [];
+
+      if (type === 'road') {
+        const count = 2;
+        const color = ['#ef4444', '#3b82f6', '#f59e0b', '#10b981', '#a855f7'][Math.floor(Math.random() * 5)];
+        for (let i = 0; i < count; i++) {
+          obstacles.push({
+            x: (i * (GRID_COLS / count)) + Math.random(),
+            width: 1.6,
+            color: color
+          });
+        }
+      } else if (type === 'river') {
+        const count = 2;
+        for (let i = 0; i < count; i++) {
+          obstacles.push({
+            x: (i * (GRID_COLS / count)) + Math.random(),
+            width: 2.2
+          });
+        }
+      }
+
+      return { y, type, speed, obstacles };
+    }
+
+    function initChickenGame() {
+      chickenPos = { x: 4, y: 9 };
+      chickenScore = 0;
+      document.getElementById('chickenCurrentScore').textContent = '0 متر';
+
+      lanes = [
+        { y: 9, type: 'grass', obstacles: [] },
+        generateLane(8, 'road'),
+        generateLane(7, 'road'),
+        generateLane(6, 'road'),
+        { y: 5, type: 'grass', obstacles: [] },
+        generateLane(4, 'river'),
+        generateLane(3, 'river'),
+        generateLane(2, 'road'),
+        generateLane(1, 'road'),
+        { y: 0, type: 'grass', obstacles: [] }
+      ];
+
+      chRunning = true;
+      if (!chAnimId) chAnimId = requestAnimationFrame(chickenGameLoop);
+    }
+
+    function moveChicken(dir) {
+      if (!chRunning) return;
+      initAudio();
+      soundJump();
+      haptic('light');
+
+      let newX = chickenPos.x;
+      let newY = chickenPos.y;
+
+      if (dir === 'up') {
+        newY--;
+        chickenScore += 5;
+        document.getElementById('chickenCurrentScore').textContent = chickenScore + ' متر';
+        if (chickenScore > chickenHighScore) {
+          chickenHighScore = chickenScore;
+          localStorage.setItem('chicken_hs', chickenHighScore.toString());
+          document.getElementById('chickenHighScore').textContent = chickenHighScore + ' متر';
+        }
+      } else if (dir === 'down') {
+        if (newY < 9) newY++;
+      } else if (dir === 'left') {
+        if (newX > 0) newX--;
+      } else if (dir === 'right') {
+        if (newX < GRID_COLS - 1) newX++;
+      }
+
+      if (newY < 0) {
+        // Finished map screen, generate new field forward!
+        soundWin();
+        haptic('success');
+        showToast('مرحله رد شد! مسافت: ' + chickenScore + ' متر 🏆');
+        initChickenGame();
+        return;
+      }
+
+      chickenPos.x = newX;
+      chickenPos.y = newY;
+    }
 
     // Keyboard support
     window.addEventListener('keydown', (e) => {
-      if (!viewChicken.classList.contains('active')) return;
-      if (e.key === 'ArrowUp' || e.key === 'w') moveChicken(0, -1);
-      if (e.key === 'ArrowDown' || e.key === 's') moveChicken(0, 1);
-      if (e.key === 'ArrowLeft' || e.key === 'a') moveChicken(-1, 0);
-      if (e.key === 'ArrowRight' || e.key === 'd') moveChicken(1, 0);
+      if (activeGame !== 'chicken') return;
+      if (e.key === 'ArrowUp' || e.key === 'w') moveChicken('up');
+      if (e.key === 'ArrowDown' || e.key === 's') moveChicken('down');
+      if (e.key === 'ArrowLeft' || e.key === 'a') moveChicken('left');
+      if (e.key === 'ArrowRight' || e.key === 'd') moveChicken('right');
     });
 
-    function chGameLoop() {
-      const w = chCanvas.width;
-      const h = chCanvas.height;
-      const cellW = w / COLS;
-      const cellH = h / ROWS;
+    // Touch Swipe on chicken canvas
+    let touchStartX = 0;
+    let touchStartY = 0;
+    chCanvas.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
 
-      chCtx.clearRect(0, 0, w, h);
+    chCanvas.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > 30 || Math.abs(dy) > 30) {
+        if (Math.abs(dx) > Math.abs(dy)) {
+          moveChicken(dx > 0 ? 'right' : 'left');
+        } else {
+          moveChicken(dy > 0 ? 'down' : 'up');
+        }
+      } else {
+        // Direct tap moves chicken up
+        moveChicken('up');
+      }
+    });
 
-      // Update & Draw lanes
-      for (let r = 0; r < ROWS; r++) {
-        const lane = lanes[r];
-        const y = r * cellH;
+    function drawDrawnChicken(ctx, cx, cy) {
+      ctx.save();
+      ctx.translate(cx, cy);
 
-        // Lane Background
+      // Shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.35)';
+      ctx.beginPath();
+      ctx.ellipse(0, 14, 14, 6, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Body (Plump round chicken)
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(0, 0, 14, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Wing
+      ctx.fillStyle = '#f1f5f9';
+      ctx.beginPath();
+      ctx.ellipse(-4, 2, 7, 5, -0.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Red Comb on head
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(-2, -15, 3.5, 0, Math.PI * 2);
+      ctx.arc(3, -16, 4, 0, Math.PI * 2);
+      ctx.arc(8, -14, 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Beak (Yellow cone)
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath();
+      ctx.moveTo(11, -3);
+      ctx.lineTo(19, 0);
+      ctx.lineTo(11, 4);
+      ctx.closePath();
+      ctx.fill();
+
+      // Eye
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(6, -4, 2.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function drawVectorCar(ctx, x, y, widthPx, color, isReversed) {
+      ctx.save();
+      ctx.translate(x, y);
+
+      // Car Shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.4)';
+      ctx.fillRect(0, 4, widthPx, CELL_H - 8);
+
+      // Car Body
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.roundRect(2, 6, widthPx - 4, CELL_H - 12, 8);
+      ctx.fill();
+
+      // Roof & Windshields
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.roundRect(10, 10, widthPx - 20, CELL_H - 20, 4);
+      ctx.fill();
+
+      // Headlights
+      ctx.fillStyle = '#fef08a';
+      if (!isReversed) {
+        ctx.fillRect(widthPx - 6, 8, 3, 5);
+        ctx.fillRect(widthPx - 6, CELL_H - 13, 3, 5);
+      } else {
+        ctx.fillRect(3, 8, 3, 5);
+        ctx.fillRect(3, CELL_H - 13, 3, 5);
+      }
+
+      ctx.restore();
+    }
+
+    function drawVectorLog(ctx, x, y, widthPx) {
+      ctx.save();
+      ctx.translate(x, y);
+
+      // Wood trunk
+      ctx.fillStyle = '#78350f';
+      ctx.beginPath();
+      ctx.roundRect(0, 6, widthPx, CELL_H - 12, 10);
+      ctx.fill();
+
+      // Wood bark highlights
+      ctx.strokeStyle = '#92400e';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(8, 12);
+      ctx.lineTo(widthPx - 8, 12);
+      ctx.moveTo(14, CELL_H - 14);
+      ctx.lineTo(widthPx - 14, CELL_H - 14);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function chickenGameLoop() {
+      chCtx.clearRect(0, 0, 400, 420);
+
+      // 1. Draw Lanes
+      lanes.forEach(lane => {
+        const yPx = lane.y * CELL_H;
+
         if (lane.type === 'grass') {
-          chCtx.fillStyle = '#1e3a1e';
-          chCtx.fillRect(0, y, w, cellH);
+          chCtx.fillStyle = '#166534';
+          chCtx.fillRect(0, yPx, 400, CELL_H);
+          // Grass texture dots
+          chCtx.fillStyle = '#15803d';
+          for (let i = 10; i < 400; i += 35) {
+            chCtx.fillRect(i, yPx + 8, 6, 6);
+          }
         } else if (lane.type === 'road') {
           chCtx.fillStyle = '#1e293b';
-          chCtx.fillRect(0, y, w, cellH);
-          // Dashed road line
-          chCtx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-          chCtx.setLineDash([8, 8]);
+          chCtx.fillRect(0, yPx, 400, CELL_H);
+
+          // Lane Dashed Line
+          chCtx.strokeStyle = '#475569';
+          chCtx.setLineDash([12, 10]);
+          chCtx.lineWidth = 2;
           chCtx.beginPath();
-          chCtx.moveTo(0, y + cellH / 2);
-          chCtx.lineTo(w, y + cellH / 2);
+          chCtx.moveTo(0, yPx + CELL_H);
+          chCtx.lineTo(400, yPx + CELL_H);
           chCtx.stroke();
           chCtx.setLineDash([]);
         } else if (lane.type === 'river') {
-          chCtx.fillStyle = '#0369a1';
-          chCtx.fillRect(0, y, w, cellH);
+          chCtx.fillStyle = '#0284c7';
+          chCtx.fillRect(0, yPx, 400, CELL_H);
+
+          // Water ripple waves
+          chCtx.strokeStyle = 'rgba(255,255,255,0.18)';
+          chCtx.lineWidth = 2;
+          chCtx.beginPath();
+          for (let w = 0; w < 400; w += 40) {
+            chCtx.moveTo(w, yPx + CELL_H / 2);
+            chCtx.lineTo(w + 18, yPx + CELL_H / 2);
+          }
+          chCtx.stroke();
         }
 
-        // Move and draw obstacles
-        if (lane.speed) {
+        // 2. Update and Draw Obstacles (Cars / Logs)
+        if (lane.obstacles) {
           lane.obstacles.forEach(obs => {
-            obs.x += (lane.speed * 0.02);
-            if (obs.x > COLS + 1) obs.x = -obs.width;
-            if (obs.x < -obs.width - 1) obs.x = COLS + 1;
+            obs.x += lane.speed;
+            if (lane.speed > 0 && obs.x > GRID_COLS) {
+              obs.x = -obs.width;
+            } else if (lane.speed < 0 && obs.x < -obs.width) {
+              obs.x = GRID_COLS;
+            }
 
-            const ox = obs.x * cellW;
-            const oy = y + cellH * 0.15;
-            const ow = obs.width * cellW;
-            const oh = cellH * 0.7;
+            const obsXPx = obs.x * CELL_W;
+            const obsWPx = obs.width * CELL_W;
 
-            chCtx.fillStyle = obs.color;
-            chCtx.beginPath();
-            chCtx.roundRect(ox, oy, ow, oh, 6);
-            chCtx.fill();
-
-            // Headlights / detail
             if (lane.type === 'road') {
-              chCtx.fillStyle = '#fef08a';
-              const lightX = lane.speed > 0 ? ox + ow - 4 : ox + 2;
-              chCtx.fillRect(lightX, oy + 4, 3, 5);
-              chCtx.fillRect(lightX, oy + oh - 9, 3, 5);
+              drawVectorCar(chCtx, obsXPx, yPx, obsWPx, obs.color, lane.speed < 0);
+            } else if (lane.type === 'river') {
+              drawVectorLog(chCtx, obsXPx, yPx, obsWPx);
             }
           });
         }
+      });
 
-        // Draw coins
-        if (lane.coins) {
-          lane.coins.forEach(c => {
-            if (!c.collected) {
-              const cx = c.x * cellW + cellW / 2;
-              const cy = y + cellH / 2;
-              chCtx.font = `${cellH * 0.55}px sans-serif`;
-              chCtx.textAlign = 'center';
-              chCtx.textBaseline = 'middle';
-              chCtx.fillText('🪙', cx, cy);
-            }
-          });
-        }
-      }
-
-      // Check Collision with Cars / Water
-      const currentLane = lanes[chicken.y];
+      // 3. Collision Detection
+      const currentLane = lanes[chickenPos.y];
       let onLog = false;
 
       if (currentLane.type === 'road') {
         currentLane.obstacles.forEach(obs => {
-          if (chicken.x >= obs.x - 0.4 && chicken.x <= obs.x + obs.width - 0.2) {
-            // Hit by car!
+          if (chickenPos.x >= obs.x - 0.4 && chickenPos.x <= obs.x + obs.width - 0.3) {
+            // Hit by car
             soundCrash();
             haptic('error');
             showToast('تصادف کردی! 💥 رکورد: ' + chickenScore + ' متر');
@@ -1089,12 +1071,23 @@
         });
       } else if (currentLane.type === 'river') {
         currentLane.obstacles.forEach(obs => {
-          if (chicken.x >= obs.x - 0.2 && chicken.x <= obs.x + obs.width) {
+          if (chickenPos.x >= obs.x - 0.3 && chickenPos.x <= obs.x + obs.width - 0.1) {
             onLog = true;
+            // Float on log
+            chickenPos.x += currentLane.speed;
+            if (chickenPos.x < 0 || chickenPos.x > GRID_COLS - 1) {
+              // Drifted off-screen
+              soundCrash();
+              haptic('error');
+              showToast('از صفحه خارج شدی! 🌊');
+              initChickenGame();
+              return;
+            }
           }
         });
+
         if (!onLog) {
-          // Fell into water!
+          // Fell into water
           soundCrash();
           haptic('error');
           showToast('افتادی توی آب! 🌊 رکورد: ' + chickenScore + ' متر');
@@ -1103,16 +1096,12 @@
         }
       }
 
-      // Draw Chicken
-      const chX = chicken.x * cellW + cellW / 2;
-      const chY = chicken.y * cellH + cellH / 2;
+      // 4. Draw Chicken Character
+      const chXPx = chickenPos.x * CELL_W + CELL_W / 2;
+      const chYPx = chickenPos.y * CELL_H + CELL_H / 2;
+      drawDrawnChicken(chCtx, chXPx, chYPx);
 
-      chCtx.font = `${cellH * 0.75}px sans-serif`;
-      chCtx.textAlign = 'center';
-      chCtx.textBaseline = 'middle';
-      chCtx.fillText('🐔', chX, chY);
-
-      chGameLoopId = requestAnimationFrame(chGameLoop);
+      chAnimId = requestAnimationFrame(chickenGameLoop);
     }
   </script>
 </body>
