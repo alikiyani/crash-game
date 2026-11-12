@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>بازی انفجار و مرغ جاده | Game Hub</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
@@ -15,415 +15,111 @@
       --primary: #06b6d4;
       --primary-glow: rgba(6, 182, 212, 0.4);
       --accent: #f43f5e;
-      --accent-glow: rgba(244, 63, 94, 0.4);
       --success: #10b981;
-      --success-glow: rgba(16, 185, 129, 0.4);
       --gold: #fbbf24;
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      user-select: none;
-      -webkit-user-select: none;
-      -webkit-touch-callout: none;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; user-select: none; -webkit-user-select: none; }
     body {
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
-      touch-action: manipulation;
+      background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column;
+      overflow-x: hidden; touch-action: manipulation;
     }
-
-    /* Top Bar */
     header {
-      background: rgba(19, 27, 46, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 10px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      background: rgba(19,27,46,0.85); border-bottom: 1px solid var(--border); padding: 10px 16px;
+      display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100;
     }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 800;
-      font-size: 1.05rem;
-      background: linear-gradient(135deg, #38bdf8, #818cf8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .balance-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(251, 191, 36, 0.1);
-      border: 1px solid rgba(251, 191, 36, 0.3);
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-weight: 800;
-      font-size: 0.95rem;
-      color: var(--gold);
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
+    .brand { display: flex; align-items: center; gap: 8px; font-weight: 900; }
+    .balance-badge { display: flex; align-items: center; gap: 8px; background: rgba(251,191,36,0.1); padding: 6px 12px; border-radius: 20px; color: var(--gold); font-weight: 800; }
+    .header-actions { display: flex; align-items: center; gap: 8px; }
     .btn-icon {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid var(--border);
-      color: var(--text);
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: all 0.2s;
+      width: 34px; height: 34px; border-radius: 12px; border: 1px solid var(--border); background: rgba(255,255,255,0.04);
+      color: var(--text); cursor: pointer; font-size: 1rem;
     }
-    .btn-icon:active { transform: scale(0.92); }
-
-    /* Tabs */
-    .tab-bar {
-      display: flex;
-      padding: 10px 16px;
-      gap: 10px;
-      background: var(--bg);
-    }
-
+    .tab-bar { display: flex; gap: 10px; padding: 10px 16px; }
     .tab-btn {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 14px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      border-radius: 14px;
-      font-weight: 700;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.25s ease;
+      flex: 1; border: 1px solid var(--border); border-radius: 14px; background: var(--card); color: var(--muted);
+      padding: 10px; font-weight: 700; cursor: pointer;
     }
-
-    .tab-btn.active {
-      color: #fff;
-      background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(99, 102, 241, 0.2));
-      border-color: var(--primary);
-      box-shadow: 0 0 16px var(--primary-glow);
-    }
-
-    /* Container */
-    main {
-      flex: 1;
-      padding: 0 16px 20px;
-      display: flex;
-      flex-direction: column;
-      max-width: 520px;
-      margin: 0 auto;
-      width: 100%;
-      gap: 14px;
-    }
-
-    .game-section {
-      display: none;
-      flex-direction: column;
-      gap: 14px;
-    }
-    .game-section.active {
-      display: flex;
-    }
-
-    /* Canvas Card */
-    .canvas-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-      position: relative;
-    }
-
-    canvas {
-      display: block;
-      width: 100%;
-      height: auto;
-      background: #060911;
-    }
-
-    /* Betting Panel */
-    .bet-panel {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .bet-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.85rem;
-      color: var(--muted);
-      font-weight: 600;
-    }
-
-    .bet-input-row {
-      display: flex;
-      align-items: center;
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 4px 10px;
-    }
-
-    .bet-input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      color: #fff;
-      font-size: 1.25rem;
-      font-weight: 800;
-      outline: none;
-      text-align: left;
-      direction: ltr;
-      padding: 8px 4px;
-    }
-
-    .bet-unit {
-      color: var(--muted);
-      font-size: 0.85rem;
-      font-weight: 700;
-      padding-right: 6px;
-    }
-
-    .quick-bets {
-      display: flex;
-      gap: 6px;
-    }
-
-    .q-btn {
-      flex: 1;
-      padding: 8px 0;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .q-btn:active {
-      background: rgba(255, 255, 255, 0.12);
-      transform: scale(0.96);
-    }
-
-    /* Action Buttons */
-    .action-btn {
-      width: 100%;
-      padding: 16px;
-      border: none;
-      border-radius: 16px;
-      font-weight: 800;
-      font-size: 1.15rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .action-btn:active { transform: scale(0.97); }
-
-    .btn-bet {
-      background: linear-gradient(135deg, #06b6d4, #2563eb);
-      color: #fff;
-      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.35);
-    }
-
-    .btn-cashout {
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: #fff;
-      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.45);
-      animation: pulse 0.9s infinite alternate;
-    }
-
-    .btn-disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      100% { transform: scale(1.02); filter: brightness(1.15); }
-    }
-
-    /* Chicken D-Pad */
-    .dpad-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      margin-top: 4px;
-    }
-    .dpad-row {
-      display: flex;
-      gap: 12px;
-    }
+    .tab-btn.active { background: linear-gradient(135deg, rgba(6,182,212,0.2), rgba(99,102,241,0.2)); color: #fff; border-color: var(--primary); }
+    main { width: min(520px, 100%); margin: 0 auto; padding: 0 16px 24px; display: flex; flex-direction: column; gap: 14px; }
+    .game-section { display: none; flex-direction: column; gap: 14px; }
+    .game-section.active { display: flex; }
+    .canvas-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; }
+    canvas { display: block; width: 100%; height: auto; background: #060911; }
+    .bet-panel { border: 1px solid var(--border); background: var(--card); border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+    .bet-header { display: flex; justify-content: space-between; font-size: 0.84rem; color: var(--muted); font-weight: 700; }
+    .bet-input-row { display: flex; align-items: center; gap: 8px; padding: 4px 10px; border-radius: 12px; border: 1px solid var(--border); background: rgba(0,0,0,0.3); }
+    .bet-input { background: transparent; border: none; color: #fff; font-size: 1.2rem; font-weight: 800; width: 100%; text-align: left; direction: ltr; }
+    .bet-unit { color: var(--muted); font-size: 0.8rem; }
+    .quick-bets { display: flex; gap: 6px; }
+    .q-btn { flex: 1; padding: 8px 0; border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text); font-weight: 700; cursor: pointer; }
+    .action-btn { width: 100%; border: none; border-radius: 16px; padding: 16px; font-weight: 900; font-size:1.12rem; cursor: pointer; }
+    .btn-bet { background: linear-gradient(135deg, #06b6d4, #2563eb); color: white; }
+    .btn-cashout { background: linear-gradient(135deg, #10b981, #059669); color: white; animation: pulse 0.9s infinite alternate; }
+    @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.02); filter: brightness(1.15); } }
+    .dpad-container { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .dpad-row { display: flex; gap: 12px; }
     .dpad-btn {
-      width: 58px;
-      height: 58px;
-      background: var(--card);
-      border: 2px solid var(--border);
-      border-radius: 14px;
-      color: var(--text);
-      font-size: 1.3rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      transition: all 0.15s;
+      width: 58px; height: 58px; border-radius: 14px; border: 2px solid var(--border); background: var(--card);
+      color: var(--text); font-size: 1.35rem; cursor: pointer;
     }
-    .dpad-btn:active {
-      background: var(--primary);
-      color: #fff;
-      transform: scale(0.92);
-    }
-
-    /* Toast */
+    .cashout-row { display: flex; gap: 8px; }
+    .cashout-row .action-btn { flex: 1; }
     .toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: rgba(19, 27, 46, 0.96);
-      border: 1px solid var(--primary);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-      backdrop-filter: blur(8px);
-      color: #fff;
-      padding: 12px 24px;
-      border-radius: 30px;
-      font-weight: 700;
-      font-size: 0.95rem;
-      pointer-events: none;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      z-index: 1000;
-      text-align: center;
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(120px);
+      background: rgba(19,27,46,0.96); border: 1px solid var(--primary); color: #fff; border-radius: 30px;
+      padding: 12px 22px; font-weight: 700; pointer-events: none; transition: all 0.3s ease; z-index: 1000;
     }
-    .toast.show {
-      transform: translateX(-50%) translateY(0);
-    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
-
-  <!-- Header -->
   <header>
-    <div class="brand">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="stroke: #38bdf8;">
-        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-      </svg>
-      <span id="userNameDisplay">بازی انفجار</span>
-    </div>
-
-    <div class="balance-badge">
-      <span>💰</span>
-      <span id="balanceDisplay">1,000</span>
-      <span style="font-size: 0.75rem;">تومان</span>
-    </div>
-
-    <div class="header-actions">
-      <button class="btn-icon" id="soundToggle" title="صدا">🔊</button>
-    </div>
+    <div class="brand">🎯 <span id="userNameDisplay">بازی انفجار</span></div>
+    <div class="balance-badge"><span>💰</span><span id="balanceDisplay">1,000</span><span style="font-size:0.75rem;">تومان</span></div>
+    <div class="header-actions"><button class="btn-icon" id="soundToggle">🔊</button></div>
   </header>
 
-  <!-- Navigation Tabs -->
   <div class="tab-bar">
-    <button class="tab-btn active" id="tabRocketBtn" onclick="switchGame('rocket')">
-      <span>🚀 بازی انفجار موشک</span>
-    </button>
-    <button class="tab-btn" id="tabChickenBtn" onclick="switchGame('chicken')">
-      <span>🐔 مرغ جاده</span>
-    </button>
+    <button class="tab-btn active" id="tabRocketBtn" onclick="switchGame('rocket')">🚀 بازی انفجار</button>
+    <button class="tab-btn" id="tabChickenBtn" onclick="switchGame('chicken')">🐔 مرغ جاده</button>
   </div>
 
   <main>
-    <!-- CRASH / ROCKET GAME -->
     <div id="rocketSection" class="game-section active">
-      <div class="canvas-card">
-        <canvas id="rocketCanvas" width="500" height="320"></canvas>
-      </div>
-
+      <div class="canvas-card"><canvas id="rocketCanvas" width="500" height="320"></canvas></div>
       <div class="bet-panel">
-        <div class="bet-header">
-          <span>مبلغ شرط</span>
-          <span>حداقل: ۱۰ | حداکثر: موجودی</span>
-        </div>
-
+        <div class="bet-header"><span>مبلغ شرط</span><span>حداقل: ۱۰</span></div>
         <div class="bet-input-row">
-          <input type="number" id="betAmountInput" class="bet-input" value="100" min="10" step="10">
+          <input type="number" id="betAmountInput" class="bet-input" value="100" min="10" step="10" />
           <span class="bet-unit">تومان</span>
         </div>
-
         <div class="quick-bets">
           <button class="q-btn" onclick="adjustBet('half')">½ نصف</button>
-          <button class="q-btn" onclick="adjustBet('double')">۲x دو برابر</button>
+          <button class="q-btn" onclick="adjustBet('double')">۲x</button>
           <button class="q-btn" onclick="adjustBet('add100')">+۱۰۰</button>
           <button class="q-btn" onclick="adjustBet('max')">حداکثر</button>
         </div>
       </div>
-
-      <button id="rocketActionBtn" class="action-btn btn-bet" onclick="handleRocketAction()">
-        <span>ثبت شرط و شروع پرواز 🚀</span>
-      </button>
+      <button id="rocketActionBtn" class="action-btn btn-bet" onclick="handleRocketAction()"><span>ثبت شرط و شروع پرواز 🚀</span></button>
     </div>
 
-    <!-- CHICKEN ROAD GAME -->
     <div id="chickenSection" class="game-section">
-      <div class="canvas-card">
-        <canvas id="chickenCanvas" width="400" height="400"></canvas>
-      </div>
-
-      <div class="bet-panel" style="padding: 10px 14px;">
-        <div style="display:flex; justify-content:space-between; font-weight:700; font-size:0.9rem;">
-          <span>مسافت طی شده: <span id="chickenCurrentScore" style="color:var(--primary);">۰</span> متر</span>
-          <span>جایزه هر لاین: <span style="color:var(--gold);">+۱۰ تومان</span></span>
+      <div class="canvas-card"><canvas id="chickenCanvas" width="400" height="400"></canvas></div>
+      <div class="bet-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; font-weight:800; font-size:0.9rem;">
+          <span>ضریب فعلی: <span id="chickenMultiplierText" style="color:var(--primary);">1.00x</span></span>
+          <span>برداشت: <span id="chickenCashoutText" style="color:var(--gold);">0 تومان</span></span>
         </div>
       </div>
-
+      <div class="cashout-row">
+        <button class="action-btn btn-bet" id="chickenCashoutBtn" onclick="cashOutChicken()">برداشت 💰</button>
+      </div>
       <div class="dpad-container">
         <button class="dpad-btn" onclick="moveChicken('up')">⬆️</button>
         <div class="dpad-row">
-          <button class="dpad-btn" onclick="moveChicken('right')">➡️</button>
-          <button class="dpad-btn" onclick="moveChicken('down')">⬇️</button>
           <button class="dpad-btn" onclick="moveChicken('left')">⬅️</button>
+          <button class="dpad-btn" onclick="moveChicken('down')">⬇️</button>
+          <button class="dpad-btn" onclick="moveChicken('right')">➡️</button>
         </div>
       </div>
     </div>
@@ -432,85 +128,15 @@
   <div id="toast" class="toast">پیام</div>
 
   <script>
-    // Telegram Web App
     const tg = window.Telegram?.WebApp;
-    if (tg) {
-      tg.ready();
-      tg.expand();
-      if (tg.initDataUnsafe?.user?.first_name) {
-        document.getElementById('userNameDisplay').textContent = tg.initDataUnsafe.user.first_name;
-      }
-    }
+    if (tg) { tg.ready(); tg.expand(); }
 
-    function haptic(type = 'light') {
-      try {
-        if (tg?.HapticFeedback) {
-          if (type === 'light') tg.HapticFeedback.impactOccurred('light');
-          else if (type === 'medium') tg.HapticFeedback.impactOccurred('medium');
-          else if (type === 'heavy') tg.HapticFeedback.impactOccurred('heavy');
-          else if (type === 'success') tg.HapticFeedback.notificationOccurred('success');
-          else if (type === 'error') tg.HapticFeedback.notificationOccurred('error');
-        }
-      } catch (e) {}
-    }
-
-    // Balance Management
     let balance = parseInt(localStorage.getItem('user_balance') || '1000', 10);
     function updateBalanceDisplay() {
       document.getElementById('balanceDisplay').textContent = balance.toLocaleString('fa-IR');
-      localStorage.setItem('user_balance', balance.toString());
+      localStorage.setItem('user_balance', String(balance));
     }
     updateBalanceDisplay();
-
-    function adjustBet(action) {
-      const input = document.getElementById('betAmountInput');
-      let val = parseInt(input.value || '100', 10);
-      if (action === 'half') val = Math.max(10, Math.floor(val / 2));
-      else if (action === 'double') val = Math.min(balance, val * 2);
-      else if (action === 'add100') val = Math.min(balance, val + 100);
-      else if (action === 'max') val = Math.max(10, balance);
-      input.value = val;
-    }
-
-    // Audio Synthesis
-    let audioCtx = null;
-    let soundEnabled = true;
-
-    function initAudio() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-    }
-
-    document.getElementById('soundToggle').onclick = () => {
-      soundEnabled = !soundEnabled;
-      document.getElementById('soundToggle').textContent = soundEnabled ? '🔊' : '🔇';
-      showToast(soundEnabled ? 'صدا فعال شد' : 'صدا قطع شد');
-    };
-
-    function playTone(freq, type, duration, slideFreq = null) {
-      if (!soundEnabled) return;
-      try {
-        initAudio();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        if (slideFreq) osc.frequency.exponentialRampToValueAtTime(slideFreq, audioCtx.currentTime + duration);
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
-      } catch (e) {}
-    }
-
-    function soundJump() { playTone(300, 'triangle', 0.12, 600); }
-    function soundCrash() { playTone(120, 'sawtooth', 0.35, 40); }
-    function soundWin() {
-      playTone(400, 'sine', 0.1, 800);
-      setTimeout(() => playTone(800, 'sine', 0.25, 1200), 100);
-    }
 
     function showToast(msg) {
       const toast = document.getElementById('toast');
@@ -519,7 +145,42 @@
       setTimeout(() => toast.classList.remove('show'), 2500);
     }
 
-    // Tab Switching
+    function adjustBet(action) {
+      const input = document.getElementById('betAmountInput');
+      let value = parseInt(input.value || '100', 10);
+      if (action === 'half') value = Math.max(10, Math.floor(value / 2));
+      else if (action === 'double') value = Math.min(balance, value * 2);
+      else if (action === 'add100') value = Math.min(balance, value + 100);
+      else if (action === 'max') value = Math.max(10, balance);
+      input.value = value;
+    }
+
+    let audioCtx = null;
+    let soundEnabled = true;
+    function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); }
+    function playTone(freq, type, duration, slide=null) {
+      if (!soundEnabled) return;
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        if (slide) osc.frequency.exponentialRampToValueAtTime(slide, audioCtx.currentTime + duration);
+        gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+    function soundJump() { playTone(320, 'triangle', 0.12, 620); }
+    function soundCrash() { playTone(120, 'sawtooth', 0.35, 40); }
+    function soundWin() { playTone(500, 'sine', 0.12, 700); }
+    document.getElementById('soundToggle').onclick = () => {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundToggle').textContent = soundEnabled ? '🔊' : '🔇';
+      showToast(soundEnabled ? 'صدا فعال شد' : 'صدا قطع شد');
+    };
+
     let activeGame = 'rocket';
     function switchGame(game) {
       activeGame = game;
@@ -527,328 +188,154 @@
       document.getElementById('tabChickenBtn').classList.toggle('active', game === 'chicken');
       document.getElementById('rocketSection').classList.toggle('active', game === 'rocket');
       document.getElementById('chickenSection').classList.toggle('active', game === 'chicken');
-      haptic('light');
-
       if (game === 'chicken' && !chRunning) initChickenGame();
     }
 
-    /* ========================================================
-       ROCKET (CRASH) GAME - Professional Vector Graphics
-    ======================================================== */
+    // Crash game logic
     const rCanvas = document.getElementById('rocketCanvas');
     const rCtx = rCanvas.getContext('2d');
-
-    let rState = 'IDLE'; // IDLE, FLYING, CRASHED, CASHED
+    let rState = 'IDLE';
     let rMultiplier = 1.00;
     let rTargetCrash = 1.00;
     let rStartTime = 0;
     let currentBet = 100;
     let rParticles = [];
+    let rRestartTimer = null;
+
+    function scheduleRocketRestart() {
+      clearTimeout(rRestartTimer);
+      rRestartTimer = setTimeout(() => {
+        rState = 'IDLE';
+        rMultiplier = 1.00;
+        rTargetCrash = 1.00;
+        rParticles = [];
+        const btn = document.getElementById('rocketActionBtn');
+        btn.className = 'action-btn btn-bet';
+        btn.innerHTML = '<span>ثبت شرط و شروع پرواز 🚀</span>';
+        showToast('دور جدید شروع شد');
+      }, 10000);
+    }
 
     class RocketParticle {
       constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.vx = (Math.random() - 0.5) * 3 - 2;
-        this.vy = (Math.random() - 0.5) * 3 + 2;
-        this.life = 1.0;
-        this.decay = 0.035 + Math.random() * 0.03;
-        this.size = 4 + Math.random() * 5;
-        this.color = Math.random() > 0.4 ? '#fbbf24' : '#ef4444';
+        this.x = x; this.y = y; this.vx = (Math.random()-0.5)*3-2; this.vy = (Math.random()-0.5)*3+2; this.life = 1; this.decay = 0.035 + Math.random()*0.03; this.size = 4 + Math.random()*5; this.color = Math.random() > 0.4 ? '#fbbf24' : '#ef4444';
       }
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        this.life -= this.decay;
-      }
-      draw(ctx) {
-        ctx.save();
-        ctx.globalAlpha = Math.max(0, this.life);
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
+      update() { this.x += this.vx; this.y += this.vy; this.life -= this.decay; }
+      draw(ctx) { ctx.save(); ctx.globalAlpha = Math.max(0, this.life); ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); ctx.restore(); }
     }
 
-    const rStars = Array.from({ length: 40 }, () => ({
-      x: Math.random() * 500,
-      y: Math.random() * 320,
-      size: Math.random() * 1.8 + 0.5,
-      speed: Math.random() * 0.8 + 0.2
-    }));
+    const rStars = Array.from({ length: 40 }, () => ({ x: Math.random()*500, y: Math.random()*320, size: Math.random()*1.8+0.5, speed: Math.random()*0.8+0.2 }));
 
-    function drawRocketBaseScene() {
-      rCtx.fillStyle = '#060913';
-      rCtx.fillRect(0, 0, 500, 320);
-
-      // Starfield
+    function drawRocketBackground() {
+      rCtx.fillStyle = '#060913'; rCtx.fillRect(0,0,500,320);
       rCtx.fillStyle = '#94a3b8';
       rStars.forEach(s => {
-        if (rState === 'FLYING') {
-          s.x -= s.speed * (1 + (rMultiplier - 1) * 0.8);
-          s.y += s.speed * 0.5;
-          if (s.x < 0) s.x = 500;
-          if (s.y > 320) s.y = 0;
-        }
-        rCtx.beginPath();
-        rCtx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-        rCtx.fill();
+        if (rState === 'FLYING') { s.x -= s.speed * (1 + (rMultiplier - 1) * 0.8); s.y += s.speed * 0.5; if (s.x < 0) s.x = 500; if (s.y > 320) s.y = 0; }
+        rCtx.beginPath(); rCtx.arc(s.x, s.y, s.size, 0, Math.PI * 2); rCtx.fill();
       });
-
-      // Neon Grid Coordinates
-      rCtx.strokeStyle = 'rgba(36, 48, 79, 0.4)';
-      rCtx.lineWidth = 1;
-      for (let x = 40; x < 500; x += 50) {
-        rCtx.beginPath();
-        rCtx.moveTo(x, 0);
-        rCtx.lineTo(x, 320);
-        rCtx.stroke();
-      }
-      for (let y = 30; y < 320; y += 45) {
-        rCtx.beginPath();
-        rCtx.moveTo(0, y);
-        rCtx.lineTo(500, y);
-        rCtx.stroke();
-      }
+      rCtx.strokeStyle = 'rgba(36,48,79,0.35)'; rCtx.lineWidth = 1;
+      for (let x = 40; x < 500; x += 50) { rCtx.beginPath(); rCtx.moveTo(x,0); rCtx.lineTo(x,320); rCtx.stroke(); }
+      for (let y = 30; y < 320; y += 45) { rCtx.beginPath(); rCtx.moveTo(0,y); rCtx.lineTo(500,y); rCtx.stroke(); }
     }
 
-    function drawVectorRocket(x, y, angle, isCrashed = false) {
-      rCtx.save();
-      rCtx.translate(x, y);
-      rCtx.rotate(angle);
-
-      if (isCrashed) {
+    function drawRocket(x, y, angle, crashed=false) {
+      rCtx.save(); rCtx.translate(x, y); rCtx.rotate(angle);
+      if (crashed) {
         rCtx.fillStyle = '#ef4444';
-        for (let i = 0; i < 8; i++) {
-          rCtx.beginPath();
-          rCtx.arc((Math.random() - 0.5) * 35, (Math.random() - 0.5) * 35, Math.random() * 8 + 3, 0, Math.PI * 2);
-          rCtx.fill();
-        }
-        rCtx.restore();
-        return;
+        for (let i = 0; i < 10; i++) { rCtx.beginPath(); rCtx.arc((Math.random()-0.5)*35, (Math.random()-0.5)*35, Math.random()*8+3, 0, Math.PI*2); rCtx.fill(); }
+        rCtx.restore(); return;
       }
-
-      // Thruster Flame
       rCtx.fillStyle = '#fbbf24';
-      rCtx.beginPath();
-      rCtx.moveTo(-12, -4);
-      rCtx.lineTo(-24 - Math.random() * 8, 0);
-      rCtx.lineTo(-12, 4);
-      rCtx.closePath();
-      rCtx.fill();
-
-      // Rocket Body
+      rCtx.beginPath(); rCtx.moveTo(-12,-4); rCtx.lineTo(-24-Math.random()*8,0); rCtx.lineTo(-12,4); rCtx.closePath(); rCtx.fill();
       rCtx.fillStyle = '#f8fafc';
-      rCtx.beginPath();
-      rCtx.moveTo(18, 0);
-      rCtx.quadraticCurveTo(0, -9, -12, -7);
-      rCtx.lineTo(-12, 7);
-      rCtx.quadraticCurveTo(0, 9, 18, 0);
-      rCtx.closePath();
-      rCtx.fill();
-
-      // Wing Fins
+      rCtx.beginPath(); rCtx.moveTo(18,0); rCtx.quadraticCurveTo(0,-9,-12,-7); rCtx.lineTo(-12,7); rCtx.quadraticCurveTo(0,9,18,0); rCtx.closePath(); rCtx.fill();
       rCtx.fillStyle = '#06b6d4';
-      rCtx.beginPath();
-      rCtx.moveTo(-6, -7);
-      rCtx.lineTo(-14, -14);
-      rCtx.lineTo(-10, -5);
-      rCtx.closePath();
-      rCtx.fill();
-
-      rCtx.beginPath();
-      rCtx.moveTo(-6, 7);
-      rCtx.lineTo(-14, 14);
-      rCtx.lineTo(-10, 5);
-      rCtx.closePath();
-      rCtx.fill();
-
-      // Cockpit Window
-      rCtx.fillStyle = '#38bdf8';
-      rCtx.beginPath();
-      rCtx.arc(4, 0, 4, 0, Math.PI * 2);
-      rCtx.fill();
-
-      rCtx.restore();
+      rCtx.beginPath(); rCtx.moveTo(-6,-7); rCtx.lineTo(-14,-14); rCtx.lineTo(-10,-5); rCtx.closePath(); rCtx.fill();
+      rCtx.beginPath(); rCtx.moveTo(-6,7); rCtx.lineTo(-14,14); rCtx.lineTo(-10,5); rCtx.closePath(); rCtx.fill();
+      rCtx.fillStyle = '#38bdf8'; rCtx.beginPath(); rCtx.arc(4, 0, 4, 0, Math.PI*2); rCtx.fill(); rCtx.restore();
     }
 
     function renderRocketFrame() {
-      drawRocketBaseScene();
-
-      const startX = 40;
-      const startY = 280;
-
+      drawRocketBackground();
+      const sx = 40, sy = 280;
       if (rState === 'IDLE') {
-        drawVectorRocket(startX, startY, -Math.PI / 4);
-
-        rCtx.fillStyle = '#94a3b8';
-        rCtx.font = 'bold 22px system-ui';
-        rCtx.textAlign = 'center';
-        rCtx.fillText('آماده پرواز', 250, 140);
-
-        rCtx.font = '14px system-ui';
-        rCtx.fillText('مبلغ شرط را تعیین کن و دکمه شروع را بزن', 250, 175);
-      } else {
-        const progress = Math.min(1.0, (rMultiplier - 1.0) / 4.0);
-        const curX = startX + (400) * Math.pow(progress, 0.75);
-        const curY = startY - (220) * Math.pow(progress, 0.85);
-
-        // Trajectory Glowing Line
-        rCtx.save();
-        rCtx.strokeStyle = rState === 'CRASHED' ? '#ef4444' : '#06b6d4';
-        rCtx.lineWidth = 4;
-        rCtx.shadowColor = rState === 'CRASHED' ? 'rgba(239,68,68,0.8)' : 'rgba(6,182,212,0.8)';
-        rCtx.shadowBlur = 12;
-
-        rCtx.beginPath();
-        rCtx.moveTo(startX, startY);
-        rCtx.quadraticCurveTo((startX + curX) / 2, startY, curX, curY);
-        rCtx.stroke();
-        rCtx.restore();
-
-        // Particles
-        if (rState === 'FLYING') {
-          rParticles.push(new RocketParticle(curX - 10, curY + 6));
-        }
-        for (let i = rParticles.length - 1; i >= 0; i--) {
-          rParticles[i].update();
-          rParticles[i].draw(rCtx);
-          if (rParticles[i].life <= 0) rParticles.splice(i, 1);
-        }
-
-        // Draw Rocket
-        const angle = -Math.atan2(startY - curY, curX - startX) * 0.7;
-        drawVectorRocket(curX, curY, angle, rState === 'CRASHED');
-
-        // Multiplier HUD
-        rCtx.save();
-        rCtx.textAlign = 'center';
-        rCtx.font = '900 48px system-ui';
-        if (rState === 'CRASHED') {
-          rCtx.fillStyle = '#ef4444';
-          rCtx.shadowColor = 'rgba(239, 68, 94, 0.6)';
-          rCtx.shadowBlur = 16;
-          rCtx.fillText('انفجار! 💥', 250, 90);
-          rCtx.font = 'bold 24px system-ui';
-          rCtx.fillText(rMultiplier.toFixed(2) + 'x', 250, 135);
-        } else if (rState === 'CASHED') {
-          rCtx.fillStyle = '#10b981';
-          rCtx.shadowColor = 'rgba(16, 185, 129, 0.6)';
-          rCtx.shadowBlur = 16;
-          rCtx.fillText('برداشت موفق! 💰', 250, 90);
-          rCtx.font = 'bold 24px system-ui';
-          rCtx.fillText(rMultiplier.toFixed(2) + 'x (' + Math.floor(currentBet * rMultiplier).toLocaleString('fa-IR') + ' تومان)', 250, 135);
-        } else {
-          rCtx.fillStyle = '#38bdf8';
-          rCtx.shadowColor = 'rgba(56, 189, 248, 0.6)';
-          rCtx.shadowBlur = 16;
-          rCtx.fillText(rMultiplier.toFixed(2) + 'x', 250, 100);
-        }
-        rCtx.restore();
+        drawRocket(sx, sy, -Math.PI/4);
+        rCtx.fillStyle = '#94a3b8'; rCtx.font = 'bold 22px system-ui'; rCtx.textAlign = 'center'; rCtx.fillText('آماده پرواز', 250, 140);
+        rCtx.font = '14px system-ui'; rCtx.fillText('مبلغ شرط را تعیین کن و شروع کن', 250, 175);
+        return;
       }
+      const progress = Math.min(1, (rMultiplier - 1)/4);
+      const x = sx + 400 * Math.pow(progress, 0.75);
+      const y = sy - 220 * Math.pow(progress, 0.85);
+      rCtx.save();
+      rCtx.strokeStyle = rState === 'CRASHED' ? '#ef4444' : '#06b6d4';
+      rCtx.lineWidth = 4; rCtx.shadowColor = rState === 'CRASHED' ? 'rgba(239,68,68,0.8)' : 'rgba(6,182,212,0.8)'; rCtx.shadowBlur = 12;
+      rCtx.beginPath(); rCtx.moveTo(sx,sy); rCtx.quadraticCurveTo((sx+x)/2, sy, x, y); rCtx.stroke(); rCtx.restore();
+      if (rState === 'FLYING') rParticles.push(new RocketParticle(x-10, y+6));
+      for (let i = rParticles.length - 1; i >= 0; i--) { rParticles[i].update(); rParticles[i].draw(rCtx); if (rParticles[i].life <= 0) rParticles.splice(i,1); }
+      drawRocket(x, y, -Math.atan2(sy-y, x-sx) * 0.7, rState === 'CRASHED');
+      rCtx.save(); rCtx.textAlign = 'center'; rCtx.font = '900 48px system-ui';
+      if (rState === 'CRASHED') {
+        rCtx.fillStyle = '#ef4444'; rCtx.shadowColor = 'rgba(239,68,94,0.7)'; rCtx.shadowBlur = 16; rCtx.fillText('انفجار! 💥', 250, 90); rCtx.font = 'bold 24px system-ui'; rCtx.fillText(rMultiplier.toFixed(2) + 'x', 250, 135);
+      } else if (rState === 'CASHED') {
+        rCtx.fillStyle = '#10b981'; rCtx.shadowColor = 'rgba(16,185,129,0.7)'; rCtx.shadowBlur = 16; rCtx.fillText('برداشت موفق! 💰', 250, 90); rCtx.font = 'bold 24px system-ui'; rCtx.fillText(rMultiplier.toFixed(2) + 'x', 250, 135);
+      } else {
+        rCtx.fillStyle = '#38bdf8'; rCtx.shadowColor = 'rgba(56,189,248,0.7)'; rCtx.shadowBlur = 16; rCtx.fillText(rMultiplier.toFixed(2) + 'x', 250, 100);
+      }
+      rCtx.restore();
     }
 
-    function rocketGameLoop() {
+    function rocketLoop() {
       if (rState === 'FLYING') {
         const elapsed = (Date.now() - rStartTime) / 1000;
-        rMultiplier = 1.00 + Math.pow(elapsed * 0.9, 1.45);
-
-        // Update button profit preview
+        rMultiplier = 1 + Math.pow(elapsed * 0.9, 1.45);
         const profit = Math.floor(currentBet * rMultiplier);
-        document.getElementById('rocketActionBtn').innerHTML =
-          `<span>برداشت سود (${profit.toLocaleString('fa-IR')} تومان) 💰</span>`;
-
+        document.getElementById('rocketActionBtn').innerHTML = `<span>برداشت سود (${profit.toLocaleString('fa-IR')} تومان) 💰</span>`;
         if (rMultiplier >= rTargetCrash) {
-          // Crashed!
           rState = 'CRASHED';
           soundCrash();
-          haptic('heavy');
           const btn = document.getElementById('rocketActionBtn');
           btn.className = 'action-btn btn-bet';
           btn.innerHTML = '<span>ثبت شرط بعدی 🔄</span>';
-          showToast('موشک در ضریب ' + rTargetCrash.toFixed(2) + 'x منفجر شد! باختی.');
+          showToast('موشک منفجر شد و شرط شما سوخت.');
+          scheduleRocketRestart();
         }
       }
-
       renderRocketFrame();
-      requestAnimationFrame(rocketGameLoop);
+      requestAnimationFrame(rocketLoop);
     }
-    requestAnimationFrame(rocketGameLoop);
+    requestAnimationFrame(rocketLoop);
 
     function handleRocketAction() {
-      initAudio();
       const input = document.getElementById('betAmountInput');
-
       if (rState === 'IDLE' || rState === 'CRASHED' || rState === 'CASHED') {
-        // Start Bet
+        clearTimeout(rRestartTimer);
         currentBet = parseInt(input.value || '100', 10);
-        if (isNaN(currentBet) || currentBet < 10) {
-          showToast('حداقل مبلغ شرط ۱۰ تومان است');
-          return;
-        }
-        if (currentBet > balance) {
-          showToast('موجودی شما کافی نیست!');
-          return;
-        }
-
-        // Deduct Bet
-        balance -= currentBet;
-        updateBalanceDisplay();
-
-        rState = 'FLYING';
-        rMultiplier = 1.00;
-        rParticles = [];
-        rStartTime = Date.now();
-
-        // Calculate Crash Point (Standard provably-fair style distribution)
-        const r = Math.random();
-        rTargetCrash = Math.min(Math.max(1.05, 0.98 / (1.0 - r)), 50.0);
-
+        if (Number.isNaN(currentBet) || currentBet < 10) { showToast('حداقل مبلغ شرط ۱۰ تومان است'); return; }
+        if (currentBet > balance) { showToast('موجودی کافی نیست'); return; }
+        balance -= currentBet; updateBalanceDisplay();
+        rState = 'FLYING'; rMultiplier = 1; rParticles = []; rStartTime = Date.now();
+        rTargetCrash = Math.min(Math.max(1.05, 0.98 / (1.0 - Math.random())), 50.0);
         soundJump();
-        haptic('medium');
-
         const btn = document.getElementById('rocketActionBtn');
         btn.className = 'action-btn btn-cashout';
         btn.innerHTML = `<span>برداشت سود (${currentBet.toLocaleString('fa-IR')} تومان) 💰</span>`;
       } else if (rState === 'FLYING') {
-        // Cash Out!
         rState = 'CASHED';
-        const wonAmount = Math.floor(currentBet * rMultiplier);
-        balance += wonAmount;
-        updateBalanceDisplay();
-
+        const won = Math.floor(currentBet * rMultiplier);
+        balance += won; updateBalanceDisplay();
         soundWin();
-        haptic('success');
-
         const btn = document.getElementById('rocketActionBtn');
         btn.className = 'action-btn btn-bet';
         btn.innerHTML = '<span>ثبت شرط بعدی 🔄</span>';
-
-        showToast(`تبریک! با ضریب ${rMultiplier.toFixed(2)}x برنده ${wonAmount.toLocaleString('fa-IR')} تومان شدی! 🎉`);
-
-        // Send data back to Telegram bot if opened via bot keyboard
-        try {
-          if (tg && typeof tg.sendData === 'function') {
-            tg.sendData(JSON.stringify({
-              action: 'cashout',
-              multiplier: rMultiplier.toFixed(2),
-              bet: currentBet,
-              profit: wonAmount,
-              userId: tg.initDataUnsafe?.user?.id
-            }));
-          }
-        } catch (e) {}
+        showToast(`برداشت شد: ${won.toLocaleString('fa-IR')} تومان`);
+        scheduleRocketRestart();
       }
     }
 
-    /* ========================================================
-       CHICKEN ROAD GAME - Vector Canvas & Reward System
-    ======================================================== */
+    // Chicken Road logic
     const chCanvas = document.getElementById('chickenCanvas');
     const chCtx = chCanvas.getContext('2d');
-
     const GRID_COLS = 9;
     const GRID_ROWS = 10;
     const CELL_W = 400 / GRID_COLS;
@@ -857,96 +344,165 @@
     let chRunning = false;
     let chAnimId = null;
     let chickenPos = { x: 4, y: 9 };
-    let chickenScore = 0;
-    let lanes = [];
-
-    function generateLane(y, type) {
-      const speed = (0.015 + Math.random() * 0.035) * (Math.random() > 0.5 ? 1 : -1);
-      const obstacles = [];
-
-      if (type === 'road') {
-        const count = 2;
-        const color = ['#ef4444', '#3b82f6', '#f59e0b', '#10b981', '#a855f7'][Math.floor(Math.random() * 5)];
-        for (let i = 0; i < count; i++) {
-          obstacles.push({
-            x: (i * (GRID_COLS / count)) + Math.random(),
-            width: 1.6,
-            color: color
-          });
-        }
-      } else if (type === 'river') {
-        const count = 2;
-        for (let i = 0; i < count; i++) {
-          obstacles.push({
-            x: (i * (GRID_COLS / count)) + Math.random(),
-            width: 2.2
-          });
-        }
-      }
-
-      return { y, type, speed, obstacles };
-    }
+    let chickenStake = 100;
+    let chickenCurrentMultiplier = 1;
+    let chickenPotentialWin = 0;
+    let chickenLanes = [];
+    let chickenRoundStarted = false;
 
     function initChickenGame() {
+      chickenStake = 100;
+      chickenCurrentMultiplier = 1;
+      chickenPotentialWin = 0;
       chickenPos = { x: 4, y: 9 };
-      chickenScore = 0;
-      document.getElementById('chickenCurrentScore').textContent = '۰';
-
-      lanes = [
-        { y: 9, type: 'grass', obstacles: [] },
-        generateLane(8, 'road'),
-        generateLane(7, 'road'),
-        generateLane(6, 'road'),
-        { y: 5, type: 'grass', obstacles: [] },
-        generateLane(4, 'river'),
-        generateLane(3, 'river'),
-        generateLane(2, 'road'),
-        generateLane(1, 'road'),
-        { y: 0, type: 'grass', obstacles: [] }
-      ];
-
+      chickenLanes = Array.from({ length: 10 }, (_, i) => ({
+        index: i,
+        safe: Math.random() > 0.35,
+        multiplier: Number((1 + Math.random() * 2.8).toFixed(2)),
+        locked: false,
+        type: i % 2 === 0 ? 'grass' : (Math.random() > 0.5 ? 'road' : 'river')
+      }));
+      chickenRoundStarted = true;
       chRunning = true;
+      updateChickenUI();
       if (!chAnimId) chAnimId = requestAnimationFrame(chickenGameLoop);
     }
 
-    function moveChicken(dir) {
-      if (!chRunning) return;
-      initAudio();
-      soundJump();
-      haptic('light');
-
-      let newX = chickenPos.x;
-      let newY = chickenPos.y;
-
-      if (dir === 'up') {
-        newY--;
-        chickenScore += 5;
-        balance += 10; // Reward per forward step!
-        updateBalanceDisplay();
-        document.getElementById('chickenCurrentScore').textContent = chickenScore;
-      } else if (dir === 'down') {
-        if (newY < 9) newY++;
-      } else if (dir === 'left') {
-        if (newX > 0) newX--;
-      } else if (dir === 'right') {
-        if (newX < GRID_COLS - 1) newX++;
-      }
-
-      if (newY < 0) {
-        soundWin();
-        haptic('success');
-        balance += 100; // Bonus for completing course
-        updateBalanceDisplay();
-        showToast('مرحله فتح شد! ۱۰۰ تومان پاداش گرفتی 🏆');
-        initChickenGame();
-        return;
-      }
-
-      chickenPos.x = newX;
-      chickenPos.y = newY;
+    function updateChickenUI() {
+      document.getElementById('chickenMultiplierText').textContent = `${chickenCurrentMultiplier.toFixed(2)}x`;
+      document.getElementById('chickenCashoutText').textContent = `${Math.floor(chickenStake * chickenCurrentMultiplier).toLocaleString('fa-IR')} تومان`;
     }
 
-    // Touch and Keyboard
+    function resetChickenRound() {
+      chRunning = false;
+      chickenRoundStarted = false;
+      chickenCurrentMultiplier = 1;
+      chickenPotentialWin = 0;
+      chickenPos = { x: 4, y: 9 };
+      updateChickenUI();
+      initChickenGame();
+    }
+
+    function moveChicken(dir) {
+      if (!chRunning || !chickenRoundStarted) return;
+      if (dir === 'up') {
+        const nextY = chickenPos.y - 1;
+        if (nextY < 0) {
+          const win = Math.floor(chickenStake * chickenCurrentMultiplier);
+          balance += win; updateBalanceDisplay();
+          soundWin();
+          showToast(`بازی تمام شد و ${win.toLocaleString('fa-IR')} تومان برداشت شد.`);
+          resetChickenRound();
+          return;
+        }
+
+        const lane = chickenLanes[nextY];
+        if (!lane) {
+          resetChickenRound();
+          return;
+        }
+
+        if (lane.safe) {
+          chickenPos.y = nextY;
+          chickenCurrentMultiplier = Number((chickenCurrentMultiplier * lane.multiplier).toFixed(2));
+          lane.locked = true;
+          chickenPotentialWin = Math.floor(chickenStake * chickenCurrentMultiplier);
+          updateChickenUI();
+          showToast(`لاین امن شد • ضریب ${chickenCurrentMultiplier.toFixed(2)}x`);
+          soundJump();
+        } else {
+          balance -= chickenStake; updateBalanceDisplay();
+          soundCrash();
+          showToast(`تصادف! کل مبلغ ${chickenStake.toLocaleString('fa-IR')} تومان سوخت.`);
+          resetChickenRound();
+        }
+      } else if (dir === 'down') {
+        if (chickenPos.y < 9) chickenPos.y += 1;
+      } else if (dir === 'left') {
+        if (chickenPos.x > 0) chickenPos.x -= 1;
+      } else if (dir === 'right') {
+        if (chickenPos.x < GRID_COLS - 1) chickenPos.x += 1;
+      }
+    }
+
+    function cashOutChicken() {
+      if (!chRunning || !chickenRoundStarted) return;
+      const win = Math.floor(chickenStake * chickenCurrentMultiplier);
+      if (win > 0) {
+        balance += win; updateBalanceDisplay();
+        soundWin();
+        showToast(`برداشت انجام شد: ${win.toLocaleString('fa-IR')} تومان`);
+      }
+      resetChickenRound();
+    }
+
+    function drawChicken(ctx, cx, cy) {
+      ctx.save(); ctx.translate(cx, cy);
+      ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(0, 13, 13, 5, 0, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(0, 0, 13, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#f1f5f9'; ctx.beginPath(); ctx.ellipse(-4, 2, 7, 5, -0.2, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath(); ctx.arc(-2, -14, 3.5, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(3, -15, 4, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(8, -13, 3, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath(); ctx.moveTo(10,-3); ctx.lineTo(18,0); ctx.lineTo(10,3); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.arc(5,-4,2,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    }
+
+    function drawBirdLane(ctx, x, y, width, color) {
+      ctx.fillStyle = color; ctx.fillRect(x, y, width, CELL_H);
+      ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.strokeRect(x, y, width, CELL_H);
+    }
+
+    function drawCar(ctx, x, y, width, color) {
+      ctx.save(); ctx.translate(x, y);
+      ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(0, 4, width, CELL_H - 8);
+      ctx.fillStyle = color; ctx.fillRect(2, 6, width - 4, CELL_H - 12);
+      ctx.fillStyle = '#0f172a'; ctx.fillRect(10, 10, width - 20, CELL_H - 20);
+      ctx.fillStyle = '#fef3c7'; ctx.fillRect(width - 6, 8, 3, 5); ctx.fillRect(width - 6, CELL_H - 13, 3, 5);
+      ctx.restore();
+    }
+
+    function drawLog(ctx, x, y, width) {
+      ctx.fillStyle = '#78350f'; ctx.fillRect(x, y, width, CELL_H);
+      ctx.strokeStyle = '#e5e7eb'; ctx.strokeRect(x, y, width, CELL_H);
+    }
+
+    function chickenGameLoop() {
+      chCtx.clearRect(0, 0, 400, 400);
+      for (let i = 0; i < 10; i++) {
+        const y = i * CELL_H;
+        const lane = chickenLanes[i];
+        if (!lane) continue;
+        if (lane.type === 'grass') drawBirdLane(chCtx, 0, y, 400, '#166534');
+        else if (lane.type === 'road') { drawBirdLane(chCtx, 0, y, 400, '#1e293b'); }
+        else drawBirdLane(chCtx, 0, y, 400, '#0ea5e9');
+
+        if (lane.locked) {
+          chCtx.fillStyle = 'rgba(0,0,0,0.38)';
+          chCtx.fillRect(0, y, 400, CELL_H);
+        }
+
+        if (lane.type === 'road') {
+          for (let j = 0; j < 2; j++) {
+            let x = ((j * 5) + (i * 1.7)) % (GRID_COLS + 2);
+            x *= CELL_W;
+            if (lane.locked) continue;
+            drawCar(chCtx, x, y, CELL_W * 1.4, j % 2 === 0 ? '#ef4444' : '#3b82f6');
+          }
+        } else if (lane.type === 'river') {
+          if (!lane.locked) drawLog(chCtx, 0, y, CELL_W * 2.3);
+        }
+      }
+
+      const px = chickenPos.x * CELL_W + CELL_W / 2;
+      const py = chickenPos.y * CELL_H + CELL_H / 2;
+      drawChicken(chCtx, px, py);
+      chAnimId = requestAnimationFrame(chickenGameLoop);
+    }
+
     window.addEventListener('keydown', (e) => {
       if (activeGame !== 'chicken') return;
       if (e.key === 'ArrowUp' || e.key === 'w') moveChicken('up');
@@ -955,221 +511,20 @@
       if (e.key === 'ArrowRight' || e.key === 'd') moveChicken('right');
     });
 
-    let touchStartX = 0;
-    let touchStartY = 0;
-    chCanvas.addEventListener('touchstart', (e) => {
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
+    chCanvas.addEventListener('touchstart', e => {
+      touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY;
     }, { passive: true });
-
-    chCanvas.addEventListener('touchend', (e) => {
+    let touchStartX = 0, touchStartY = 0;
+    chCanvas.addEventListener('touchend', e => {
       const dx = e.changedTouches[0].clientX - touchStartX;
       const dy = e.changedTouches[0].clientY - touchStartY;
       if (Math.abs(dx) > 30 || Math.abs(dy) > 30) {
         if (Math.abs(dx) > Math.abs(dy)) moveChicken(dx > 0 ? 'right' : 'left');
         else moveChicken(dy > 0 ? 'down' : 'up');
-      } else {
-        moveChicken('up');
-      }
+      } else moveChicken('up');
     });
 
-    function drawDrawnChicken(ctx, cx, cy) {
-      ctx.save();
-      ctx.translate(cx, cy);
-
-      // Shadow
-      ctx.fillStyle = 'rgba(0,0,0,0.35)';
-      ctx.beginPath();
-      ctx.ellipse(0, 13, 13, 5, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Body
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(0, 0, 13, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Wing
-      ctx.fillStyle = '#f1f5f9';
-      ctx.beginPath();
-      ctx.ellipse(-4, 2, 7, 5, -0.2, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Red Comb
-      ctx.fillStyle = '#ef4444';
-      ctx.beginPath();
-      ctx.arc(-2, -14, 3.5, 0, Math.PI * 2);
-      ctx.arc(3, -15, 4, 0, Math.PI * 2);
-      ctx.arc(8, -13, 3, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Beak
-      ctx.fillStyle = '#f59e0b';
-      ctx.beginPath();
-      ctx.moveTo(10, -3);
-      ctx.lineTo(18, 0);
-      ctx.lineTo(10, 3);
-      ctx.closePath();
-      ctx.fill();
-
-      // Eye
-      ctx.fillStyle = '#0f172a';
-      ctx.beginPath();
-      ctx.arc(5, -4, 2, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.restore();
-    }
-
-    function drawVectorCar(ctx, x, y, widthPx, color, isReversed) {
-      ctx.save();
-      ctx.translate(x, y);
-
-      // Car Shadow
-      ctx.fillStyle = 'rgba(0,0,0,0.4)';
-      ctx.fillRect(0, 4, widthPx, CELL_H - 8);
-
-      // Car Body
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.roundRect(2, 6, widthPx - 4, CELL_H - 12, 8);
-      ctx.fill();
-
-      // Windshield
-      ctx.fillStyle = '#0f172a';
-      ctx.beginPath();
-      ctx.roundRect(10, 10, widthPx - 20, CELL_H - 20, 4);
-      ctx.fill();
-
-      // Headlights
-      ctx.fillStyle = '#fef08a';
-      if (!isReversed) {
-        ctx.fillRect(widthPx - 6, 8, 3, 5);
-        ctx.fillRect(widthPx - 6, CELL_H - 13, 3, 5);
-      } else {
-        ctx.fillRect(3, 8, 3, 5);
-        ctx.fillRect(3, CELL_H - 13, 3, 5);
-      }
-
-      ctx.restore();
-    }
-
-    function drawVectorLog(ctx, x, y, widthPx) {
-      ctx.save();
-      ctx.translate(x, y);
-
-      ctx.fillStyle = '#78350f';
-      ctx.beginPath();
-      ctx.roundRect(0, 6, widthPx, CELL_H - 12, 10);
-      ctx.fill();
-
-      ctx.strokeStyle = '#92400e';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(8, 12);
-      ctx.lineTo(widthPx - 8, 12);
-      ctx.stroke();
-
-      ctx.restore();
-    }
-
-    function chickenGameLoop() {
-      chCtx.clearRect(0, 0, 400, 400);
-
-      // Lanes
-      lanes.forEach(lane => {
-        const yPx = lane.y * CELL_H;
-
-        if (lane.type === 'grass') {
-          chCtx.fillStyle = '#166534';
-          chCtx.fillRect(0, yPx, 400, CELL_H);
-          chCtx.fillStyle = '#15803d';
-          for (let i = 10; i < 400; i += 35) chCtx.fillRect(i, yPx + 8, 6, 6);
-        } else if (lane.type === 'road') {
-          chCtx.fillStyle = '#1e293b';
-          chCtx.fillRect(0, yPx, 400, CELL_H);
-          chCtx.strokeStyle = '#475569';
-          chCtx.setLineDash([12, 10]);
-          chCtx.lineWidth = 2;
-          chCtx.beginPath();
-          chCtx.moveTo(0, yPx + CELL_H);
-          chCtx.lineTo(400, yPx + CELL_H);
-          chCtx.stroke();
-          chCtx.setLineDash([]);
-        } else if (lane.type === 'river') {
-          chCtx.fillStyle = '#0284c7';
-          chCtx.fillRect(0, yPx, 400, CELL_H);
-          chCtx.strokeStyle = 'rgba(255,255,255,0.18)';
-          chCtx.lineWidth = 2;
-          chCtx.beginPath();
-          for (let w = 0; w < 400; w += 40) {
-            chCtx.moveTo(w, yPx + CELL_H / 2);
-            chCtx.lineTo(w + 18, yPx + CELL_H / 2);
-          }
-          chCtx.stroke();
-        }
-
-        // Obstacles
-        if (lane.obstacles) {
-          lane.obstacles.forEach(obs => {
-            obs.x += lane.speed;
-            if (lane.speed > 0 && obs.x > GRID_COLS) obs.x = -obs.width;
-            else if (lane.speed < 0 && obs.x < -obs.width) obs.x = GRID_COLS;
-
-            const obsXPx = obs.x * CELL_W;
-            const obsWPx = obs.width * CELL_W;
-
-            if (lane.type === 'road') drawVectorCar(chCtx, obsXPx, yPx, obsWPx, obs.color, lane.speed < 0);
-            else if (lane.type === 'river') drawVectorLog(chCtx, obsXPx, yPx, obsWPx);
-          });
-        }
-      });
-
-      // Collision
-      const currentLane = lanes[chickenPos.y];
-      let onLog = false;
-
-      if (currentLane.type === 'road') {
-        currentLane.obstacles.forEach(obs => {
-          if (chickenPos.x >= obs.x - 0.4 && chickenPos.x <= obs.x + obs.width - 0.3) {
-            soundCrash();
-            haptic('error');
-            showToast('تصادف کردی! 💥 مسافت: ' + chickenScore + ' متر');
-            initChickenGame();
-            return;
-          }
-        });
-      } else if (currentLane.type === 'river') {
-        currentLane.obstacles.forEach(obs => {
-          if (chickenPos.x >= obs.x - 0.3 && chickenPos.x <= obs.x + obs.width - 0.1) {
-            onLog = true;
-            chickenPos.x += currentLane.speed;
-            if (chickenPos.x < 0 || chickenPos.x > GRID_COLS - 1) {
-              soundCrash();
-              haptic('error');
-              showToast('از کادر خارج شدی! 🌊');
-              initChickenGame();
-              return;
-            }
-          }
-        });
-
-        if (!onLog) {
-          soundCrash();
-          haptic('error');
-          showToast('افتادی توی آب! 🌊');
-          initChickenGame();
-          return;
-        }
-      }
-
-      // Draw Chicken
-      const chXPx = chickenPos.x * CELL_W + CELL_W / 2;
-      const chYPx = chickenPos.y * CELL_H + CELL_H / 2;
-      drawDrawnChicken(chCtx, chXPx, chYPx);
-
-      chAnimId = requestAnimationFrame(chickenGameLoop);
-    }
+    initChickenGame();
   </script>
 </body>
 </html>
