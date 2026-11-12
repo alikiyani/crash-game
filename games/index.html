@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>بازی‌ها</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root{color-scheme:dark;--bg:#090d16;--card:#131b2e;--line:#24304f;--text:#f8fafc;--muted:#94a3b8;--blue:#06b6d4;--green:#10b981;--red:#ef4444;--gold:#fbbf24}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;min-height:100vh}header,.tabs,main{max-width:520px;margin:auto}header{position:sticky;top:0;background:#131b2eee;border-bottom:1px solid var(--line);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:2}.balance{color:var(--gold);font-weight:800}.tabs{display:flex;gap:8px;padding:12px 16px}.tabs button,.btn,.switch{border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);padding:12px;font-weight:700;cursor:pointer}.tabs button{flex:1}.tabs button.active{border-color:var(--blue);color:#fff}main{padding:0 16px 24px}.game{display:none}.game.active{display:block}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px;text-align:center}#rocket{height:240px;display:grid;place-items:center;font-size:2rem;color:var(--blue)}#multiplier{font-size:2.6rem;font-weight:900}input{width:100%;margin:12px 0;padding:12px;border-radius:10px;border:1px solid var(--line);background:#090d16;color:white;font-size:1.1rem;text-align:center}.btn{width:100%;background:linear-gradient(120deg,#06b6d4,#2563eb);border:0;font-size:1.05rem;margin-top:8px}.btn.green{background:linear-gradient(120deg,#10b981,#059669)}.toggle-row{display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:right}.switch{padding:8px 14px}.switch.on{background:#065f46;border-color:var(--green)}.note{color:var(--muted);font-size:.85rem;line-height:1.7}.road{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:12px 0}.cell{height:36px;border-radius:6px;background:#1e293b}.cell.grass{background:#166534}.cell.road{background:#334155}.cell.river{background:#0369a1}.cell.chicken{outline:2px solid var(--gold);font-size:22px}.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:240px;margin:12px auto}.controls button{padding:12px;border-radius:10px;border:1px solid var(--line);background:#1e293b;color:#fff;font-size:1.1rem}.overlay{position:fixed;inset:0;background:#000b;display:none;place-items:center;padding:20px;z-index:5}.overlay.show{display:grid}.dialog{width:min(360px,100%);background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;text-align:center}.dialog-actions{display:flex;gap:10px}.dialog-actions button{flex:1}.toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,100px);background:#202b42;padding:12px 20px;border-radius:20px;transition:.25s;z-index:8}.toast.show{transform:translate(-50%,0)}
+  </style>
+</head>
+<body>
+<header><strong>🎮 بازی‌ها</strong><span class="balance">💰 <b id="balance">۱٬۰۰۰</b> تومان</span></header>
+<nav class="tabs"><button id="rocketTab" class="active" onclick="showGame('rocket')">🚀 انفجار</button><button id="chickenTab" onclick="showGame('chicken')">🐔 مرغ جاده</button></nav>
+<main>
+  <section id="rocketGame" class="game active">
+    <div class="card" id="rocket"><div><div id="multiplier">۱٫۰۰x</div><div id="rocketMessage">برای شروع شرط را وارد کن</div></div></div>
+    <div class="card"><label for="bet">مبلغ شرط (حداقل ۱۰ تومان)</label><input id="bet" type="number" min="10" step="10" value="100"><div class="toggle-row"><span>بازی خودکار پس از انفجار (۱۰ ثانیه)</span><button id="autoToggle" class="switch" aria-pressed="false" onclick="toggleAuto()">خاموش</button></div><p class="note">بازی خودکار پیش‌فرض خاموش است. روشن‌کردنش فقط بازی‌های بعدی را خودکار می‌کند.</p></div>
+    <button id="rocketAction" class="btn" onclick="rocketAction()">ثبت شرط و شروع 🚀</button>
+  </section>
+  <section id="chickenGame" class="game">
+    <div class="card"><b>مس��فت: <span id="score">۰</span></b><div id="road" class="road"></div><p class="note">به بالا حرکت کن و از ماشین‌ها و رودخانه دوری کن.</p></div>
+    <div class="controls"><span></span><button onclick="moveChicken(0,-1)">⬆️</button><span></span><button onclick="moveChicken(-1,0)">⬅️</button><button onclick="moveChicken(0,1)">⬇️</button><button onclick="moveChicken(1,0)">➡️</button></div>
+  </section>
+</main>
+<div id="prompt" class="overlay"><div class="dialog"><h3 id="promptTitle">دوباره شروع کنم؟</h3><p id="promptText">برای شروع دوباره «بله» را انتخاب کن.</p><div class="dialog-actions"><button class="btn green" onclick="answerPrompt(true)">بله</button><button class="btn" onclick="answerPrompt(false)">خیر</button></div></div></div>
+<div id="toast" class="toast"></div>
+<script>
+  const tg=window.Telegram?.WebApp;tg?.ready();tg?.expand();
+  let balance=Math.max(0,parseInt(localStorage.getItem('user_balance')||'1000',10)||0);
+  let autoPlay=localStorage.getItem('crash_auto')==='true';let state='idle',bet=100,multiplier=1,target=1,startAt=0,autoTimer=null,autoSeconds=0;
+  const $=id=>document.getElementById(id);function fmt(n){return Number(n).toLocaleString('fa-IR')}
+  function updateBalance(){ $('balance').textContent=fmt(balance);localStorage.setItem('user_balance',String(balance)); }
+  function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2500)}
+  function showGame(which){$('rocketGame').classList.toggle('active',which==='rocket');$('chickenGame').classList.toggle('active',which==='chicken');$('rocketTab').classList.toggle('active',which==='rocket');$('chickenTab').classList.toggle('active',which==='chicken');if(which==='chicken')drawRoad()}
+  function toggleAuto(){autoPlay=!autoPlay;localStorage.setItem('crash_auto',String(autoPlay));$('autoToggle').textContent=autoPlay?'روشن':'خاموش';$('autoToggle').classList.toggle('on',autoPlay);$('autoToggle').setAttribute('aria-pressed',String(autoPlay));toast(autoPlay?'بازی خودکار روشن شد':'بازی خودکار خاموش شد')}
+  if(autoPlay){$('autoToggle').textContent='روشن';$('autoToggle').classList.add('on');$('autoToggle').setAttribute('aria-pressed','true')}updateBalance();
+  function setAction(label,cls='btn'){const b=$('rocketAction');b.textContent=label;b.className='btn '+cls}
+  function rocketAction(){if(state==='flying'){state='cashed';const payout=Math.floor(bet*multiplier);balance+=payout;updateBalance();$('rocketMessage').textContent=`برداشت شد: ${fmt(payout)} تومان`;setAction('شروع دور بعد 🔄');return}startRound(false)}
+  function startRound(isAuto){const amount=Math.floor(Number($('bet').value));if(!Number.isFinite(amount)||amount<10){toast('حداقل شرط ۱۰ تومان است');return false}if(amount>balance){toast('موجودی کافی نیست؛ حسابت را شارژ کن');return false}clearTimeout(autoTimer);balance-=amount;updateBalance();bet=amount;multiplier=1;target=Math.min(Math.max(1.05,0.98/(1-Math.random())),50);startAt=Date.now();state='flying';$('rocketMessage').textContent=isAuto?'بازی خودکار':'در حال پرواز';setAction(`برداشت سود (${fmt(bet)} تومان)`,'btn green');return true}
+  function crash(){state='crashed';$('rocketMessage').textContent=`انفجار در ضریب ${multiplier.toFixed(2)}x 💥`;setAction('شروع دور بعد 🔄');if(autoPlay){autoSeconds=10;countdown()}}
+  function countdown(){if(!autoPlay||state!=='crashed')return;if(autoSeconds<=0){$('rocketMessage').textContent='شروع خودکار دور بعد…';if(!startRound(true)){state='idle';$('rocketMessage').textContent='موجودی کافی نیست؛ برای شارژ حساب اقدام کن';setAction('شروع دستی 🚀')}return}$('rocketMessage').textContent=`انفجار! شروع دور بعد تا ${autoSeconds} ثانیه`;autoSeconds--;autoTimer=setTimeout(countdown,1000)}
+  function rocketLoop(){if(state==='flying'){multiplier=1+Math.pow((Date.now()-startAt)/1000*.9,1.45);$('multiplier').textContent=multiplier.toFixed(2)+'x';if(multiplier>=target)crash()}else if(state==='idle')$('multiplier').textContent='۱٫۰۰x';requestAnimationFrame(rocketLoop)}requestAnimationFrame(rocketLoop);
+  const cols=5,rows=8;let chicken={x:2,y:7},chickenScore=0,dead=false,obstacles=[];
+  function resetChicken(){chicken={x:2,y:7};chickenScore=0;dead=false;obstacles=Array.from({length:rows},(_,y)=>({type:y===7||y===4||y===0?'grass':(y===3?'river':'road'),x:Math.floor(Math.random()*cols)}));$('score').textContent='۰';drawRoad()}
+  function drawRoad(){const board=$('road');board.innerHTML='';for(let y=0;y<rows;y++)for(let x=0;x<cols;x++){const c=document.createElement('div'),lane=obstacles[y]||{type:y===7||y===4||y===0?'grass':'road',x:-1};c.className='cell '+lane.type;if(chicken.x===x&&chicken.y===y){c.classList.add('chicken');c.textContent='🐔'}else if(lane.type==='road'&&lane.x===x)c.textContent='🚗';else if(lane.type==='river'&&lane.x===x)c.textContent='🌊';board.appendChild(c)}}
+  function moveChicken(dx,dy){if(dead)return;const x=chicken.x+dx,y=chicken.y+dy;if(x<0||x>=cols||y<0||y>=rows)return;chicken={x,y};const lane=obstacles[y];if(lane&&lane.type==='road'&&lane.x===x||lane&&lane.type==='river'&&lane.x===x){dead=true;drawRoad();$('promptTitle').textContent='باختی! دوباره شروع کنم؟';$('promptText').textContent=`مسافت: ${fmt(chickenScore)}. «بله» برای شروع از خط اول، «خیر» برای برگشت.`;$('prompt').classList.add('show');return}if(dy<0&&lane?.type!=='grass'){chickenScore++;$('score').textContent=fmt(chickenScore)}if(y===0){dead=true;$('promptTitle').textContent='آفرین! دوباره بازی کنی؟';$('promptText').textContent='مسیر را کامل کردی. می‌خواهی دوباره از خط اول شروع کنی؟';$('prompt').classList.add('show')}drawRoad()}
+  function answerPrompt(yes){$('prompt').classList.remove('show');if(yes){resetChicken();return}if(tg&&typeof tg.close==='function')tg.close();else{showGame('rocket');toast('به صفحهٔ بازی‌ها برگشتی')}}
+  resetChicken();
+</script>
+</body>
+</html>
