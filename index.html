@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>مرکز بازی‌های اکشن و رکوردی</title>
+  <title>بازی انفجار و مرغ جاده | Game Hub</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -17,6 +17,7 @@
       --accent: #f43f5e;
       --accent-glow: rgba(244, 63, 94, 0.4);
       --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.4);
       --gold: #fbbf24;
     }
 
@@ -40,13 +41,13 @@
       touch-action: manipulation;
     }
 
-    /* Top Navigation */
+    /* Top Bar */
     header {
       background: rgba(19, 27, 46, 0.85);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
-      padding: 12px 18px;
+      padding: 10px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -58,41 +59,53 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-weight: 900;
-      font-size: 1.15rem;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
+      gap: 8px;
+      font-weight: 800;
+      font-size: 1.05rem;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+    }
+
+    .balance-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--gold);
     }
 
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .btn-icon {
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid var(--border);
       color: var(--text);
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 1.1rem;
+      font-size: 1rem;
       transition: all 0.2s;
     }
     .btn-icon:active { transform: scale(0.92); }
 
-    /* Game Selector Tabs */
+    /* Tabs */
     .tab-bar {
       display: flex;
-      padding: 12px 16px;
+      padding: 10px 16px;
       gap: 10px;
       background: var(--bg);
     }
@@ -103,13 +116,13 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 12px 16px;
+      padding: 10px 14px;
       background: var(--card);
       border: 1px solid var(--border);
       color: var(--muted);
       border-radius: 14px;
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       cursor: pointer;
       transition: all 0.25s ease;
     }
@@ -118,24 +131,25 @@
       color: #fff;
       background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(99, 102, 241, 0.2));
       border-color: var(--primary);
-      box-shadow: 0 0 20px var(--primary-glow);
+      box-shadow: 0 0 16px var(--primary-glow);
     }
 
-    /* Main Container */
+    /* Container */
     main {
       flex: 1;
       padding: 0 16px 20px;
       display: flex;
       flex-direction: column;
-      max-width: 600px;
+      max-width: 520px;
       margin: 0 auto;
       width: 100%;
+      gap: 14px;
     }
 
     .game-section {
       display: none;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
     }
     .game-section.active {
       display: flex;
@@ -145,9 +159,9 @@
     .canvas-card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 20px;
+      border-radius: 18px;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
       position: relative;
     }
 
@@ -158,106 +172,149 @@
       background: #060911;
     }
 
-    /* Stat Badges */
-    .stats-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .stat-badge {
-      background: rgba(255, 255, 255, 0.03);
+    /* Betting Panel */
+    .bet-panel {
+      background: var(--card);
       border: 1px solid var(--border);
-      padding: 10px 14px;
-      border-radius: 14px;
+      border-radius: 18px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 10px;
     }
-    .stat-title {
-      font-size: 0.75rem;
+
+    .bet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
       color: var(--muted);
       font-weight: 600;
     }
-    .stat-value {
-      font-size: 1.15rem;
-      font-weight: 900;
-      color: var(--gold);
+
+    .bet-input-row {
+      display: flex;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 4px 10px;
     }
 
-    /* Primary Action Buttons */
+    .bet-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 1.25rem;
+      font-weight: 800;
+      outline: none;
+      text-align: left;
+      direction: ltr;
+      padding: 8px 4px;
+    }
+
+    .bet-unit {
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding-right: 6px;
+    }
+
+    .quick-bets {
+      display: flex;
+      gap: 6px;
+    }
+
+    .q-btn {
+      flex: 1;
+      padding: 8px 0;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .q-btn:active {
+      background: rgba(255, 255, 255, 0.12);
+      transform: scale(0.96);
+    }
+
+    /* Action Buttons */
     .action-btn {
       width: 100%;
       padding: 16px;
       border: none;
       border-radius: 16px;
       font-weight: 800;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 8px;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .action-btn:active {
-      transform: scale(0.97);
+    .action-btn:active { transform: scale(0.97); }
+
+    .btn-bet {
+      background: linear-gradient(135deg, #06b6d4, #2563eb);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.35);
     }
 
-    .btn-launch {
-      background: linear-gradient(135deg, #06b6d4, #3b82f6);
-      color: #fff;
-      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
-    }
-    .btn-escape {
+    .btn-cashout {
       background: linear-gradient(135deg, #10b981, #059669);
       color: #fff;
-      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
-      animation: pulse 1s infinite alternate;
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.45);
+      animation: pulse 0.9s infinite alternate;
     }
-    .btn-restart {
-      background: linear-gradient(135deg, #f43f5e, #e11d48);
-      color: #fff;
-      box-shadow: 0 4px 20px rgba(244, 63, 94, 0.4);
+
+    .btn-disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      pointer-events: none;
     }
 
     @keyframes pulse {
-      0% { transform: scale(1); filter: brightness(1); }
+      0% { transform: scale(1); }
       100% { transform: scale(1.02); filter: brightness(1.15); }
     }
 
-    /* D-PAD for Chicken */
+    /* Chicken D-Pad */
     .dpad-container {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 8px;
-      margin-top: 6px;
+      margin-top: 4px;
     }
     .dpad-row {
       display: flex;
       gap: 12px;
     }
     .dpad-btn {
-      width: 60px;
-      height: 60px;
+      width: 58px;
+      height: 58px;
       background: var(--card);
       border: 2px solid var(--border);
-      border-radius: 16px;
+      border-radius: 14px;
       color: var(--text);
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
       transition: all 0.15s;
     }
     .dpad-btn:active {
       background: var(--primary);
-      border-color: #fff;
       color: #fff;
-      transform: scale(0.9);
+      transform: scale(0.92);
     }
 
     /* Toast */
@@ -266,7 +323,7 @@
       bottom: 24px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
-      background: rgba(19, 27, 46, 0.95);
+      background: rgba(19, 27, 46, 0.96);
       border: 1px solid var(--primary);
       box-shadow: 0 10px 25px rgba(0,0,0,0.5);
       backdrop-filter: blur(8px);
@@ -290,11 +347,18 @@
   <!-- Header -->
   <header>
     <div class="brand">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="stroke: #38bdf8;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="stroke: #38bdf8;">
         <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
       </svg>
-      <span>گیم سنتر آرکید</span>
+      <span id="userNameDisplay">بازی انفجار</span>
     </div>
+
+    <div class="balance-badge">
+      <span>💰</span>
+      <span id="balanceDisplay">1,000</span>
+      <span style="font-size: 0.75rem;">تومان</span>
+    </div>
+
     <div class="header-actions">
       <button class="btn-icon" id="soundToggle" title="صدا">🔊</button>
     </div>
@@ -306,47 +370,51 @@
       <span>🚀 بازی انفجار موشک</span>
     </button>
     <button class="tab-btn" id="tabChickenBtn" onclick="switchGame('chicken')">
-      <span>🐔 مرغ ماجراجو</span>
+      <span>🐔 مرغ جاده</span>
     </button>
   </div>
 
   <main>
-    <!-- ROCKET GAME SECTION -->
+    <!-- CRASH / ROCKET GAME -->
     <div id="rocketSection" class="game-section active">
       <div class="canvas-card">
-        <canvas id="rocketCanvas" width="500" height="340"></canvas>
+        <canvas id="rocketCanvas" width="500" height="320"></canvas>
       </div>
 
-      <div class="stats-row">
-        <div class="stat-badge">
-          <span class="stat-title">بالاترین رکورد ضریب</span>
-          <span class="stat-value" id="rocketHighScore">1.00x</span>
+      <div class="bet-panel">
+        <div class="bet-header">
+          <span>مبلغ شرط</span>
+          <span>حداقل: ۱۰ | حداکثر: موجودی</span>
         </div>
-        <div class="stat-badge">
-          <span class="stat-title">آخرین خروج موفق</span>
-          <span class="stat-value" id="rocketLastScore" style="color: var(--primary);">-</span>
+
+        <div class="bet-input-row">
+          <input type="number" id="betAmountInput" class="bet-input" value="100" min="10" step="10">
+          <span class="bet-unit">تومان</span>
+        </div>
+
+        <div class="quick-bets">
+          <button class="q-btn" onclick="adjustBet('half')">½ نصف</button>
+          <button class="q-btn" onclick="adjustBet('double')">۲x دو برابر</button>
+          <button class="q-btn" onclick="adjustBet('add100')">+۱۰۰</button>
+          <button class="q-btn" onclick="adjustBet('max')">حداکثر</button>
         </div>
       </div>
 
-      <button id="rocketActionBtn" class="action-btn btn-launch" onclick="handleRocketAction()">
-        <span>پرتاب موشک 🚀</span>
+      <button id="rocketActionBtn" class="action-btn btn-bet" onclick="handleRocketAction()">
+        <span>ثبت شرط و شروع پرواز 🚀</span>
       </button>
     </div>
 
-    <!-- CHICKEN ROAD SECTION -->
+    <!-- CHICKEN ROAD GAME -->
     <div id="chickenSection" class="game-section">
       <div class="canvas-card">
-        <canvas id="chickenCanvas" width="400" height="420"></canvas>
+        <canvas id="chickenCanvas" width="400" height="400"></canvas>
       </div>
 
-      <div class="stats-row">
-        <div class="stat-badge">
-          <span class="stat-title">بیشترین مسافت پیموده</span>
-          <span class="stat-value" id="chickenHighScore">0 متر</span>
-        </div>
-        <div class="stat-badge">
-          <span class="stat-title">مسافت فعلی</span>
-          <span class="stat-value" id="chickenCurrentScore" style="color: var(--primary);">0 متر</span>
+      <div class="bet-panel" style="padding: 10px 14px;">
+        <div style="display:flex; justify-content:space-between; font-weight:700; font-size:0.9rem;">
+          <span>مسافت طی شده: <span id="chickenCurrentScore" style="color:var(--primary);">۰</span> متر</span>
+          <span>جایزه هر لاین: <span style="color:var(--gold);">+۱۰ تومان</span></span>
         </div>
       </div>
 
@@ -361,16 +429,17 @@
     </div>
   </main>
 
-  <div id="toast" class="toast">پیام سیستم</div>
+  <div id="toast" class="toast">پیام</div>
 
   <script>
-    // Telegram Web App Initialization
+    // Telegram Web App
     const tg = window.Telegram?.WebApp;
     if (tg) {
       tg.ready();
       tg.expand();
-      if (tg.setHeaderColor) tg.setHeaderColor('#090d16');
-      if (tg.setBackgroundColor) tg.setBackgroundColor('#090d16');
+      if (tg.initDataUnsafe?.user?.first_name) {
+        document.getElementById('userNameDisplay').textContent = tg.initDataUnsafe.user.first_name;
+      }
     }
 
     function haptic(type = 'light') {
@@ -385,23 +454,37 @@
       } catch (e) {}
     }
 
-    // Audio Synthesis (Web Audio API)
+    // Balance Management
+    let balance = parseInt(localStorage.getItem('user_balance') || '1000', 10);
+    function updateBalanceDisplay() {
+      document.getElementById('balanceDisplay').textContent = balance.toLocaleString('fa-IR');
+      localStorage.setItem('user_balance', balance.toString());
+    }
+    updateBalanceDisplay();
+
+    function adjustBet(action) {
+      const input = document.getElementById('betAmountInput');
+      let val = parseInt(input.value || '100', 10);
+      if (action === 'half') val = Math.max(10, Math.floor(val / 2));
+      else if (action === 'double') val = Math.min(balance, val * 2);
+      else if (action === 'add100') val = Math.min(balance, val + 100);
+      else if (action === 'max') val = Math.max(10, balance);
+      input.value = val;
+    }
+
+    // Audio Synthesis
     let audioCtx = null;
     let soundEnabled = true;
 
     function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
     document.getElementById('soundToggle').onclick = () => {
       soundEnabled = !soundEnabled;
       document.getElementById('soundToggle').textContent = soundEnabled ? '🔊' : '🔇';
-      showToast(soundEnabled ? 'صدا وصل شد' : 'صدا قطع شد');
+      showToast(soundEnabled ? 'صدا فعال شد' : 'صدا قطع شد');
     };
 
     function playTone(freq, type, duration, slideFreq = null) {
@@ -412,9 +495,7 @@
         const gain = audioCtx.createGain();
         osc.type = type;
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        if (slideFreq) {
-          osc.frequency.exponentialRampToValueAtTime(slideFreq, audioCtx.currentTime + duration);
-        }
+        if (slideFreq) osc.frequency.exponentialRampToValueAtTime(slideFreq, audioCtx.currentTime + duration);
         gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
         osc.connect(gain);
@@ -424,7 +505,6 @@
       } catch (e) {}
     }
 
-    function soundBeep() { playTone(550, 'sine', 0.08); }
     function soundJump() { playTone(300, 'triangle', 0.12, 600); }
     function soundCrash() { playTone(120, 'sawtooth', 0.35, 40); }
     function soundWin() {
@@ -449,27 +529,22 @@
       document.getElementById('chickenSection').classList.toggle('active', game === 'chicken');
       haptic('light');
 
-      if (game === 'chicken' && !chRunning) {
-        initChickenGame();
-      }
+      if (game === 'chicken' && !chRunning) initChickenGame();
     }
 
     /* ========================================================
-       ROCKET (CRASH) GAME - Vector & Canvas Enhanced
+       ROCKET (CRASH) GAME - Professional Vector Graphics
     ======================================================== */
     const rCanvas = document.getElementById('rocketCanvas');
     const rCtx = rCanvas.getContext('2d');
 
-    let rState = 'IDLE'; // IDLE, FLYING, CRASHED, ESCAPED
+    let rState = 'IDLE'; // IDLE, FLYING, CRASHED, CASHED
     let rMultiplier = 1.00;
     let rTargetCrash = 1.00;
     let rStartTime = 0;
-    let rAnimId = null;
-    let rHighScore = parseFloat(localStorage.getItem('rocket_hs') || '1.00');
-    document.getElementById('rocketHighScore').textContent = rHighScore.toFixed(2) + 'x';
-
-    // Particle system for rocket smoke & fire
+    let currentBet = 100;
     let rParticles = [];
+
     class RocketParticle {
       constructor(x, y) {
         this.x = x;
@@ -477,9 +552,9 @@
         this.vx = (Math.random() - 0.5) * 3 - 2;
         this.vy = (Math.random() - 0.5) * 3 + 2;
         this.life = 1.0;
-        this.decay = 0.03 + Math.random() * 0.03;
-        this.size = 4 + Math.random() * 6;
-        this.color = Math.random() > 0.4 ? '#f59e0b' : '#ef4444';
+        this.decay = 0.035 + Math.random() * 0.03;
+        this.size = 4 + Math.random() * 5;
+        this.color = Math.random() > 0.4 ? '#fbbf24' : '#ef4444';
       }
       update() {
         this.x += this.vx;
@@ -497,17 +572,16 @@
       }
     }
 
-    // Stars Background
-    const rStars = Array.from({ length: 45 }, () => ({
+    const rStars = Array.from({ length: 40 }, () => ({
       x: Math.random() * 500,
-      y: Math.random() * 340,
+      y: Math.random() * 320,
       size: Math.random() * 1.8 + 0.5,
       speed: Math.random() * 0.8 + 0.2
     }));
 
     function drawRocketBaseScene() {
       rCtx.fillStyle = '#060913';
-      rCtx.fillRect(0, 0, 500, 340);
+      rCtx.fillRect(0, 0, 500, 320);
 
       // Starfield
       rCtx.fillStyle = '#94a3b8';
@@ -516,7 +590,7 @@
           s.x -= s.speed * (1 + (rMultiplier - 1) * 0.8);
           s.y += s.speed * 0.5;
           if (s.x < 0) s.x = 500;
-          if (s.y > 340) s.y = 0;
+          if (s.y > 320) s.y = 0;
         }
         rCtx.beginPath();
         rCtx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
@@ -529,10 +603,10 @@
       for (let x = 40; x < 500; x += 50) {
         rCtx.beginPath();
         rCtx.moveTo(x, 0);
-        rCtx.lineTo(x, 340);
+        rCtx.lineTo(x, 320);
         rCtx.stroke();
       }
-      for (let y = 30; y < 340; y += 45) {
+      for (let y = 30; y < 320; y += 45) {
         rCtx.beginPath();
         rCtx.moveTo(0, y);
         rCtx.lineTo(500, y);
@@ -546,11 +620,10 @@
       rCtx.rotate(angle);
 
       if (isCrashed) {
-        // Boom shockwave
         rCtx.fillStyle = '#ef4444';
         for (let i = 0; i < 8; i++) {
           rCtx.beginPath();
-          rCtx.arc((Math.random() - 0.5) * 30, (Math.random() - 0.5) * 30, Math.random() * 8 + 3, 0, Math.PI * 2);
+          rCtx.arc((Math.random() - 0.5) * 35, (Math.random() - 0.5) * 35, Math.random() * 8 + 3, 0, Math.PI * 2);
           rCtx.fill();
         }
         rCtx.restore();
@@ -566,7 +639,7 @@
       rCtx.closePath();
       rCtx.fill();
 
-      // Rocket Body (Aerodynamic vector shuttle)
+      // Rocket Body
       rCtx.fillStyle = '#f8fafc';
       rCtx.beginPath();
       rCtx.moveTo(18, 0);
@@ -592,7 +665,7 @@
       rCtx.closePath();
       rCtx.fill();
 
-      // Cockpit Window (Cyan glass)
+      // Cockpit Window
       rCtx.fillStyle = '#38bdf8';
       rCtx.beginPath();
       rCtx.arc(4, 0, 4, 0, Math.PI * 2);
@@ -605,7 +678,7 @@
       drawRocketBaseScene();
 
       const startX = 40;
-      const startY = 300;
+      const startY = 280;
 
       if (rState === 'IDLE') {
         drawVectorRocket(startX, startY, -Math.PI / 4);
@@ -613,14 +686,14 @@
         rCtx.fillStyle = '#94a3b8';
         rCtx.font = 'bold 22px system-ui';
         rCtx.textAlign = 'center';
-        rCtx.fillText('آماده پرواز', 250, 150);
+        rCtx.fillText('آماده پرواز', 250, 140);
 
         rCtx.font = '14px system-ui';
-        rCtx.fillText('برای شروع دکمه پرتاب را بزن', 250, 185);
-      } else if (rState === 'FLYING' || rState === 'CRASHED' || rState === 'ESCAPED') {
+        rCtx.fillText('مبلغ شرط را تعیین کن و دکمه شروع را بزن', 250, 175);
+      } else {
         const progress = Math.min(1.0, (rMultiplier - 1.0) / 4.0);
         const curX = startX + (400) * Math.pow(progress, 0.75);
-        const curY = startY - (240) * Math.pow(progress, 0.85);
+        const curY = startY - (220) * Math.pow(progress, 0.85);
 
         // Trajectory Glowing Line
         rCtx.save();
@@ -635,7 +708,7 @@
         rCtx.stroke();
         rCtx.restore();
 
-        // Particles update & draw
+        // Particles
         if (rState === 'FLYING') {
           rParticles.push(new RocketParticle(curX - 10, curY + 6));
         }
@@ -645,11 +718,11 @@
           if (rParticles[i].life <= 0) rParticles.splice(i, 1);
         }
 
-        // Draw the Rocket
+        // Draw Rocket
         const angle = -Math.atan2(startY - curY, curX - startX) * 0.7;
         drawVectorRocket(curX, curY, angle, rState === 'CRASHED');
 
-        // Multiplier Digital HUD
+        // Multiplier HUD
         rCtx.save();
         rCtx.textAlign = 'center';
         rCtx.font = '900 48px system-ui';
@@ -657,95 +730,121 @@
           rCtx.fillStyle = '#ef4444';
           rCtx.shadowColor = 'rgba(239, 68, 94, 0.6)';
           rCtx.shadowBlur = 16;
-          rCtx.fillText('منفجر شد! 💥', 250, 100);
+          rCtx.fillText('انفجار! 💥', 250, 90);
           rCtx.font = 'bold 24px system-ui';
-          rCtx.fillText(rMultiplier.toFixed(2) + 'x', 250, 145);
-        } else if (rState === 'ESCAPED') {
+          rCtx.fillText(rMultiplier.toFixed(2) + 'x', 250, 135);
+        } else if (rState === 'CASHED') {
           rCtx.fillStyle = '#10b981';
           rCtx.shadowColor = 'rgba(16, 185, 129, 0.6)';
           rCtx.shadowBlur = 16;
-          rCtx.fillText('خروج موفقیت‌آمیز! 🎉', 250, 100);
-          rCtx.font = 'bold 26px system-ui';
-          rCtx.fillText('ضریب ذخیره شده: ' + rMultiplier.toFixed(2) + 'x', 250, 145);
+          rCtx.fillText('برداشت موفق! 💰', 250, 90);
+          rCtx.font = 'bold 24px system-ui';
+          rCtx.fillText(rMultiplier.toFixed(2) + 'x (' + Math.floor(currentBet * rMultiplier).toLocaleString('fa-IR') + ' تومان)', 250, 135);
         } else {
           rCtx.fillStyle = '#38bdf8';
           rCtx.shadowColor = 'rgba(56, 189, 248, 0.6)';
           rCtx.shadowBlur = 16;
-          rCtx.fillText(rMultiplier.toFixed(2) + 'x', 250, 110);
+          rCtx.fillText(rMultiplier.toFixed(2) + 'x', 250, 100);
         }
         rCtx.restore();
       }
     }
 
-    function rocketLoop() {
+    function rocketGameLoop() {
       if (rState === 'FLYING') {
         const elapsed = (Date.now() - rStartTime) / 1000;
-        // Growth curve
         rMultiplier = 1.00 + Math.pow(elapsed * 0.9, 1.45);
 
+        // Update button profit preview
+        const profit = Math.floor(currentBet * rMultiplier);
+        document.getElementById('rocketActionBtn').innerHTML =
+          `<span>برداشت سود (${profit.toLocaleString('fa-IR')} تومان) 💰</span>`;
+
         if (rMultiplier >= rTargetCrash) {
-          // Crash!
+          // Crashed!
           rState = 'CRASHED';
           soundCrash();
           haptic('heavy');
-          document.getElementById('rocketActionBtn').className = 'action-btn btn-restart';
-          document.getElementById('rocketActionBtn').innerHTML = '<span>شروع مجدد 🔄</span>';
-          showToast('موشک در ضریب ' + rTargetCrash.toFixed(2) + 'x منفجر شد!');
+          const btn = document.getElementById('rocketActionBtn');
+          btn.className = 'action-btn btn-bet';
+          btn.innerHTML = '<span>ثبت شرط بعدی 🔄</span>';
+          showToast('موشک در ضریب ' + rTargetCrash.toFixed(2) + 'x منفجر شد! باختی.');
         }
       }
 
       renderRocketFrame();
-      rAnimId = requestAnimationFrame(rocketLoop);
+      requestAnimationFrame(rocketGameLoop);
     }
-    rAnimId = requestAnimationFrame(rocketLoop);
+    requestAnimationFrame(rocketGameLoop);
 
     function handleRocketAction() {
       initAudio();
-      if (rState === 'IDLE' || rState === 'CRASHED' || rState === 'ESCAPED') {
-        // Start Flight
+      const input = document.getElementById('betAmountInput');
+
+      if (rState === 'IDLE' || rState === 'CRASHED' || rState === 'CASHED') {
+        // Start Bet
+        currentBet = parseInt(input.value || '100', 10);
+        if (isNaN(currentBet) || currentBet < 10) {
+          showToast('حداقل مبلغ شرط ۱۰ تومان است');
+          return;
+        }
+        if (currentBet > balance) {
+          showToast('موجودی شما کافی نیست!');
+          return;
+        }
+
+        // Deduct Bet
+        balance -= currentBet;
+        updateBalanceDisplay();
+
         rState = 'FLYING';
         rMultiplier = 1.00;
         rParticles = [];
         rStartTime = Date.now();
 
-        // Calculate random crash point between 1.15 and 8.5
+        // Calculate Crash Point (Standard provably-fair style distribution)
         const r = Math.random();
-        if (r < 0.25) rTargetCrash = 1.10 + Math.random() * 0.4;
-        else if (r < 0.70) rTargetCrash = 1.50 + Math.random() * 2.0;
-        else if (r < 0.90) rTargetCrash = 3.50 + Math.random() * 3.5;
-        else rTargetCrash = 7.00 + Math.random() * 6.0;
+        rTargetCrash = Math.min(Math.max(1.05, 0.98 / (1.0 - r)), 50.0);
 
         soundJump();
         haptic('medium');
 
         const btn = document.getElementById('rocketActionBtn');
-        btn.className = 'action-btn btn-escape';
-        btn.innerHTML = '<span>خروج با پرش موفق 🪂</span>';
+        btn.className = 'action-btn btn-cashout';
+        btn.innerHTML = `<span>برداشت سود (${currentBet.toLocaleString('fa-IR')} تومان) 💰</span>`;
       } else if (rState === 'FLYING') {
-        // User Cashing Out / Escaping!
-        rState = 'ESCAPED';
+        // Cash Out!
+        rState = 'CASHED';
+        const wonAmount = Math.floor(currentBet * rMultiplier);
+        balance += wonAmount;
+        updateBalanceDisplay();
+
         soundWin();
         haptic('success');
 
         const btn = document.getElementById('rocketActionBtn');
-        btn.className = 'action-btn btn-restart';
-        btn.innerHTML = '<span>پرواز بعدی 🚀</span>';
+        btn.className = 'action-btn btn-bet';
+        btn.innerHTML = '<span>ثبت شرط بعدی 🔄</span>';
 
-        document.getElementById('rocketLastScore').textContent = rMultiplier.toFixed(2) + 'x';
+        showToast(`تبریک! با ضریب ${rMultiplier.toFixed(2)}x برنده ${wonAmount.toLocaleString('fa-IR')} تومان شدی! 🎉`);
 
-        if (rMultiplier > rHighScore) {
-          rHighScore = rMultiplier;
-          localStorage.setItem('rocket_hs', rHighScore.toString());
-          document.getElementById('rocketHighScore').textContent = rHighScore.toFixed(2) + 'x';
-          showToast('🔥 رکورد جدید ضریب: ' + rHighScore.toFixed(2) + 'x');
-        } else {
-          showToast('خروج در ضریب ' + rMultiplier.toFixed(2) + 'x ثبت شد!');
-        }
+        // Send data back to Telegram bot if opened via bot keyboard
+        try {
+          if (tg && typeof tg.sendData === 'function') {
+            tg.sendData(JSON.stringify({
+              action: 'cashout',
+              multiplier: rMultiplier.toFixed(2),
+              bet: currentBet,
+              profit: wonAmount,
+              userId: tg.initDataUnsafe?.user?.id
+            }));
+          }
+        } catch (e) {}
       }
     }
 
     /* ========================================================
-       CHICKEN ROAD GAME - Real Canvas Sprites & Physics
+       CHICKEN ROAD GAME - Vector Canvas & Reward System
     ======================================================== */
     const chCanvas = document.getElementById('chickenCanvas');
     const chCtx = chCanvas.getContext('2d');
@@ -753,16 +852,12 @@
     const GRID_COLS = 9;
     const GRID_ROWS = 10;
     const CELL_W = 400 / GRID_COLS;
-    const CELL_H = 420 / GRID_ROWS;
+    const CELL_H = 400 / GRID_ROWS;
 
     let chRunning = false;
     let chAnimId = null;
     let chickenPos = { x: 4, y: 9 };
-    let chickenTargetPos = { x: 4, y: 9 };
     let chickenScore = 0;
-    let chickenHighScore = parseInt(localStorage.getItem('chicken_hs') || '0', 10);
-    document.getElementById('chickenHighScore').textContent = chickenHighScore + ' متر';
-
     let lanes = [];
 
     function generateLane(y, type) {
@@ -795,7 +890,7 @@
     function initChickenGame() {
       chickenPos = { x: 4, y: 9 };
       chickenScore = 0;
-      document.getElementById('chickenCurrentScore').textContent = '0 متر';
+      document.getElementById('chickenCurrentScore').textContent = '۰';
 
       lanes = [
         { y: 9, type: 'grass', obstacles: [] },
@@ -826,12 +921,9 @@
       if (dir === 'up') {
         newY--;
         chickenScore += 5;
-        document.getElementById('chickenCurrentScore').textContent = chickenScore + ' متر';
-        if (chickenScore > chickenHighScore) {
-          chickenHighScore = chickenScore;
-          localStorage.setItem('chicken_hs', chickenHighScore.toString());
-          document.getElementById('chickenHighScore').textContent = chickenHighScore + ' متر';
-        }
+        balance += 10; // Reward per forward step!
+        updateBalanceDisplay();
+        document.getElementById('chickenCurrentScore').textContent = chickenScore;
       } else if (dir === 'down') {
         if (newY < 9) newY++;
       } else if (dir === 'left') {
@@ -841,10 +933,11 @@
       }
 
       if (newY < 0) {
-        // Finished map screen, generate new field forward!
         soundWin();
         haptic('success');
-        showToast('مرحله رد شد! مسافت: ' + chickenScore + ' متر 🏆');
+        balance += 100; // Bonus for completing course
+        updateBalanceDisplay();
+        showToast('مرحله فتح شد! ۱۰۰ تومان پاداش گرفتی 🏆');
         initChickenGame();
         return;
       }
@@ -853,7 +946,7 @@
       chickenPos.y = newY;
     }
 
-    // Keyboard support
+    // Touch and Keyboard
     window.addEventListener('keydown', (e) => {
       if (activeGame !== 'chicken') return;
       if (e.key === 'ArrowUp' || e.key === 'w') moveChicken('up');
@@ -862,7 +955,6 @@
       if (e.key === 'ArrowRight' || e.key === 'd') moveChicken('right');
     });
 
-    // Touch Swipe on chicken canvas
     let touchStartX = 0;
     let touchStartY = 0;
     chCanvas.addEventListener('touchstart', (e) => {
@@ -874,13 +966,9 @@
       const dx = e.changedTouches[0].clientX - touchStartX;
       const dy = e.changedTouches[0].clientY - touchStartY;
       if (Math.abs(dx) > 30 || Math.abs(dy) > 30) {
-        if (Math.abs(dx) > Math.abs(dy)) {
-          moveChicken(dx > 0 ? 'right' : 'left');
-        } else {
-          moveChicken(dy > 0 ? 'down' : 'up');
-        }
+        if (Math.abs(dx) > Math.abs(dy)) moveChicken(dx > 0 ? 'right' : 'left');
+        else moveChicken(dy > 0 ? 'down' : 'up');
       } else {
-        // Direct tap moves chicken up
         moveChicken('up');
       }
     });
@@ -892,13 +980,13 @@
       // Shadow
       ctx.fillStyle = 'rgba(0,0,0,0.35)';
       ctx.beginPath();
-      ctx.ellipse(0, 14, 14, 6, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, 13, 13, 5, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // Body (Plump round chicken)
+      // Body
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();
-      ctx.arc(0, 0, 14, 0, Math.PI * 2);
+      ctx.arc(0, 0, 13, 0, Math.PI * 2);
       ctx.fill();
 
       // Wing
@@ -907,27 +995,27 @@
       ctx.ellipse(-4, 2, 7, 5, -0.2, 0, Math.PI * 2);
       ctx.fill();
 
-      // Red Comb on head
+      // Red Comb
       ctx.fillStyle = '#ef4444';
       ctx.beginPath();
-      ctx.arc(-2, -15, 3.5, 0, Math.PI * 2);
-      ctx.arc(3, -16, 4, 0, Math.PI * 2);
-      ctx.arc(8, -14, 3, 0, Math.PI * 2);
+      ctx.arc(-2, -14, 3.5, 0, Math.PI * 2);
+      ctx.arc(3, -15, 4, 0, Math.PI * 2);
+      ctx.arc(8, -13, 3, 0, Math.PI * 2);
       ctx.fill();
 
-      // Beak (Yellow cone)
+      // Beak
       ctx.fillStyle = '#f59e0b';
       ctx.beginPath();
-      ctx.moveTo(11, -3);
-      ctx.lineTo(19, 0);
-      ctx.lineTo(11, 4);
+      ctx.moveTo(10, -3);
+      ctx.lineTo(18, 0);
+      ctx.lineTo(10, 3);
       ctx.closePath();
       ctx.fill();
 
       // Eye
       ctx.fillStyle = '#0f172a';
       ctx.beginPath();
-      ctx.arc(6, -4, 2.2, 0, Math.PI * 2);
+      ctx.arc(5, -4, 2, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.restore();
@@ -947,7 +1035,7 @@
       ctx.roundRect(2, 6, widthPx - 4, CELL_H - 12, 8);
       ctx.fill();
 
-      // Roof & Windshields
+      // Windshield
       ctx.fillStyle = '#0f172a';
       ctx.beginPath();
       ctx.roundRect(10, 10, widthPx - 20, CELL_H - 20, 4);
@@ -970,45 +1058,36 @@
       ctx.save();
       ctx.translate(x, y);
 
-      // Wood trunk
       ctx.fillStyle = '#78350f';
       ctx.beginPath();
       ctx.roundRect(0, 6, widthPx, CELL_H - 12, 10);
       ctx.fill();
 
-      // Wood bark highlights
       ctx.strokeStyle = '#92400e';
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(8, 12);
       ctx.lineTo(widthPx - 8, 12);
-      ctx.moveTo(14, CELL_H - 14);
-      ctx.lineTo(widthPx - 14, CELL_H - 14);
       ctx.stroke();
 
       ctx.restore();
     }
 
     function chickenGameLoop() {
-      chCtx.clearRect(0, 0, 400, 420);
+      chCtx.clearRect(0, 0, 400, 400);
 
-      // 1. Draw Lanes
+      // Lanes
       lanes.forEach(lane => {
         const yPx = lane.y * CELL_H;
 
         if (lane.type === 'grass') {
           chCtx.fillStyle = '#166534';
           chCtx.fillRect(0, yPx, 400, CELL_H);
-          // Grass texture dots
           chCtx.fillStyle = '#15803d';
-          for (let i = 10; i < 400; i += 35) {
-            chCtx.fillRect(i, yPx + 8, 6, 6);
-          }
+          for (let i = 10; i < 400; i += 35) chCtx.fillRect(i, yPx + 8, 6, 6);
         } else if (lane.type === 'road') {
           chCtx.fillStyle = '#1e293b';
           chCtx.fillRect(0, yPx, 400, CELL_H);
-
-          // Lane Dashed Line
           chCtx.strokeStyle = '#475569';
           chCtx.setLineDash([12, 10]);
           chCtx.lineWidth = 2;
@@ -1020,8 +1099,6 @@
         } else if (lane.type === 'river') {
           chCtx.fillStyle = '#0284c7';
           chCtx.fillRect(0, yPx, 400, CELL_H);
-
-          // Water ripple waves
           chCtx.strokeStyle = 'rgba(255,255,255,0.18)';
           chCtx.lineWidth = 2;
           chCtx.beginPath();
@@ -1032,39 +1109,32 @@
           chCtx.stroke();
         }
 
-        // 2. Update and Draw Obstacles (Cars / Logs)
+        // Obstacles
         if (lane.obstacles) {
           lane.obstacles.forEach(obs => {
             obs.x += lane.speed;
-            if (lane.speed > 0 && obs.x > GRID_COLS) {
-              obs.x = -obs.width;
-            } else if (lane.speed < 0 && obs.x < -obs.width) {
-              obs.x = GRID_COLS;
-            }
+            if (lane.speed > 0 && obs.x > GRID_COLS) obs.x = -obs.width;
+            else if (lane.speed < 0 && obs.x < -obs.width) obs.x = GRID_COLS;
 
             const obsXPx = obs.x * CELL_W;
             const obsWPx = obs.width * CELL_W;
 
-            if (lane.type === 'road') {
-              drawVectorCar(chCtx, obsXPx, yPx, obsWPx, obs.color, lane.speed < 0);
-            } else if (lane.type === 'river') {
-              drawVectorLog(chCtx, obsXPx, yPx, obsWPx);
-            }
+            if (lane.type === 'road') drawVectorCar(chCtx, obsXPx, yPx, obsWPx, obs.color, lane.speed < 0);
+            else if (lane.type === 'river') drawVectorLog(chCtx, obsXPx, yPx, obsWPx);
           });
         }
       });
 
-      // 3. Collision Detection
+      // Collision
       const currentLane = lanes[chickenPos.y];
       let onLog = false;
 
       if (currentLane.type === 'road') {
         currentLane.obstacles.forEach(obs => {
           if (chickenPos.x >= obs.x - 0.4 && chickenPos.x <= obs.x + obs.width - 0.3) {
-            // Hit by car
             soundCrash();
             haptic('error');
-            showToast('تصادف کردی! 💥 رکورد: ' + chickenScore + ' متر');
+            showToast('تصادف کردی! 💥 مسافت: ' + chickenScore + ' متر');
             initChickenGame();
             return;
           }
@@ -1073,13 +1143,11 @@
         currentLane.obstacles.forEach(obs => {
           if (chickenPos.x >= obs.x - 0.3 && chickenPos.x <= obs.x + obs.width - 0.1) {
             onLog = true;
-            // Float on log
             chickenPos.x += currentLane.speed;
             if (chickenPos.x < 0 || chickenPos.x > GRID_COLS - 1) {
-              // Drifted off-screen
               soundCrash();
               haptic('error');
-              showToast('از صفحه خارج شدی! 🌊');
+              showToast('از کادر خارج شدی! 🌊');
               initChickenGame();
               return;
             }
@@ -1087,16 +1155,15 @@
         });
 
         if (!onLog) {
-          // Fell into water
           soundCrash();
           haptic('error');
-          showToast('افتادی توی آب! 🌊 رکورد: ' + chickenScore + ' متر');
+          showToast('افتادی توی آب! 🌊');
           initChickenGame();
           return;
         }
       }
 
-      // 4. Draw Chicken Character
+      // Draw Chicken
       const chXPx = chickenPos.x * CELL_W + CELL_W / 2;
       const chYPx = chickenPos.y * CELL_H + CELL_H / 2;
       drawDrawnChicken(chCtx, chXPx, chYPx);
