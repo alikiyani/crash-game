@@ -3,523 +3,359 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>بازی‌ها</title>
+<title>Chicken Road Clone</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-    :root{color-scheme:dark;--bg:#0f172a;--card:#1e293b;--line:#334155;--text:#f8fafc;--muted:#94a3b8;--blue:#3b82f6;--green:#10b981;--gold:#fbbf24}
-    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;min-height:100vh}
-    header,.tabs,main{max-width:560px;margin:auto}
-    header{position:sticky;top:0;background:#1e293bee;border-bottom:1px solid var(--line);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:2}
-    .balance{color:var(--gold);font-weight:800}
-    .tabs{display:flex;gap:8px;padding:12px 16px}
-    .tabs button,.btn,.switch,.difficulty button{border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);padding:12px;font-weight:700;cursor:pointer}
-    .tabs button{flex:1}.tabs button.active{border-color:var(--blue);background:#1e3a8a}
-    main{padding:0 12px 24px}
-    .game{display:none}.game.active{display:block}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;text-align:center}
-    .canvas-wrap{padding:0;overflow:hidden;border-radius:12px;border:1px solid var(--line)}
-    canvas{display:block;width:100%;height:auto}
-    .bet-row,.toggle-row{display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:right}
-    .muted,.note{color:var(--muted);font-size:.85rem;line-height:1.6}
-    input{width:100%;margin:10px 0;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0f172a;color:white;font-size:1.1rem;text-align:center}
-    .btn{width:100%;background:linear-gradient(120deg,#3b82f6,#2563eb);border:0;font-size:1.02rem;margin-top:8px}
-    .btn.green{background:linear-gradient(120deg,#10b981,#059669)}
-    .switch{padding:8px 14px;min-width:72px}.switch.on{background:#065f46;border-color:var(--green)}
-    .difficulty{display:flex;gap:5px;margin:10px 0}
-    .difficulty button{flex:1;padding:8px 3px;font-size:.75rem}
-    .difficulty button.selected{border-color:var(--gold);color:var(--gold);background:#45340c}
-    .overlay{position:fixed;inset:0;background:#000b;display:none;place-items:center;padding:20px;z-index:5}
-    .overlay.show{display:grid}
-    .dialog{width:min(360px,100%);background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;text-align:center}
-    .dialog-actions{display:flex;gap:10px}.dialog-actions button{flex:1}
-    .toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,100px);background:#202b42;padding:12px 20px;border-radius:20px;transition:.25s;z-index:8}
-    .toast.show{transform:translate(-50%,0)}
+    :root{color-scheme:dark;--bg:#1a202c;--card:#2d3748;--line:#4a5568;--text:#f7fafc;--muted:#a0aec0;--green:#48bb78;--gold:#ecc94b}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+    
+    header{width:100%;max-width:600px;padding:15px;display:flex;justify-content:space-between;align-items:center;background:var(--card);border-bottom:1px solid var(--line)}
+    .balance{color:var(--gold);font-weight:bold;font-size:1.1rem}
+    
+    main{width:100%;max-width:600px;padding:10px;flex:1;display:flex;flex-direction:column;gap:10px}
+    
+    .canvas-container{
+        width:100%;aspect-ratio:16/9;background:#2d3748;border-radius:12px;overflow:hidden;border:2px solid var(--line);position:relative;
+    }
+    canvas{display:block;width:100%;height:100%}
+
+    .controls{background:var(--card);padding:15px;border-radius:12px;border:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+    
+    .info-row{display:flex;justify-content:space-between;font-size:0.9rem;color:var(--muted)}
+    .info-row b{color:var(--text)}
+
+    .difficulty-selector{display:flex;gap:5px;background:#1a202c;padding:5px;border-radius:8px}
+    .diff-btn{flex:1;border:none;background:transparent;color:var(--muted);padding:8px;border-radius:6px;cursor:pointer;font-size:0.8rem;transition:0.2s}
+    .diff-btn.active{background:var(--gold);color:#1a202c;font-weight:bold}
+
+    input[type=number]{width:100%;padding:12px;background:#1a202c;border:1px solid var(--line);border-radius:8px;color:white;text-align:center;font-size:1rem}
+
+    .action-buttons{display:flex;gap:10px;margin-top:5px}
+    .btn{flex:1;padding:14px;border:none;border-radius:8px;font-weight:bold;font-size:1rem;cursor:pointer;transition:0.2s}
+    .btn-start{background:var(--green);color:white}
+    .btn-go{background:#38bdf8;color:#1a202c}
+    .btn-cashout{background:var(--gold);color:#1a202c}
+    .btn:disabled{opacity:0.5;cursor:not-allowed;filter:grayscale(1)}
+
+    .note{text-align:center;font-size:0.75rem;color:var(--muted);margin-top:5px}
 </style>
 </head>
 <body>
 
 <header>
-    <strong>🎮 بازی‌ها</strong>
-    <span class="balance">💰 <b id="balance">۱٬۰۰۰</b> تومان</span>
+    <span>🐔 CHICKEN ROAD</span>
+    <span class="balance">💰 <b id="balanceDisplay">1000</b></span>
 </header>
 
-<nav class="tabs">
-    <button id="rocketTab" class="active" onclick="showGame('rocket')">🚀 انفجار</button>
-    <button id="chickenTab" onclick="showGame('chicken')">🐔 مرغ جاده</button>
-</nav>
-
 <main>
-    <section id="rocketGame" class="game active">
-        <div class="card canvas-wrap">
-            <canvas id="rocketCanvas" width="500" height="300"></canvas>
-        </div>
-        <div class="card">
-            <div class="bet-row">
-                <span class="muted">مبلغ شرط (حداقل ۱۰)</span>
-                <b id="rocketStatus">آماده پرواز</b>
-            </div>
-            <input id="rocketBet" type="number" min="10" step="10" value="100">
-            <div class="toggle-row">
-                <span>پخش خودکار (هر ۱۰ ثانیه)</span>
-                <button id="autoToggle" class="switch" onclick="toggleAuto()">خاموش</button>
-            </div>
-        </div>
-        <button id="rocketAction" class="btn" onclick="rocketAction()">ثبت شرط و شروع 🚀</button>
-    </section>
+    <div class="canvas-container">
+        <canvas id="gameCanvas"></canvas>
+    </div>
 
-    <section id="chickenGame" class="game">
-        <div class="card canvas-wrap">
-            <canvas id="chickenCanvas" width="700" height="400"></canvas>
+    <div class="controls">
+        <div class="info-row">
+            <span>قدم فعلی: <b id="stepDisplay">0</b></span>
+            <span>ضریب: <b id="multiplierDisplay">1.00x</b></span>
         </div>
-        <div class="card">
-            <div class="bet-row">
-                <span>قدم امن: <b id="stepCount">۰</b></span>
-                <span>ضریب: <b id="chMultiplier">۱٫۰۰x</b></span>
-            </div>
-            <div class="difficulty">
-                <button data-difficulty="easy" onclick="setDifficulty('easy')">آسان</button>
-                <button data-difficulty="medium" onclick="setDifficulty('medium')">متوسط</button>
-                <button data-difficulty="hard" onclick="setDifficulty('hard')">سخت</button>
-                <button data-difficulty="hardcore" onclick="setDifficulty('hardcore')">خیلی سخت</button>
-            </div>
-            <p class="note">مرغ از چپ به راست می‌پرد. از بین ماشین‌ها رد شو!</p>
-            <input id="chickenBet" type="number" min="10" step="10" value="100">
-            <div id="chickenHint" class="muted">مبلغ را وارد کن و شروع کن.</div>
+
+        <div class="difficulty-selector" id="diffSelector">
+            <button class="diff-btn" data-val="easy">آسان</button>
+            <button class="diff-btn active" data-val="medium">متوسط</button>
+            <button class="diff-btn" data-val="hard">سخت</button>
+            <button class="diff-btn" data-val="hardcore">هاردکور</button>
         </div>
-        <button id="chickenAction" class="btn" onclick="beginChickenRound()">شروع بازی 🐔</button>
-        <button id="chickenGo" class="btn green" style="display:none" onclick="takeChickenStep()">GO — قدم بعدی</button>
-        <button id="chickenCashout" class="btn" style="display:none;background:linear-gradient(120deg,#fbbf24,#d97706);color:#171717" onclick="cashoutChicken()">برداشت سود</button>
-    </section>
+
+        <input type="number" id="betInput" value="100" min="10" step="10">
+
+        <div class="action-buttons">
+            <button id="btnStart" class="btn btn-start">شروع بازی</button>
+            <button id="btnGo" class="btn btn-go" style="display:none">GO ➡️</button>
+            <button id="btnCashout" class="btn btn-cashout" style="display:none">برداشت سود</button>
+        </div>
+        
+        <p class="note" id="statusText">مبلغ شرط را وارد کرده و شروع کنید</p>
+    </div>
 </main>
 
-<div id="prompt" class="overlay">
-    <div class="dialog">
-        <h3 id="promptTitle">باختی!</h3>
-        <p id="promptText">دوباره تلاش می‌کنی؟</p>
-        <div class="dialog-actions">
-            <button class="btn green" onclick="answerPrompt(true)">بله</button>
-            <button class="btn" onclick="answerPrompt(false)">خیر</button>
-        </div>
-    </div>
-</div>
-<div id="toast" class="toast"></div>
-
 <script>
-const tg=window.Telegram?.WebApp; tg?.ready(); tg?.expand();
-const $=id=>document.getElementById(id);
-let balance=Math.max(0,parseInt(localStorage.getItem('user_balance')||'1000',10)||0);
+// --- تنظیمات اولیه ---
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+let balance = parseInt(localStorage.getItem('cr_balance') || '1000');
 
-function fmt(n){return Number(n).toLocaleString('fa-IR')}
-function updateBalance(){$('balance').textContent=fmt(balance);localStorage.setItem('user_balance',String(balance))}
-function toast(s){$('toast').textContent=s;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2500)}
+// ریسک هر سطح (احتمال باخت در هر قدم)
+const RISKS = { easy: 0.10, medium: 0.20, hard: 0.35, hardcore: 0.50 };
+let currentRisk = RISKS.medium;
+let gameState = 'IDLE'; // IDLE, PLAYING, LOST, CASHED
+let currentStep = 0;
+let crashAtStep = -1; // قدمی که کاربر توش میبازه
+let betAmount = 0;
 
-function showGame(g){
-    $('rocketGame').classList.toggle('active',g==='rocket');
-    $('chickenGame').classList.toggle('active',g==='chicken');
-    $('rocketTab').classList.toggle('active',g==='rocket');
-    $('chickenTab').classList.toggle('active',g==='chicken');
-    if(g==='chicken') drawChicken();
+// ابعاد بازی
+const COLS = 6; // تعداد ستون‌ها (مثل عکس اول)
+let cellW, cellH;
+
+function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    cellW = canvas.width / COLS;
+    cellH = canvas.height;
 }
-updateBalance();
+window.addEventListener('resize', resize);
+resize();
 
-// بازی انفجار
-let autoPlay=false, rocketState='idle', rocketBet=0, multiplier=1, crashAt=1, startAt=0, countdownVal=10, autoInterval=null;
-
-function toggleAuto(){
-    autoPlay=!autoPlay;
-    $('autoToggle').textContent=autoPlay?'روشن':'خاموش';
-    $('autoToggle').classList.toggle('on',autoPlay);
+// --- منطق بازی ---
+function updateUI() {
+    document.getElementById('balanceDisplay').innerText = balance.toLocaleString('fa-IR');
+    document.getElementById('stepDisplay').innerText = currentStep;
     
-    if(autoPlay && rocketState==='idle'){
-        startRocket(true);
-    } else if (!autoPlay) {
-        clearInterval(autoInterval);
-        rocketState = 'idle';
-        setRocketButton('شروع دستی 🚀');
-        $('rocketStatus').textContent = 'خودکار متوقف شد';
-    }
-}
+    let mult = currentStep > 0 ? calculateMultiplier(currentStep) : "1.00";
+    document.getElementById('multiplierDisplay').innerText = mult + "x";
 
-const rc=$('rocketCanvas'), rctx=rc.getContext('2d');
+    const btnStart = document.getElementById('btnStart');
+    const btnGo = document.getElementById('btnGo');
+    const btnCashout = document.getElementById('btnCashout');
+    const status = document.getElementById('statusText');
 
-function setRocketButton(t, cl='btn'){$('rocketAction').textContent=t; $('rocketAction').className='btn '+cl}
-
-function startRocket(isAuto=false){
-    let a=Math.floor(+$('rocketBet').value);
-    if(a<10 || a>balance){
-        toast(a<10?'حداقل ۱۰ تومان':'موجودی کم است');
-        if(isAuto) {
-             autoPlay=false; $('autoToggle').textContent='خاموش'; $('autoToggle').classList.remove('on');
-        }
-        return false;
-    }
-    
-    rocketBet=a; balance-=a; updateBalance();
-    multiplier=1; 
-    crashAt = Math.floor((100 / (Math.random() * 100 + 1)) * 100) / 100;
-    if(crashAt < 1.01) crashAt = 1.01;
-    
-    startAt=Date.now();
-    rocketState='flying';
-    $('rocketStatus').textContent = isAuto ? `پرواز خودکار (${countdownVal}s)` : 'در حال پرواز';
-    setRocketButton('برداشت سود 💰','green');
-    return true;
-}
-
-function rocketAction(){
-    if(rocketState==='flying'){
-        rocketState='cashed';
-        balance+=Math.floor(rocketBet*multiplier);
-        updateBalance();
-        $('rocketStatus').textContent=`برداشت شد: ${fmt(Math.floor(rocketBet*multiplier))}`;
-        setRocketButton('صبر برای دور بعد...');
+    if (gameState === 'IDLE' || gameState === 'LOST' || gameState === 'CASHED') {
+        btnStart.style.display = 'block';
+        btnGo.style.display = 'none';
+        btnCashout.style.display = 'none';
+        btnStart.disabled = false;
+        status.innerText = gameState === 'LOST' ? 'باختی! دوباره تلاش کن.' : (gameState === 'CASHED' ? 'برنده شدی!' : 'آماده شروع');
+    } else if (gameState === 'PLAYING') {
+        btnStart.style.display = 'none';
+        btnGo.style.display = 'block';
+        btnCashout.style.display = currentStep > 0 ? 'block' : 'none';
         
-        if(autoPlay) scheduleNextAutoRound();
-        
-    } else if (rocketState === 'idle') {
-        startRocket(false);
+        let winAmt = Math.floor(betAmount * calculateMultiplier(currentStep));
+        btnCashout.innerText = `برداشت (${winAmt})`;
+        status.innerText = `مرغ در ستون ${currentStep} امن است. برو بعدی؟`;
     }
 }
 
-function rocketCrash(){
-    rocketState='crashed';
-    $('rocketStatus').textContent=`انفجار! ضریب ${crashAt.toFixed(2)}x`;
-    setRocketButton('صبر...');
+function calculateMultiplier(step) {
+    // فرمول استاندارد RTP 95%
+    return (0.95 / Math.pow(1 - currentRisk, step)).toFixed(2);
+}
+
+function startGame() {
+    let val = parseInt(document.getElementById('betInput').value);
+    if (isNaN(val) || val < 10 || val > balance) {
+        alert('موجودی کافی نیست یا مبلغ اشتباه است');
+        return;
+    }
     
-    if(autoPlay){
-        scheduleNextAutoRound();
+    betAmount = val;
+    balance -= betAmount;
+    localStorage.setItem('cr_balance', balance);
+    
+    currentStep = 0;
+    gameState = 'PLAYING';
+    
+    // تعیین نقطه باخت از قبل (Provably Fair Simulation)
+    // حلقه تا زمانی که تصادف小于 ریسک نباشد ادامه میدهد
+    crashAtStep = 0;
+    while (Math.random() > currentRisk && crashAtStep < COLS) {
+        crashAtStep++;
+    }
+    // اگر تا آخر نباخت، یعنی برنده مطلق (که بعیده)
+    if(crashAtStep >= COLS) crashAtStep = COLS + 1; 
+
+    updateUI();
+}
+
+function goNext() {
+    if (gameState !== 'PLAYING') return;
+    
+    currentStep++;
+    
+    if (currentStep >= crashAtStep) {
+        // باخت
+        gameState = 'LOST';
+        // انیمیشن تصادف اینجا Trigger میشه
     } else {
-        setRocketButton('شروع مجدد 🚀');
-    }
-}
-
-function scheduleNextAutoRound(){
-    rocketState = 'waiting_auto';
-    countdownVal = 10;
-    clearInterval(autoInterval);
-    
-    autoInterval = setInterval(() => {
-        if(!autoPlay) { clearInterval(autoInterval); return; }
-        
-        countdownVal--;
-        $('rocketStatus').textContent = `شروع خودکار در ${countdownVal} ثانیه...`;
-        
-        if(countdownVal <= 0){
-            clearInterval(autoInterval);
-            startRocket(true);
-        }
-    }, 1000);
-}
-
-function drawRocket(){
-    rctx.fillStyle='#0f172a'; rctx.fillRect(0,0,500,300);
-    
-    for(let i=0;i<30;i++){
-        rctx.fillStyle='#fff';
-        rctx.fillRect((i*40+Date.now()*0.05)%500, (i*20)%300, 2, 2);
-    }
-
-    let x=250, y=250;
-    if(['flying','crashed','cashed'].includes(rocketState)){
-        let p = Math.min(1, (multiplier-1)/10);
-        y = 250 - (150 * p);
-        
-        rctx.strokeStyle = rocketState==='crashed'?'#ef4444':'#3b82f6';
-        rctx.lineWidth=4;
-        rctx.beginPath(); rctx.moveTo(250,250); rctx.lineTo(250,y); rctx.stroke();
-    }
-
-    rctx.font='40px system-ui'; rctx.textAlign='center';
-    rctx.fillText('🚀', x, y-10);
-    
-    rctx.fillStyle='#fff'; rctx.font='bold 40px system-ui';
-    let txt = rocketState==='flying' ? multiplier.toFixed(2)+'x' : 
-              rocketState==='crashed' ? 'CRASHED' : 
-              rocketState==='cashed' ? 'WIN' : 'READY';
-    if(rocketState === 'waiting_auto') txt = `AUTO IN ${countdownVal}s`;
-    
-    rctx.fillText(txt, 250, 100);
-}
-
-function rocketLoop(){
-    if(rocketState==='flying'){
-        multiplier += 0.01 + (multiplier * 0.002);
-        if(multiplier >= crashAt){
-            multiplier = crashAt;
-            rocketCrash();
+        // موفقیت
+        if (currentStep >= COLS) {
+            cashout(); // رسیدن به انتها
         }
     }
-    drawRocket();
-    requestAnimationFrame(rocketLoop);
-}
-requestAnimationFrame(rocketLoop);
-
-// بازی مرغ جاده - دقیقاً مثل Chicken Road اصلی
-const riskByDifficulty = { easy: 0.15, medium: 0.25, hard: 0.35, hardcore: 0.45 };
-let difficulty='medium', chickenState='ready', chickenBet=0, chickenStep=0, crashStep=0;
-const cc=$('chickenCanvas'), cctx=cc.getContext('2d');
-const COLUMN_WIDTH = 100; // عرض هر ستون
-const TOTAL_COLUMNS = 7; // تعداد ستون‌ها
-
-function getPayout(step) {
-    let risk = riskByDifficulty[difficulty];
-    let raw = 1 / Math.pow(1 - risk, step);
-    return Math.max(1, (raw * 0.95)).toFixed(2);
+    updateUI();
 }
 
-function setDifficulty(level){
-    if(chickenState==='playing') return;
-    difficulty=level;
-    document.querySelectorAll('.difficulty button').forEach(b=>b.classList.toggle('selected', b.dataset.difficulty===level));
-    drawChicken();
+function cashout() {
+    if (gameState !== 'PLAYING') return;
+    let win = Math.floor(betAmount * calculateMultiplier(currentStep));
+    balance += win;
+    localStorage.setItem('cr_balance', balance);
+    gameState = 'CASHED';
+    updateUI();
 }
-document.querySelector('[data-difficulty="medium"]').click();
 
-function beginChickenRound(){
-    const a=Math.floor(+$('chickenBet').value);
-    if(a<10 || a>balance){ toast('موجودی کافی نیست'); return; }
+// انتخاب سختی
+document.querySelectorAll('.diff-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        if(gameState !== 'IDLE' && gameState !== 'LOST' && gameState !== 'CASHED') return;
+        document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        currentRisk = RISKS[e.target.dataset.val];
+        draw(); // redraw to update multipliers
+    });
+});
+
+document.getElementById('btnStart').onclick = startGame;
+document.getElementById('btnGo').onclick = goNext;
+document.getElementById('btnCashout').onclick = cashout;
+
+// --- رسم گرافیک (دقیقاً مثل عکس) ---
+function drawCar(x, y, color, isUp) {
+    ctx.save();
+    ctx.translate(x, y);
+    if (!isUp) ctx.scale(1, -1); // اگر داره پایین میاد، برعکس کن
     
-    chickenBet=a; balance-=a; updateBalance();
-    chickenStep=0;
+    // بدنه
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.roundRect(-25, -40, 50, 80, 8);
+    ctx.fill();
     
-    let currentRisk = riskByDifficulty[difficulty];
-    crashStep = 0;
-    while(true) {
-        crashStep++;
-        if(Math.random() < currentRisk) break;
-        if(crashStep > TOTAL_COLUMNS) break;
+    // شیشه جلو
+    ctx.fillStyle = '#bae6fd';
+    ctx.fillRect(-20, -30, 40, 20);
+    
+    // چراغ ها
+    ctx.fillStyle = '#fef08a';
+    ctx.fillRect(-20, -38, 10, 5);
+    ctx.fillRect(10, -38, 10, 5);
+    
+    ctx.restore();
+}
+
+function drawChicken(x, y, isDead) {
+    ctx.save();
+    ctx.translate(x, y);
+    
+    if(isDead) {
+        ctx.rotate(Math.PI / 4);
+        ctx.filter = 'grayscale(100%)';
     }
-    
-    chickenState='playing';
-    $('chickenAction').style.display='none';
-    $('chickenGo').style.display='block';
-    $('chickenCashout').style.display='none';
-    $('chickenHint').textContent='مرغ از چپ به راست می‌پرد. GO را بزن!';
-    updateChickenUI();
-    drawChicken();
-}
 
-function takeChickenStep(){
-    if(chickenState !== 'playing') return;
-    
-    chickenStep++;
-    
-    if(chickenStep >= crashStep) {
-        chickenState='lost';
-        $('chickenHint').textContent='تصادف کردی! 💥';
-        $('chickenGo').style.display='none';
-        $('chickenCashout').style.display='none';
-        $('chickenAction').style.display='block';
-        $('chickenAction').textContent='تلاش دوباره';
-        setTimeout(()=>$('prompt').classList.add('show'), 500);
-    } else {
-        $('chickenHint').textContent=`امن! ضریب فعلی: ${getPayout(chickenStep)}x`;
-        $('chickenCashout').style.display='block';
-        $('chickenCashout').textContent = `برداشت ${fmt(Math.floor(chickenBet * getPayout(chickenStep)))}`;
-    }
-    updateChickenUI();
-    drawChicken();
-}
-
-function cashoutChicken(){
-    if(chickenState !== 'playing') return;
-    let winAmount = Math.floor(chickenBet * getPayout(chickenStep));
-    balance += winAmount; updateBalance();
-    chickenState='cashed';
-    $('chickenHint').textContent=`برنده شدی! ${fmt(winAmount)} تومان`;
-    $('chickenGo').style.display='none';
-    $('chickenCashout').style.display='none';
-    $('chickenAction').style.display='block';
-    $('chickenAction').textContent='بازی جدید';
-    drawChicken();
-}
-
-function answerPrompt(yes){
-    $('prompt').classList.remove('show');
-    if(yes){
-        chickenState='ready'; chickenStep=0;
-        $('chickenAction').style.display='block';
-        $('chickenAction').textContent='شروع بازی 🐔';
-        $('chickenGo').style.display='none';
-        $('chickenCashout').style.display='none';
-        $('chickenHint').textContent='شرط ببند و شروع کن.';
-        updateChickenUI();
-        drawChicken();
-    }
-}
-
-function updateChickenUI(){
-    $('stepCount').textContent=chickenStep;
-    $('chMultiplier').textContent = chickenStep > 0 ? getPayout(chickenStep)+'x' : '1.00x';
-}
-
-// رسم بازی مرغ - مثل Chicken Road اصلی
-function drawChicken(){
-    const w=700, h=400;
-    cctx.clearRect(0,0,w,h);
-    
-    // پس زمینه جاده
-    cctx.fillStyle='#4a5568';
-    cctx.fillRect(0, 0, w, h);
-    
-    // خط‌کشی ستون‌ها (عمودی)
-    for(let i=0; i<=TOTAL_COLUMNS; i++){
-        cctx.strokeStyle='#fff';
-        cctx.lineWidth=3;
-        cctx.setLineDash([15, 10]);
-        cctx.beginPath();
-        cctx.moveTo(i * COLUMN_WIDTH, 0);
-        cctx.lineTo(i * COLUMN_WIDTH, h);
-        cctx.stroke();
-        cctx.setLineDash([]);
-    }
-    
-    // رسم ماشین‌ها در هر ستون (حرکت عمودی)
-    let time = Date.now() / 1000;
-    for(let col=0; col<TOTAL_COLUMNS; col++){
-        let colCenterX = col * COLUMN_WIDTH + COLUMN_WIDTH/2;
-        
-        // جهت حرکت در این ستون (یکی در میان)
-        let dir = col % 2 === 0 ? 1 : -1;
-        let speed = 1.5 + (col * 0.3);
-        
-        // 2 ماشین در هر ستون
-        for(let car=0; car<2; car++){
-            let carY = ((time * speed * 60 + car * 200) % (h + 100)) - 50;
-            if(dir === -1) carY = h - carY;
-            
-            // اگر این ستون محل تصادف است و کاربر باخته
-            if(chickenState === 'lost' && col === chickenStep - 1){
-                carY = h/2 - 30; // ماشین وسط
-            }
-            
-            // فقط ماشین‌های نزدیک را رسم کن
-            if(carY > -100 && carY < h + 100){
-                drawCar(colCenterX - 30, carY, dir);
-            }
-        }
-    }
-    
-    // رسم ضرایب پایین هر ستون
-    for(let col=0; col<TOTAL_COLUMNS; col++){
-        let colCenterX = col * COLUMN_WIDTH + COLUMN_WIDTH/2;
-        let payout = getPayout(col + 1);
-        
-        // دایره ضریب
-        cctx.beginPath();
-        cctx.arc(colCenterX, h - 50, 35, 0, Math.PI * 2);
-        cctx.fillStyle = col < chickenStep ? '#10b981' : '#2d3748';
-        cctx.fill();
-        cctx.strokeStyle = '#fff';
-        cctx.lineWidth = 3;
-        cctx.stroke();
-        
-        // متن ضریب
-        cctx.fillStyle = '#fff';
-        cctx.font = 'bold 18px system-ui';
-        cctx.textAlign = 'center';
-        cctx.textBaseline = 'middle';
-        cctx.fillText(payout + 'x', colCenterX, h - 50);
-    }
-    
-    // رسم مرغ
-    if(chickenState !== 'ready'){
-        let chickenX = chickenStep * COLUMN_WIDTH + COLUMN_WIDTH/2;
-        let chickenY = h/2;
-        drawChickenSprite(chickenX, chickenY);
-    }
-}
-
-function drawCar(x, y, dir){
-    cctx.save();
-    cctx.translate(x, y);
-    if(dir === -1){
-        cctx.translate(60, 0);
-        cctx.scale(-1, 1);
-    }
-    
-    // بدنه ماشین
-    cctx.fillStyle = '#ef4444';
-    cctx.beginPath();
-    cctx.roundRect(0, 0, 60, 35, 5);
-    cctx.fill();
-    
-    // شیشه
-    cctx.fillStyle = '#bae6fd';
-    cctx.fillRect(10, 5, 20, 25);
-    cctx.fillRect(35, 5, 15, 25);
-    
-    // چرخ‌ها
-    cctx.fillStyle = '#1a202c';
-    cctx.beginPath();
-    cctx.arc(15, 35, 6, 0, Math.PI * 2);
-    cctx.arc(45, 35, 6, 0, Math.PI * 2);
-    cctx.fill();
-    
-    cctx.restore();
-}
-
-function drawChickenSprite(x, y){
-    cctx.save();
-    cctx.translate(x, y);
-    
-    // سایه
-    cctx.fillStyle = 'rgba(0,0,0,0.3)';
-    cctx.beginPath();
-    cctx.ellipse(0, 25, 20, 8, 0, 0, Math.PI * 2);
-    cctx.fill();
-    
-    // بدن مرغ
-    cctx.fillStyle = '#fff';
-    cctx.beginPath();
-    cctx.ellipse(0, 0, 25, 20, 0, 0, Math.PI * 2);
-    cctx.fill();
+    // بدن
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.ellipse(0, 10, 20, 25, 0, 0, Math.PI*2);
+    ctx.fill();
     
     // سر
-    cctx.beginPath();
-    cctx.arc(15, -15, 15, 0, Math.PI * 2);
-    cctx.fill();
+    ctx.beginPath();
+    ctx.arc(0, -15, 18, 0, Math.PI*2);
+    ctx.fill();
     
-    // تاج قرمز
-    cctx.fillStyle = '#ef4444';
-    cctx.beginPath();
-    cctx.arc(15, -28, 6, 0, Math.PI * 2);
-    cctx.arc(22, -25, 5, 0, Math.PI * 2);
-    cctx.arc(8, -25, 5, 0, Math.PI * 2);
-    cctx.fill();
+    // تاج
+    ctx.fillStyle = '#ef4444';
+    ctx.beginPath();
+    ctx.arc(0, -32, 6, 0, Math.PI*2);
+    ctx.arc(-8, -28, 5, 0, Math.PI*2);
+    ctx.arc(8, -28, 5, 0, Math.PI*2);
+    ctx.fill();
     
     // منقار
-    cctx.fillStyle = '#f59e0b';
-    cctx.beginPath();
-    cctx.moveTo(28, -15);
-    cctx.lineTo(38, -12);
-    cctx.lineTo(28, -9);
-    cctx.fill();
+    ctx.fillStyle = '#f59e0b';
+    ctx.beginPath();
+    ctx.moveTo(15, -15);
+    ctx.lineTo(28, -10);
+    ctx.lineTo(15, -5);
+    ctx.fill();
     
     // چشم
-    cctx.fillStyle = '#000';
-    cctx.beginPath();
-    cctx.arc(20, -18, 3, 0, Math.PI * 2);
-    cctx.fill();
-    
-    // پاها
-    cctx.strokeStyle = '#f59e0b';
-    cctx.lineWidth = 3;
-    cctx.beginPath();
-    cctx.moveTo(-10, 18);
-    cctx.lineTo(-12, 28);
-    cctx.moveTo(10, 18);
-    cctx.lineTo(12, 28);
-    cctx.stroke();
-    
-    cctx.restore();
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(8, -18, 3, 0, Math.PI*2);
+    ctx.fill();
+
+    ctx.restore();
 }
 
-function animation(){
-    if($('chickenGame').classList.contains('active')) drawChicken();
-    requestAnimationFrame(animation);
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // 1. رسم پس زمینه جاده و خطوط ستون
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 2;
+    for(let i=1; i<COLS; i++) {
+        let x = i * cellW;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+    }
+
+    // 2. رسم ضرایب پایین صفحه
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = 'bold 16px system-ui';
+    
+    for(let i=0; i<COLS; i++) {
+        let cx = i * cellW + cellW/2;
+        let cy = canvas.height - 40;
+        let mult = calculateMultiplier(i+1);
+        
+        // دایره ضریب
+        ctx.beginPath();
+        ctx.arc(cx, cy, 25, 0, Math.PI*2);
+        ctx.fillStyle = i < currentStep ? '#48bb78' : '#4a5568'; // سبز اگر رد شده باشه
+        if(i === currentStep && gameState === 'PLAYING') ctx.fillStyle = '#ecc94b'; // زرد اگر الان اینجا باشیم
+        ctx.fill();
+        
+        ctx.fillStyle = '#fff';
+        ctx.fillText(mult + 'x', cx, cy);
+    }
+
+    // 3. رسم ماشین‌ها (متحرک)
+    let time = Date.now() / 1000;
+    const carColors = ['#ef4444', '#3b82f6', '#f59e0b', '#8b5cf6'];
+    
+    for(let col=0; col<COLS; col++) {
+        // هر ستون 2 ماشین داره که برعکس هم حرکت میکنن
+        let speed = 1.5 + (col * 0.2);
+        let offset1 = (time * speed * 60) % (canvas.height + 100);
+        let offset2 = (canvas.height + 100) - offset1; 
+        
+        // اگر تو این ستون باختیم، ماشین رو ثابت کن وسط
+        let isCrashCol = (gameState === 'LOST' && col === currentStep - 1);
+        
+        if(!isCrashCol) {
+            drawCar(col * cellW + cellW/2, offset1 - 50, carColors[col % 4], true);
+            drawCar(col * cellW + cellW/2, offset2 - 50, carColors[(col+1) % 4], false);
+        } else {
+            // حالت تصادف: ماشین دقیقا روی مرغ
+            drawCar(col * cellW + cellW/2, canvas.height/2, '#ef4444', true);
+        }
+    }
+
+    // 4. رسم مرغ
+    if (gameState !== 'IDLE') {
+        // مرغ همیشه وسط ارتفاعیه، فقط افقی میره
+        let chickenX = (currentStep * cellW) + (cellW / 2);
+        let chickenY = canvas.height / 2; 
+        
+        if (gameState === 'LOST' && currentStep > 0) {
+             // اگر باخته، مرغ یه کم عقب تر از ستون باخت میمونه یا همونجا میمونه
+             chickenX = ((currentStep-1) * cellW) + (cellW / 2);
+        }
+        
+        drawChicken(chickenX, chickenY, gameState === 'LOST');
+    }
+
+    requestAnimationFrame(draw);
 }
-requestAnimationFrame(animation);
+
+// لوپ اولیه
+updateUI();
+draw();
+
 </script>
 </body>
 </html>
