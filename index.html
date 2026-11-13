@@ -3,23 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>گیم سنتر آرکید | انفجار و مرغ جاده</title>
+  <title>Game Bot</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg: #0a0e17;
-      --card-bg: #111827;
-      --card-border: #1f293d;
+      --bg: #0b1120;
+      --card-bg: #111a2e;
+      --card-border: #1e293b;
       --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --primary: #06b6d4;
-      --primary-glow: rgba(6, 182, 212, 0.35);
+      --muted: #94a3b8;
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --primary-glow: rgba(2, 132, 199, 0.4);
       --accent: #f43f5e;
-      --accent-glow: rgba(244, 63, 94, 0.35);
+      --gold: #eab308;
+      --gold-glow: rgba(234, 179, 8, 0.35);
       --success: #10b981;
-      --success-glow: rgba(16, 185, 129, 0.4);
-      --gold: #f59e0b;
-      --gold-glow: rgba(245, 158, 11, 0.4);
+      --green-grass: #22543d;
+      --asphalt: #2d3748;
     }
 
     * {
@@ -44,150 +45,105 @@
 
     /* Top Bar */
     header {
-      background: rgba(17, 24, 39, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--card-border);
-      padding: 10px 14px;
+      background: rgba(11, 17, 32, 0.95);
+      padding: 12px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    .user-badge {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
-      font-weight: 600;
-    }
-
-    .avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #06b6d4, #3b82f6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.95rem;
-      box-shadow: 0 0 10px var(--primary-glow);
-    }
-
-    .balance-chip {
-      background: rgba(31, 41, 61, 0.7);
-      border: 1px solid rgba(245, 158, 11, 0.35);
-      border-radius: 20px;
-      padding: 5px 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.85rem;
-      font-weight: 700;
+    .header-balance {
+      font-size: 1.1rem;
+      font-weight: 800;
       color: var(--gold);
-      box-shadow: 0 0 12px var(--gold-glow);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
     }
 
-    .reload-btn {
-      background: rgba(16, 185, 129, 0.2);
-      border: 1px solid var(--success);
-      color: var(--success);
+    .header-balance span.btn-refill {
+      font-size: 0.75rem;
+      background: rgba(234, 179, 8, 0.15);
+      border: 1px solid var(--gold);
+      padding: 2px 8px;
       border-radius: 12px;
-      padding: 2px 7px;
-      font-size: 0.72rem;
-      cursor: pointer;
+      margin-right: 6px;
+    }
+
+    .header-title {
+      font-size: 1.05rem;
       font-weight: 700;
-      transition: all 0.2s;
-    }
-    .reload-btn:active {
-      transform: scale(0.92);
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-icon {
-      background: rgba(31, 41, 61, 0.6);
-      border: 1px solid var(--card-border);
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 0.9rem;
       color: var(--text);
-    }
-
-    /* Tabs */
-    .tab-bar {
       display: flex;
-      background: #0f172a;
-      border-bottom: 1px solid var(--card-border);
-      padding: 4px;
+      align-items: center;
       gap: 6px;
     }
 
-    .tab-btn {
-      flex: 1;
-      padding: 10px 8px;
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-size: 0.88rem;
-      font-weight: 700;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
+    /* Navigation Tabs */
+    .nav-tabs {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .tab-btn.active {
-      background: #1e293b;
-      color: var(--text);
-      border: 1px solid var(--primary);
-      box-shadow: 0 0 14px var(--primary-glow);
-    }
-
-    main {
-      flex: 1;
-      padding: 12px 14px;
-      display: flex;
-      flex-direction: column;
+      padding: 12px 16px 8px;
       gap: 12px;
-      max-width: 600px;
+      max-width: 480px;
       margin: 0 auto;
       width: 100%;
     }
 
-    .game-section {
-      display: none;
-      flex-direction: column;
-      gap: 10px;
+    .tab-btn {
+      flex: 1;
+      padding: 12px 10px;
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
     }
 
-    .game-section.active {
+    .tab-btn.active {
+      background: #0f233f;
+      border-color: #0284c7;
+      color: #fff;
+      box-shadow: 0 0 16px rgba(2, 132, 199, 0.35);
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      padding: 6px 16px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .game-view {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .game-view.active {
       display: flex;
     }
 
     /* Canvas Frame */
-    .canvas-card {
-      background: #080c14;
+    .canvas-container {
+      background: #0a0f1d;
       border: 1px solid var(--card-border);
-      border-radius: 14px;
-      position: relative;
+      border-radius: 16px;
       overflow: hidden;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      position: relative;
     }
 
     canvas {
@@ -196,232 +152,142 @@
       height: auto;
     }
 
-    /* Panel Card */
-    .panel-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 14px;
-      padding: 12px 14px;
+    /* Card Details */
+    .control-card {
+      background: #0d1527;
+      border: 1px solid #1c273e;
+      border-radius: 16px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
 
-    .countdown-bar-container {
-      background: rgba(31, 41, 61, 0.5);
-      border-radius: 8px;
-      height: 8px;
-      overflow: hidden;
-      width: 100%;
-      position: relative;
-    }
-
-    .countdown-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #06b6d4, #10b981);
-      width: 100%;
-      transition: width 0.1s linear;
-      box-shadow: 0 0 10px var(--primary-glow);
-    }
-
-    .status-text {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--text-muted);
+    .stats-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text);
     }
 
-    /* Input & Preset Buttons */
-    .input-row {
+    .sub-stat {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    /* Difficulty Pills */
+    .diff-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .diff-pill {
+      flex: 1;
+      padding: 10px 4px;
+      background: #090e1c;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .diff-pill.active {
+      background: #172138;
+      border-color: var(--gold);
+      color: #fff;
+      box-shadow: 0 0 10px var(--gold-glow);
+    }
+
+    .desc-text {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    /* Input */
+    .bet-box {
+      background: #070c18;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 12px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
     }
 
-    .num-input {
-      flex: 1;
-      background: #0b0f19;
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 10px 12px;
-      color: var(--text);
-      font-size: 1rem;
-      font-weight: 700;
+    .bet-input {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 1.4rem;
+      font-weight: 800;
       text-align: center;
       outline: none;
-    }
-    .num-input:focus {
-      border-color: var(--primary);
+      width: 100%;
     }
 
-    .chip-btn {
-      background: #1e293b;
-      border: 1px solid var(--card-border);
-      color: var(--text-muted);
-      border-radius: 8px;
-      padding: 8px 10px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .chip-btn:active {
-      transform: scale(0.94);
-      background: var(--primary);
-      color: #000;
-    }
-
-    .preset-chips {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .preset-chips .chip-btn {
-      flex: 1;
+    .input-hint {
+      font-size: 0.82rem;
+      color: var(--muted);
       text-align: center;
-      min-width: 44px;
     }
 
     /* Action Buttons */
-    .action-btn {
-      width: 100%;
-      padding: 13px;
-      border-radius: 10px;
+    .main-btn {
+      background: linear-gradient(180deg, #0284c7, #0369a1);
       border: none;
-      font-size: 1rem;
+      border-radius: 14px;
+      color: #fff;
+      font-size: 1.15rem;
       font-weight: 800;
+      padding: 16px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
+      box-shadow: 0 6px 20px var(--primary-glow);
       transition: all 0.2s;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    }
+
+    .main-btn:active {
+      transform: scale(0.98);
+      filter: brightness(0.95);
+    }
+
+    .btn-cashout {
+      background: linear-gradient(180deg, #eab308, #ca8a04);
+      box-shadow: 0 6px 20px var(--gold-glow);
+      color: #000;
     }
 
     .btn-green {
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: white;
-      box-shadow: 0 0 18px var(--success-glow);
-    }
-    .btn-green:hover:not(:disabled) {
-      filter: brightness(1.1);
-    }
-    .btn-green:active:not(:disabled) {
-      transform: scale(0.98);
+      background: linear-gradient(180deg, #10b981, #059669);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
     }
 
-    .btn-gold {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: #000;
-      box-shadow: 0 0 18px var(--gold-glow);
+    /* Rocket specific */
+    .countdown-bar {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
     }
-    .btn-gold:hover:not(:disabled) {
-      filter: brightness(1.1);
-    }
-    .btn-gold:active:not(:disabled) {
-      transform: scale(0.98);
-    }
-
-    .btn-red {
-      background: linear-gradient(135deg, #ef4444, #dc2626);
-      color: white;
-      box-shadow: 0 0 18px var(--accent-glow);
+    .countdown-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 100%;
+      transition: width 0.1s linear;
     }
 
-    .btn-blue {
-      background: linear-gradient(135deg, #06b6d4, #2563eb);
-      color: white;
-      box-shadow: 0 0 18px var(--primary-glow);
-    }
-
-    button:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-      filter: grayscale(0.5);
-      box-shadow: none !important;
-    }
-
-    /* Chicken Road specific styling */
-    .difficulty-group {
-      display: flex;
-      gap: 6px;
-      background: #0b0f19;
-      padding: 4px;
-      border-radius: 10px;
-      border: 1px solid var(--card-border);
-    }
-
-    .diff-btn {
-      flex: 1;
-      padding: 7px;
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-size: 0.78rem;
-      font-weight: 700;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .diff-btn.active {
-      background: #1e293b;
-      color: var(--primary);
-      border: 1px solid rgba(6, 182, 212, 0.4);
-      box-shadow: 0 0 8px var(--primary-glow);
-    }
-
-    .multiplier-strip {
-      display: flex;
-      gap: 4px;
-      overflow-x: auto;
-      padding: 4px 2px;
-      scrollbar-width: none;
-    }
-    .multiplier-strip::-webkit-scrollbar {
-      display: none;
-    }
-
-    .mult-step-badge {
-      padding: 4px 8px;
-      border-radius: 6px;
-      background: #0f172a;
-      border: 1px solid var(--card-border);
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-
-    .mult-step-badge.passed {
-      background: rgba(16, 185, 129, 0.2);
-      border-color: var(--success);
-      color: var(--success);
-    }
-
-    .mult-step-badge.current {
-      background: rgba(245, 158, 11, 0.25);
-      border-color: var(--gold);
-      color: var(--gold);
-      box-shadow: 0 0 10px var(--gold-glow);
-      transform: scale(1.08);
-    }
-
-    .chicken-actions-row {
-      display: flex;
-      gap: 8px;
-    }
-
-    .chicken-actions-row .action-btn {
-      flex: 1;
-    }
-
-    /* Toast */
     .toast {
       position: fixed;
       bottom: 24px;
@@ -447,116 +313,103 @@
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Top Header -->
   <header>
-    <div class="user-badge">
-      <div class="avatar">🎮</div>
-      <span id="userNameDisplay">بازیکن آرکید</span>
+    <div class="header-balance" onclick="refillCoins()">
+      <span id="balanceDisplay">۵۸۸ تومان</span>
+      <span>💰</span>
+      <span class="btn-refill" title="شارژ مجدد">+ شارژ</span>
     </div>
-
-    <div class="header-actions">
-      <div class="balance-chip">
-        <span>سکه:</span>
-        <span id="balanceDisplay">۱,۰۰۰</span>
-        <button class="reload-btn" onclick="refillBalance()" title="شارژ رایگان">➕ شارژ</button>
-      </div>
-      <button class="btn-icon" id="soundToggle" onclick="toggleSound()" title="صدا">🔊</button>
+    <div class="header-title">
+      <span>بازی‌ها</span>
+      <span>🎮</span>
     </div>
   </header>
 
-  <!-- Navigation Tabs -->
-  <div class="tab-bar">
-    <button class="tab-btn active" id="tabRocketBtn" onclick="switchGame('rocket')">
-      <span>🚀 بازی انفجار (اتوماتیک)</span>
+  <!-- Tabs matching screenshot -->
+  <div class="nav-tabs">
+    <button class="tab-btn active" id="tabChickenBtn" onclick="setTab('chicken')">
+      <span>مرغ جاده 🐔</span>
     </button>
-    <button class="tab-btn" id="tabChickenBtn" onclick="switchGame('chicken')">
-      <span>🐔 مرغ جاده (Chicken Road)</span>
+    <button class="tab-btn" id="tabRocketBtn" onclick="setTab('rocket')">
+      <span>انفجار 🚀</span>
     </button>
   </div>
 
   <main>
-    <!-- CRASH / ROCKET GAME -->
-    <div id="rocketSection" class="game-section active">
-      <div class="canvas-card">
-        <canvas id="rocketCanvas" width="500" height="320"></canvas>
+    <!-- CHICKEN ROAD TAB -->
+    <div id="chickenView" class="game-view active">
+      <div class="canvas-container">
+        <canvas id="chickenCanvas" width="460" height="230"></canvas>
       </div>
 
-      <div class="panel-card">
-        <div class="status-text">
-          <span id="rocketStatusLabel">در انتظار دور بعدی...</span>
-          <span id="rocketTimerLabel" style="color:var(--primary);">۱۰.۰ ثانیه</span>
-        </div>
-        <div class="countdown-bar-container">
-          <div id="rocketCountdownBar" class="countdown-bar-fill"></div>
+      <div class="control-card">
+        <div class="stats-row">
+          <div>قدم امن: <span id="chickenStepDisplay">۰</span></div>
+          <div>ضریب فعلی: <span id="chickenMultDisplay">۱٫۰۰x</span></div>
         </div>
 
-        <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">سکه شرط‌بندی:</div>
-        <div class="input-row">
-          <input type="number" id="rocketBetInput" class="num-input" value="100" min="10" step="10">
-          <button class="chip-btn" onclick="adjustRocketBet('half')">½</button>
-          <button class="chip-btn" onclick="adjustRocketBet('double')">۲×</button>
-          <button class="chip-btn" onclick="adjustRocketBet('max')">حداکثر</button>
+        <div class="sub-stat">
+          احتمال خطر هر قدم: <span id="chickenRiskDisplay">۱۰٪</span>
         </div>
 
-        <div class="preset-chips">
-          <button class="chip-btn" onclick="setRocketBet(50)">۵۰</button>
-          <button class="chip-btn" onclick="setRocketBet(100)">۱۰۰</button>
-          <button class="chip-btn" onclick="setRocketBet(250)">۲۵۰</button>
-          <button class="chip-btn" onclick="setRocketBet(500)">۵۰۰</button>
+        <div class="diff-row">
+          <button class="diff-pill active" id="dEasy" onclick="chooseDiff('easy')">آسان</button>
+          <button class="diff-pill" id="dMedium" onclick="chooseDiff('medium')">متوسط</button>
+          <button class="diff-pill" id="dHard" onclick="chooseDiff('hard')">سخت</button>
+          <button class="diff-pill" id="dVeryHard" onclick="chooseDiff('vhard')">خیلی سخت</button>
         </div>
 
-        <button id="rocketActionBtn" class="action-btn btn-blue" onclick="handleRocketAction()">
-          <span>ثبت شرط برای پرتاب بعدی 🚀</span>
-        </button>
+        <div class="desc-text">
+          ماشین‌ها در امتداد لاین‌های افقی حرکت می‌کنند و با عبور مرغ، دوربین و جاده اسکرول می‌شوند. نتیجهٔ هر دور از ابتدا تعیین می‌شود. برداشت، همان دور را تمام می‌کند.
+        </div>
+
+        <div class="bet-box">
+          <input type="number" id="chickenBetInput" class="bet-input" value="100" min="10" step="10">
+        </div>
+
+        <div class="input-hint">مبلغ شرط را وارد کن و بازی را شروع کن.</div>
+
+        <div style="display:flex; gap:8px;">
+          <button id="chickenMainBtn" class="main-btn" style="flex:1;" onclick="handleChickenAction()">
+            <span>شروع بازی 🐔</span>
+          </button>
+          <button id="chickenCashoutBtn" class="main-btn btn-cashout" style="flex:1; display:none;" onclick="handleChickenCashout()">
+            <span>برداشت سود 💰</span>
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- CHICKEN ROAD GAME -->
-    <div id="chickenSection" class="game-section">
-      <div class="canvas-card">
-        <canvas id="chickenCanvas" width="540" height="300"></canvas>
+    <!-- ROCKET CRASH TAB -->
+    <div id="rocketView" class="game-view">
+      <div class="canvas-container">
+        <canvas id="rocketCanvas" width="460" height="240"></canvas>
       </div>
 
-      <!-- Multiplier Highway Road Strip -->
-      <div class="multiplier-strip" id="chickenMultStrip">
-        <!-- populated dynamically -->
-      </div>
-
-      <div class="panel-card">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted);">درجه سختی جاده:</span>
-          <span id="chickenDangerLabel" style="font-size:0.75rem; color:var(--accent); font-weight:700;">خطر برخورد: ۱۰٪</span>
+      <div class="control-card">
+        <div class="stats-row">
+          <div id="rocketStatusText">در انتظار دور بعدی...</div>
+          <div id="rocketTimerText" style="color:var(--primary);">۱۰.۰s</div>
         </div>
 
-        <div class="difficulty-group">
-          <button class="diff-btn active" id="diffEasy" onclick="setDifficulty('easy')">آسان (Easy)</button>
-          <button class="diff-btn" id="diffMedium" onclick="setDifficulty('medium')">متوسط (Medium)</button>
-          <button class="diff-btn" id="diffHard" onclick="setDifficulty('hard')">سخت (Hard)</button>
+        <div class="countdown-bar">
+          <div id="rocketBar" class="countdown-fill"></div>
         </div>
 
-        <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">سکه ورود به جاده:</div>
-        <div class="input-row">
-          <button class="chip-btn" onclick="adjustChickenStake('minus')">➖</button>
-          <input type="number" id="chickenStakeInput" class="num-input" value="100" min="10" step="10">
-          <button class="chip-btn" onclick="adjustChickenStake('plus')">➕</button>
-          <button class="chip-btn" onclick="adjustChickenStake('double')">۲×</button>
+        <div class="desc-text">
+          پرتاب موشک هر ۱۰ ثانیه به شکل خودکار انجام می‌شود. قبل از پرتاب شرط را ثبت کنید و قبل از انفجار برداشت کنید.
         </div>
 
-        <div class="preset-chips">
-          <button class="chip-btn" onclick="setChickenStake(50)">۵۰</button>
-          <button class="chip-btn" onclick="setChickenStake(100)">۱۰۰</button>
-          <button class="chip-btn" onclick="setChickenStake(250)">۲۵۰</button>
-          <button class="chip-btn" onclick="setChickenStake(500)">۵۰۰</button>
+        <div class="bet-box">
+          <input type="number" id="rocketBetInput" class="bet-input" value="100" min="10" step="10">
         </div>
 
-        <div class="chicken-actions-row">
-          <button id="chickenGoBtn" class="action-btn btn-green" onclick="handleChickenGo()">
-            <span>حرکت (GO) 🐔</span>
-          </button>
-          <button id="chickenCashoutBtn" class="action-btn btn-gold" onclick="handleChickenCashout()" disabled>
-            <span>برداشت (CASH OUT) 💰</span>
-          </button>
-        </div>
+        <div class="input-hint">مبلغ شرط دور بعدی را تعیین کنید.</div>
+
+        <button id="rocketActionBtn" class="main-btn" onclick="handleRocketAction()">
+          <span>ثبت شرط برای پرتاب بعدی 🚀</span>
+        </button>
       </div>
     </div>
   </main>
@@ -565,15 +418,12 @@
 
   <script>
     /* ========================================================
-       CORE TELEGRAM & AUDIO & BALANCE MANAGEMENT
+       CORE TELEGRAM & AUDIO
     ======================================================== */
     const tg = window.Telegram?.WebApp;
     if (tg) {
       tg.ready();
       tg.expand();
-      if (tg.initDataUnsafe?.user?.first_name) {
-        document.getElementById('userNameDisplay').textContent = tg.initDataUnsafe.user.first_name;
-      }
     }
 
     function haptic(type = 'light') {
@@ -588,28 +438,16 @@
       } catch (e) {}
     }
 
-    // Sound FX Synthesis
     let audioCtx = null;
-    let soundEnabled = true;
-
     function initAudio() {
       if (!audioCtx) {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         if (AudioContext) audioCtx = new AudioContext();
       }
-      if (audioCtx && audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-    }
-
-    function toggleSound() {
-      soundEnabled = !soundEnabled;
-      document.getElementById('soundToggle').textContent = soundEnabled ? '🔊' : '🔇';
-      showToast(soundEnabled ? 'صدا فعال شد' : 'صدا قطع شد');
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
     }
 
     function playTone(freq, type, duration, slideFreq = null) {
-      if (!soundEnabled) return;
       initAudio();
       if (!audioCtx) return;
       try {
@@ -617,9 +455,7 @@
         const gain = audioCtx.createGain();
         osc.type = type;
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        if (slideFreq) {
-          osc.frequency.exponentialRampToValueAtTime(slideFreq, audioCtx.currentTime + duration);
-        }
+        if (slideFreq) osc.frequency.exponentialRampToValueAtTime(slideFreq, audioCtx.currentTime + duration);
         gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
         osc.connect(gain);
@@ -629,10 +465,8 @@
       } catch (e) {}
     }
 
-    function soundBeep() { playTone(520, 'sine', 0.08); }
-    function soundLaunch() { playTone(240, 'triangle', 0.4, 600); }
-    function soundHop() { playTone(320, 'sine', 0.12, 540); }
-    function soundCrash() { playTone(140, 'sawtooth', 0.4, 30); }
+    function soundHop() { playTone(340, 'sine', 0.12, 580); }
+    function soundCrash() { playTone(130, 'sawtooth', 0.4, 25); }
     function soundWin() {
       playTone(440, 'sine', 0.1);
       setTimeout(() => playTone(587, 'sine', 0.1), 100);
@@ -646,777 +480,617 @@
       setTimeout(() => toast.classList.remove('show'), 2200);
     }
 
-    // Arcade Balance
-    let balance = parseInt(localStorage.getItem('arcade_balance') || '1000', 10);
+    /* Balance */
+    let balance = parseInt(localStorage.getItem('user_game_balance') || '588', 10);
     function updateBalanceDisplay() {
-      document.getElementById('balanceDisplay').textContent = balance.toLocaleString('fa-IR');
-      localStorage.setItem('arcade_balance', balance.toString());
+      document.getElementById('balanceDisplay').textContent = `${balance.toLocaleString('fa-IR')} تومان`;
+      localStorage.setItem('user_game_balance', balance.toString());
     }
     updateBalanceDisplay();
 
-    function refillBalance() {
+    function refillCoins() {
       balance += 1000;
       updateBalanceDisplay();
       soundWin();
       haptic('success');
-      showToast('🎁 ۱,۰۰۰ سکه رایگان به حسابتان اضافه شد!');
+      showToast('۱,۰۰۰ تومان به موجودی اضافه شد 🎁');
     }
 
-    function switchGame(game) {
-      document.getElementById('tabRocketBtn').classList.toggle('active', game === 'rocket');
-      document.getElementById('tabChickenBtn').classList.toggle('active', game === 'chicken');
-      document.getElementById('rocketSection').classList.toggle('active', game === 'rocket');
-      document.getElementById('chickenSection').classList.toggle('active', game === 'chicken');
+    function setTab(tab) {
+      document.getElementById('tabChickenBtn').classList.toggle('active', tab === 'chicken');
+      document.getElementById('tabRocketBtn').classList.toggle('active', tab === 'rocket');
+      document.getElementById('chickenView').classList.toggle('active', tab === 'chicken');
+      document.getElementById('rocketView').classList.toggle('active', tab === 'rocket');
       haptic('light');
     }
 
     /* ========================================================
-       ROCKET CRASH GAME - CONTINUOUS 10-SECOND AUTO LOOP
+       CHICKEN ROAD - EXACT HORIZONTAL HIGHWAY MATCHING SCREENSHOT
+    ======================================================== */
+    const chCanvas = document.getElementById('chickenCanvas');
+    const chCtx = chCanvas.getContext('2d');
+
+    const MULT_EASY = [1.06, 1.17, 1.30, 1.45, 1.61, 1.79, 1.99, 2.22, 2.50, 2.85, 3.30, 4.00];
+    const MULT_MED = [1.12, 1.32, 1.60, 1.98, 2.50, 3.20, 4.20, 5.60, 7.50, 10.5, 15.0, 22.0];
+    const MULT_HARD = [1.25, 1.70, 2.40, 3.50, 5.20, 8.00, 12.8, 21.0, 35.0, 60.0, 110.0, 200.0];
+    const MULT_VHARD = [1.45, 2.30, 3.90, 7.00, 13.0, 26.0, 55.0, 120.0, 280.0, 650.0, 1500.0, 3500.0];
+
+    let currentDiff = 'easy';
+    let currentMultList = MULT_EASY;
+    let riskRates = { easy: 0.08, medium: 0.18, hard: 0.28, vhard: 0.42 };
+
+    let chPlaying = false;
+    let chStep = 0;
+    let chBet = 100;
+    let chCameraX = 0;
+    let chTargetCameraX = 0;
+
+    // Traffic Cars moving HORIZONTALLY along the lanes
+    const HORIZ_LANES = 4; // 4 horizontal lanes between top and bottom curbs
+    const LANE_HEIGHT = 28;
+    const ROAD_Y_START = 40;
+
+    const cars = [];
+    const carTypes = [
+      { color: '#ef4444', w: 32, h: 16, type: 'car' }, // Red car
+      { color: '#eab308', w: 38, h: 18, type: 'bus' }, // Yellow bus
+      { color: '#a855f7', w: 28, h: 16, type: 'car' }, // Purple car
+      { color: '#ef4444', w: 36, h: 17, type: 'van' }, // Red van
+      { color: '#3b82f6', w: 30, h: 16, type: 'car' }  // Blue car
+    ];
+
+    function initCars() {
+      cars.length = 0;
+      for (let lane = 0; lane < HORIZ_LANES; lane++) {
+        const laneY = ROAD_Y_START + 12 + lane * LANE_HEIGHT;
+        const speed = (lane % 2 === 0 ? 1 : -1) * (1.2 + Math.random() * 1.4);
+        for (let i = 0; i < 3; i++) {
+          const ct = carTypes[Math.floor(Math.random() * carTypes.length)];
+          cars.push({
+            x: Math.random() * 800 - 100,
+            y: laneY,
+            w: ct.w,
+            h: ct.h,
+            color: ct.color,
+            speed: speed
+          });
+        }
+      }
+    }
+    initCars();
+
+    function chooseDiff(d) {
+      if (chPlaying) {
+        showToast('در حین دست فعال امکان تغییر سختی نیست');
+        return;
+      }
+      currentDiff = d;
+      document.getElementById('dEasy').classList.toggle('active', d === 'easy');
+      document.getElementById('dMedium').classList.toggle('active', d === 'medium');
+      document.getElementById('dHard').classList.toggle('active', d === 'hard');
+      document.getElementById('dVeryHard').classList.toggle('active', d === 'vhard');
+
+      if (d === 'easy') {
+        currentMultList = MULT_EASY;
+        document.getElementById('chickenRiskDisplay').textContent = '۸٪';
+      } else if (d === 'medium') {
+        currentMultList = MULT_MED;
+        document.getElementById('chickenRiskDisplay').textContent = '۱۸٪';
+      } else if (d === 'hard') {
+        currentMultList = MULT_HARD;
+        document.getElementById('chickenRiskDisplay').textContent = '۲۸٪';
+      } else {
+        currentMultList = MULT_VHARD;
+        document.getElementById('chickenRiskDisplay').textContent = '۴۲٪';
+      }
+      haptic('light');
+    }
+
+    function handleChickenAction() {
+      initAudio();
+      const input = document.getElementById('chickenBetInput');
+
+      if (!chPlaying) {
+        // Start round
+        chBet = parseInt(input.value || '100', 10);
+        if (chBet > balance) {
+          showToast('موجودی کافی نیست! از شارژ استفاده کنید');
+          return;
+        }
+        if (chBet < 10) {
+          showToast('حداقل مبلغ ۱۰ تومان است');
+          return;
+        }
+
+        balance -= chBet;
+        updateBalanceDisplay();
+
+        chPlaying = true;
+        chStep = 1;
+        chTargetCameraX = 0;
+
+        soundHop();
+        haptic('medium');
+        checkChickenStepResult();
+      } else {
+        // Next step!
+        chStep++;
+        soundHop();
+        haptic('medium');
+        chTargetCameraX = Math.max(0, (chStep - 2) * 58);
+        checkChickenStepResult();
+      }
+    }
+
+    function checkChickenStepResult() {
+      const isCrash = Math.random() < riskRates[currentDiff];
+
+      if (isCrash) {
+        // Crash
+        chPlaying = false;
+        soundCrash();
+        haptic('error');
+        showToast(`💥 تصادف در قدم ${chStep}! سوختی!`);
+        updateChickenUI(true);
+      } else {
+        // Safe
+        const currentMult = currentMultList[chStep - 1] || currentMultList[currentMultList.length - 1];
+        document.getElementById('chickenStepDisplay').textContent = chStep;
+        document.getElementById('chickenMultDisplay').textContent = `${currentMult.toFixed(2)}x`;
+        updateChickenUI(false);
+
+        if (chStep >= currentMultList.length) {
+          // Completed
+          const win = Math.floor(chBet * currentMult);
+          balance += win;
+          updateBalanceDisplay();
+          chPlaying = false;
+          soundWin();
+          haptic('success');
+          showToast(`🏆 برنده شدی! ${win.toLocaleString('fa-IR')} تومان به حسابت واریز شد!`);
+          updateChickenUI(false);
+        }
+      }
+    }
+
+    function handleChickenCashout() {
+      if (!chPlaying || chStep === 0) return;
+      const currentMult = currentMultList[chStep - 1];
+      const won = Math.floor(chBet * currentMult);
+      balance += won;
+      updateBalanceDisplay();
+
+      chPlaying = false;
+      soundWin();
+      haptic('success');
+      showToast(`💰 تبریک! ${won.toLocaleString('fa-IR')} تومان برداشت شد!`);
+      updateChickenUI(false);
+    }
+
+    function updateChickenUI(isCrashed = false) {
+      const mainBtn = document.getElementById('chickenMainBtn');
+      const cashBtn = document.getElementById('chickenCashoutBtn');
+      const input = document.getElementById('chickenBetInput');
+
+      if (chPlaying) {
+        input.disabled = true;
+        mainBtn.innerHTML = `<span>قدم بعدی 🐔</span>`;
+        cashBtn.style.display = 'flex';
+        const currentMult = currentMultList[chStep - 1];
+        const curWin = Math.floor(chBet * currentMult);
+        cashBtn.innerHTML = `<span>برداشت (${curWin.toLocaleString('fa-IR')} تومان) 💰</span>`;
+      } else {
+        input.disabled = false;
+        mainBtn.innerHTML = `<span>شروع بازی 🐔</span>`;
+        cashBtn.style.display = 'none';
+        if (isCrashed) {
+          document.getElementById('chickenStepDisplay').textContent = '۰';
+          document.getElementById('chickenMultDisplay').textContent = '۱٫۰۰x';
+        }
+      }
+    }
+
+    function renderChickenCanvas() {
+      // Smooth camera
+      chCameraX += (chTargetCameraX - chCameraX) * 0.12;
+
+      chCtx.save();
+      chCtx.fillStyle = '#0f172a';
+      chCtx.fillRect(0, 0, 460, 230);
+
+      // Top Grass
+      chCtx.fillStyle = '#1b4332';
+      chCtx.fillRect(0, 0, 460, 36);
+
+      // Top curb text matching screenshot
+      chCtx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      chCtx.font = 'bold 11px system-ui';
+      chCtx.textAlign = 'right';
+      chCtx.fillText('شروع', 50, 24);
+      chCtx.textAlign = 'left';
+      chCtx.fillText('مسیر ادامه دارد ←', 340, 24);
+
+      // Concrete Curb top
+      chCtx.fillStyle = '#e2e8f0';
+      chCtx.fillRect(0, 34, 460, 4);
+
+      // Asphalt Road
+      chCtx.fillStyle = '#2d3748';
+      chCtx.fillRect(0, 38, 460, 126);
+
+      // Concrete Curb bottom
+      chCtx.fillStyle = '#e2e8f0';
+      chCtx.fillRect(0, 164, 460, 4);
+
+      // Bottom Grass
+      chCtx.fillStyle = '#1b4332';
+      chCtx.fillRect(0, 168, 460, 62);
+
+      // World Camera translation for lanes and traffic
+      chCtx.save();
+      chCtx.translate(-chCameraX, 0);
+
+      // Horizontal dashed lane divider lines
+      chCtx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+      chCtx.lineWidth = 2;
+      chCtx.setLineDash([10, 10]);
+      for (let l = 1; l < HORIZ_LANES; l++) {
+        const ly = ROAD_Y_START + l * LANE_HEIGHT + 6;
+        chCtx.beginPath();
+        chCtx.moveTo(-200, ly);
+        chCtx.lineTo(2000, ly);
+        chCtx.stroke();
+      }
+      chCtx.setLineDash([]);
+
+      // Vertical dashed guide marks (as seen in screenshot)
+      chCtx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+      chCtx.lineWidth = 1;
+      chCtx.setLineDash([4, 4]);
+      for (let x = 0; x < 2000; x += 58) {
+        chCtx.beginPath();
+        chCtx.moveTo(x, 38);
+        chCtx.lineTo(x, 164);
+        chCtx.stroke();
+      }
+      chCtx.setLineDash([]);
+
+      // Render Horizontal Cars
+      cars.forEach(car => {
+        car.x += car.speed;
+        if (car.speed > 0 && car.x > chCameraX + 600) car.x = chCameraX - 150;
+        if (car.speed < 0 && car.x < chCameraX - 150) car.x = chCameraX + 600;
+
+        chCtx.save();
+        chCtx.fillStyle = car.color;
+        chCtx.beginPath();
+        chCtx.roundRect(car.x, car.y - car.h / 2, car.w, car.h, 4);
+        chCtx.fill();
+
+        // Windshield
+        chCtx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+        chCtx.fillRect(car.x + (car.speed > 0 ? car.w - 10 : 3), car.y - car.h / 2 + 2, 7, car.h - 4);
+
+        // Headlights
+        chCtx.fillStyle = '#fef08a';
+        if (car.speed > 0) {
+          chCtx.fillRect(car.x + car.w - 2, car.y - car.h / 2 + 2, 2, 3);
+          chCtx.fillRect(car.x + car.w - 2, car.y + car.h / 2 - 5, 2, 3);
+        } else {
+          chCtx.fillRect(car.x, car.y - car.h / 2 + 2, 2, 3);
+          chCtx.fillRect(car.x, car.y + car.h / 2 - 5, 2, 3);
+        }
+
+        chCtx.restore();
+      });
+
+      // Render Multiplier Step Badges (Circular badges matching screenshot)
+      const STEP_Y = 100;
+      currentMultList.forEach((mult, idx) => {
+        const stepX = 85 + idx * 58;
+        const isPast = chPlaying && (idx + 1) < chStep;
+        const isCur = chPlaying && (idx + 1) === chStep;
+
+        chCtx.save();
+        chCtx.fillStyle = isCur ? '#334155' : (isPast ? 'rgba(16, 185, 129, 0.3)' : 'rgba(51, 65, 85, 0.7)');
+        chCtx.strokeStyle = isCur ? '#eab308' : (isPast ? '#10b981' : '#64748b');
+        chCtx.lineWidth = isCur ? 2.5 : 1.5;
+
+        chCtx.beginPath();
+        chCtx.arc(stepX, STEP_Y, 19, 0, Math.PI * 2);
+        chCtx.fill();
+        chCtx.stroke();
+
+        chCtx.fillStyle = isCur ? '#f8fafc' : (isPast ? '#10b981' : '#cbd5e1');
+        chCtx.font = 'bold 10px monospace';
+        chCtx.textAlign = 'center';
+        chCtx.fillText(`${mult.toFixed(2)}x`, stepX, STEP_Y + 4);
+        chCtx.restore();
+      });
+
+      // Render Chicken
+      let chickX = 40;
+      if (chPlaying && chStep > 0) {
+        chickX = 85 + (chStep - 1) * 58;
+      }
+      drawCuteChicken(chickX, STEP_Y);
+
+      chCtx.restore(); // end camera
+      chCtx.restore(); // end canvas
+
+      requestAnimationFrame(renderChickenCanvas);
+    }
+
+    function drawCuteChicken(cx, cy) {
+      chCtx.save();
+      chCtx.translate(cx, cy);
+
+      // Body
+      chCtx.fillStyle = '#ffffff';
+      chCtx.beginPath();
+      chCtx.ellipse(0, 0, 13, 11, 0, 0, Math.PI * 2);
+      chCtx.fill();
+
+      // Wing
+      chCtx.fillStyle = '#e2e8f0';
+      chCtx.beginPath();
+      chCtx.ellipse(-4, 1, 6, 4, -0.2, 0, Math.PI * 2);
+      chCtx.fill();
+
+      // Beak
+      chCtx.fillStyle = '#f59e0b';
+      chCtx.beginPath();
+      chCtx.moveTo(11, -3);
+      chCtx.lineTo(18, 0);
+      chCtx.lineTo(11, 3);
+      chCtx.closePath();
+      chCtx.fill();
+
+      // Comb
+      chCtx.fillStyle = '#ef4444';
+      chCtx.beginPath();
+      chCtx.arc(2, -11, 3, 0, Math.PI * 2);
+      chCtx.arc(6, -13, 3, 0, Math.PI * 2);
+      chCtx.arc(10, -11, 2.5, 0, Math.PI * 2);
+      chCtx.fill();
+
+      // Eye
+      chCtx.fillStyle = '#0f172a';
+      chCtx.beginPath();
+      chCtx.arc(7, -3, 2, 0, Math.PI * 2);
+      chCtx.fill();
+
+      // Legs
+      chCtx.strokeStyle = '#f59e0b';
+      chCtx.lineWidth = 2.5;
+      chCtx.beginPath();
+      chCtx.moveTo(-3, 8);
+      chCtx.lineTo(-3, 14);
+      chCtx.moveTo(4, 8);
+      chCtx.lineTo(4, 14);
+      chCtx.stroke();
+
+      chCtx.restore();
+    }
+
+    requestAnimationFrame(renderChickenCanvas);
+
+    /* ========================================================
+       ROCKET CRASH - 10-SECOND CONTINUOUS AUTO CYCLE
     ======================================================== */
     const rCanvas = document.getElementById('rocketCanvas');
     const rCtx = rCanvas.getContext('2d');
 
-    const COUNTDOWN_TOTAL_MS = 10000; // 10 seconds
-    let rGlobalState = 'COUNTDOWN'; // COUNTDOWN, FLYING, CRASHED
-    let rCountdownEndTime = Date.now() + COUNTDOWN_TOTAL_MS;
+    const COUNTDOWN_MS = 10000;
+    let rState = 'COUNTDOWN'; // COUNTDOWN, FLYING, CRASHED
+    let rTimerEnd = Date.now() + COUNTDOWN_MS;
     let rMultiplier = 1.00;
-    let rTargetCrash = 2.00;
-    let rFlightStartTime = 0;
+    let rCrashTarget = 2.00;
+    let rFlightStart = 0;
 
-    let userInCurrentFlight = false;
-    let userHasBetNextRound = false;
-    let userCurrentStake = 100;
-    let userCashedOut = false;
-    let userWonAmount = 0;
-
-    let rParticles = [];
-    const rStars = Array.from({ length: 45 }, () => ({
-      x: Math.random() * 500,
-      y: Math.random() * 320,
-      size: Math.random() * 1.8 + 0.5,
-      speed: Math.random() * 0.9 + 0.3
-    }));
-
-    function adjustRocketBet(action) {
-      const input = document.getElementById('rocketBetInput');
-      let val = parseInt(input.value || '100', 10);
-      if (action === 'half') val = Math.max(10, Math.floor(val / 2));
-      else if (action === 'double') val = Math.min(balance, val * 2);
-      else if (action === 'max') val = Math.max(10, balance);
-      input.value = val;
-    }
-
-    function setRocketBet(val) {
-      document.getElementById('rocketBetInput').value = Math.min(balance, val);
-    }
+    let userInFlight = false;
+    let userHasBetNext = false;
+    let userStake = 100;
+    let userCashed = false;
+    let userWon = 0;
 
     function handleRocketAction() {
       initAudio();
       const input = document.getElementById('rocketBetInput');
       const stake = parseInt(input.value || '100', 10);
 
-      if (rGlobalState === 'COUNTDOWN') {
-        if (!userHasBetNextRound) {
+      if (rState === 'COUNTDOWN') {
+        if (!userHasBetNext) {
           if (stake > balance) {
-            showToast('سکه کافی نیست! از دکمه شارژ استفاده کنید');
+            showToast('موجودی کافی نیست! از شارژ استفاده کنید');
             return;
           }
           if (stake < 10) {
-            showToast('حداقل مقدار شرط ۱۰ سکه است');
+            showToast('حداقل مقدار ۱۰ تومان است');
             return;
           }
-          userHasBetNextRound = true;
-          userCurrentStake = stake;
+          userHasBetNext = true;
+          userStake = stake;
           balance -= stake;
           updateBalanceDisplay();
-          soundBeep();
           haptic('medium');
-          updateRocketButtonUI();
-          showToast(`شرط ${stake.toLocaleString('fa-IR')} سکه برای پرواز بعدی ثبت شد`);
+          updateRocketButton();
+          showToast(`شرط ${stake.toLocaleString('fa-IR')} تومان ثبت شد`);
         } else {
-          // Cancel bet
-          userHasBetNextRound = false;
-          balance += userCurrentStake;
+          userHasBetNext = false;
+          balance += userStake;
           updateBalanceDisplay();
-          soundBeep();
-          updateRocketButtonUI();
-          showToast('شرط لغو شد و سکه‌ها برگشت');
+          updateRocketButton();
+          showToast('شرط لغو شد');
         }
-      } else if (rGlobalState === 'FLYING') {
-        if (userInCurrentFlight && !userCashedOut) {
-          // Cash out!
-          userCashedOut = true;
-          userWonAmount = Math.floor(userCurrentStake * rMultiplier);
-          balance += userWonAmount;
+      } else if (rState === 'FLYING') {
+        if (userInFlight && !userCashed) {
+          userCashed = true;
+          userWon = Math.floor(userStake * rMultiplier);
+          balance += userWon;
           updateBalanceDisplay();
           soundWin();
           haptic('success');
-          updateRocketButtonUI();
-          showToast(`🎉 تبریک! ${userWonAmount.toLocaleString('fa-IR')} سکه برداشت شد!`);
+          updateRocketButton();
+          showToast(`🎉 ${userWon.toLocaleString('fa-IR')} تومان برداشت شد!`);
         }
       }
     }
 
-    function updateRocketButtonUI() {
+    function updateRocketButton() {
       const btn = document.getElementById('rocketActionBtn');
-
-      if (rGlobalState === 'COUNTDOWN') {
+      if (rState === 'COUNTDOWN') {
         btn.disabled = false;
-        if (userHasBetNextRound) {
-          btn.className = 'action-btn btn-red';
-          btn.innerHTML = `<span>شرط ثبت شد (${userCurrentStake.toLocaleString('fa-IR')} سکه) - کلیک برای لغو ❌</span>`;
+        if (userHasBetNext) {
+          btn.className = 'main-btn btn-cashout';
+          btn.innerHTML = `<span>شرط ثبت شد (${userStake.toLocaleString('fa-IR')} تومان) - کلیک برای لغو ❌</span>`;
         } else {
-          btn.className = 'action-btn btn-blue';
+          btn.className = 'main-btn';
           btn.innerHTML = `<span>ثبت شرط برای پرتاب بعدی 🚀</span>`;
         }
-      } else if (rGlobalState === 'FLYING') {
-        if (userInCurrentFlight) {
-          if (!userCashedOut) {
-            const currentWin = Math.floor(userCurrentStake * rMultiplier);
+      } else if (rState === 'FLYING') {
+        if (userInFlight) {
+          if (!userCashed) {
+            const cur = Math.floor(userStake * rMultiplier);
             btn.disabled = false;
-            btn.className = 'action-btn btn-green';
-            btn.innerHTML = `<span>برداشت سود (${currentWin.toLocaleString('fa-IR')} سکه) 💰</span>`;
+            btn.className = 'main-btn btn-green';
+            btn.innerHTML = `<span>برداشت سود (${cur.toLocaleString('fa-IR')} تومان) 💰</span>`;
           } else {
             btn.disabled = true;
-            btn.className = 'action-btn btn-gold';
-            btn.innerHTML = `<span>برداشت شد در ${rMultiplier.toFixed(2)}x (${userWonAmount.toLocaleString('fa-IR')} سکه) ✓</span>`;
+            btn.className = 'main-btn btn-cashout';
+            btn.innerHTML = `<span>برداشت شد در ${rMultiplier.toFixed(2)}x ✓</span>`;
           }
         } else {
           btn.disabled = true;
-          btn.className = 'action-btn btn-blue';
-          btn.innerHTML = `<span>پرواز در جریان است... (دور بعد شرکت کنید)</span>`;
+          btn.className = 'main-btn';
+          btn.innerHTML = `<span>پرواز در جریان است...</span>`;
         }
-      } else if (rGlobalState === 'CRASHED') {
+      } else if (rState === 'CRASHED') {
         btn.disabled = true;
-        btn.className = 'action-btn btn-red';
-        btn.innerHTML = `<span>منفجر شد در ${rTargetCrash.toFixed(2)}x 💥</span>`;
+        btn.className = 'main-btn';
+        btn.innerHTML = `<span>منفجر شد در ${rCrashTarget.toFixed(2)}x 💥</span>`;
       }
     }
 
-    function startRocketFlight() {
-      rGlobalState = 'FLYING';
-      rMultiplier = 1.00;
-      rFlightStartTime = Date.now();
-      rParticles = [];
+    function rocketRenderLoop() {
+      rCtx.fillStyle = '#0a0f1d';
+      rCtx.fillRect(0, 0, 460, 240);
 
-      // Determine crash multiplier (Provably fair style curve)
-      const r = Math.random();
-      if (r < 0.05) {
-        rTargetCrash = 1.00 + Math.random() * 0.15; // Instant crash
-      } else {
-        rTargetCrash = Math.min(Math.max(1.08, 0.98 / (1.0 - r)), 40.0);
-      }
-
-      userInCurrentFlight = userHasBetNextRound;
-      userCashedOut = false;
-      userHasBetNextRound = false;
-
-      soundLaunch();
-      haptic('heavy');
-      updateRocketButtonUI();
-    }
-
-    function crashRocketFlight() {
-      rGlobalState = 'CRASHED';
-      soundCrash();
-      haptic('error');
-
-      // Explosion particles
-      for (let i = 0; i < 40; i++) {
-        rParticles.push({
-          x: 250,
-          y: 160,
-          vx: (Math.random() - 0.5) * 8,
-          vy: (Math.random() - 0.5) * 8,
-          size: 4 + Math.random() * 8,
-          color: Math.random() > 0.4 ? '#f43f5e' : '#fbbf24',
-          life: 1.0,
-          decay: 0.02 + Math.random() * 0.02
-        });
-      }
-
-      updateRocketButtonUI();
-
-      // Wait 2.5 seconds, then begin next 10-second countdown!
-      setTimeout(() => {
-        rGlobalState = 'COUNTDOWN';
-        rCountdownEndTime = Date.now() + COUNTDOWN_TOTAL_MS;
-        userInCurrentFlight = false;
-        userCashedOut = false;
-        updateRocketButtonUI();
-      }, 2500);
-    }
-
-    function rocketLoop() {
-      rCtx.fillStyle = '#070a12';
-      rCtx.fillRect(0, 0, 500, 320);
-
-      // Stars
-      rCtx.fillStyle = '#94a3b8';
-      rStars.forEach(s => {
-        if (rGlobalState === 'FLYING') {
-          s.x -= s.speed * (1 + (rMultiplier - 1) * 0.8);
-          s.y += s.speed * 0.5;
-          if (s.x < 0) s.x = 500;
-          if (s.y > 320) s.y = 0;
-        }
-        rCtx.beginPath();
-        rCtx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-        rCtx.fill();
-      });
-
-      // Neon Grid lines
-      rCtx.strokeStyle = 'rgba(31, 41, 61, 0.4)';
+      // Grid
+      rCtx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
       rCtx.lineWidth = 1;
-      for (let x = 40; x < 500; x += 60) {
-        rCtx.beginPath();
-        rCtx.moveTo(x, 0);
-        rCtx.lineTo(x, 320);
-        rCtx.stroke();
+      for (let x = 30; x < 460; x += 50) {
+        rCtx.beginPath(); rCtx.moveTo(x, 0); rCtx.lineTo(x, 240); rCtx.stroke();
       }
-      for (let y = 40; y < 320; y += 50) {
-        rCtx.beginPath();
-        rCtx.moveTo(0, y);
-        rCtx.lineTo(500, y);
-        rCtx.stroke();
+      for (let y = 30; y < 240; y += 40) {
+        rCtx.beginPath(); rCtx.moveTo(0, y); rCtx.lineTo(460, y); rCtx.stroke();
       }
 
-      if (rGlobalState === 'COUNTDOWN') {
-        const remaining = Math.max(0, rCountdownEndTime - Date.now());
-        const secs = (remaining / 1000).toFixed(1);
-        const pct = Math.min(100, Math.max(0, (remaining / COUNTDOWN_TOTAL_MS) * 100));
+      if (rState === 'COUNTDOWN') {
+        const rem = Math.max(0, rTimerEnd - Date.now());
+        const secs = (rem / 1000).toFixed(1);
+        const pct = Math.min(100, (rem / COUNTDOWN_MS) * 100);
 
-        document.getElementById('rocketStatusLabel').textContent = 'آماده‌سازی برای پرتاب بعدی...';
-        document.getElementById('rocketTimerLabel').textContent = `${secs} ثانیه`;
-        document.getElementById('rocketCountdownBar').style.width = `${pct}%`;
-
-        // Big countdown text on canvas
-        rCtx.save();
-        rCtx.textAlign = 'center';
-        rCtx.fillStyle = '#06b6d4';
-        rCtx.font = 'bold 22px system-ui';
-        rCtx.fillText('پرتاب موشک در:', 250, 130);
-        rCtx.font = 'bold 54px monospace';
-        rCtx.fillStyle = '#f8fafc';
-        rCtx.shadowColor = 'rgba(6, 182, 212, 0.8)';
-        rCtx.shadowBlur = 18;
-        rCtx.fillText(`${secs}s`, 250, 195);
-        rCtx.restore();
-
-        if (remaining <= 0) {
-          startRocketFlight();
-        }
-      } else if (rGlobalState === 'FLYING') {
-        const elapsedSec = (Date.now() - rFlightStartTime) / 1000;
-        rMultiplier = Math.pow(Math.E, 0.065 * elapsedSec);
-
-        document.getElementById('rocketStatusLabel').textContent = 'موشک در حال اوج‌گیری 🚀';
-        document.getElementById('rocketTimerLabel').textContent = `${rMultiplier.toFixed(2)}x`;
-        document.getElementById('rocketCountdownBar').style.width = '100%';
-
-        if (rMultiplier >= rTargetCrash) {
-          crashRocketFlight();
-        } else {
-          updateRocketButtonUI();
-        }
-
-        // Draw curved flight path
-        const progress = Math.min(1, (rMultiplier - 1.0) / 8.0);
-        const rocketX = 60 + progress * 340;
-        const rocketY = 270 - progress * 210;
-
-        rCtx.save();
-        rCtx.strokeStyle = 'rgba(6, 182, 212, 0.6)';
-        rCtx.lineWidth = 3;
-        rCtx.shadowColor = '#06b6d4';
-        rCtx.shadowBlur = 12;
-        rCtx.beginPath();
-        rCtx.moveTo(50, 280);
-        rCtx.quadraticCurveTo(180, 270, rocketX, rocketY);
-        rCtx.stroke();
-        rCtx.restore();
-
-        // Particles
-        for (let i = 0; i < 2; i++) {
-          rParticles.push({
-            x: rocketX - 15,
-            y: rocketY + 8,
-            vx: -2 - Math.random() * 2,
-            vy: 1 + (Math.random() - 0.5) * 2,
-            size: 3 + Math.random() * 4,
-            color: Math.random() > 0.4 ? '#f59e0b' : '#ef4444',
-            life: 1.0,
-            decay: 0.05
-          });
-        }
-
-        // Draw rocket vector
-        drawVectorRocket(rocketX, rocketY, -0.45);
-
-        // Big Multiplier
-        rCtx.save();
-        rCtx.textAlign = 'center';
-        rCtx.font = 'bold 50px monospace';
-        rCtx.fillStyle = '#10b981';
-        rCtx.shadowColor = 'rgba(16, 185, 129, 0.8)';
-        rCtx.shadowBlur = 16;
-        rCtx.fillText(`${rMultiplier.toFixed(2)}x`, 250, 110);
-        rCtx.restore();
-
-      } else if (rGlobalState === 'CRASHED') {
-        document.getElementById('rocketStatusLabel').textContent = 'منفجر شد 💥';
-        document.getElementById('rocketTimerLabel').textContent = `${rTargetCrash.toFixed(2)}x`;
+        document.getElementById('rocketStatusText').textContent = 'آماده‌سازی پرتاب...';
+        document.getElementById('rocketTimerText').textContent = `${secs}s`;
+        document.getElementById('rocketBar').style.width = `${pct}%`;
 
         rCtx.save();
         rCtx.textAlign = 'center';
-        rCtx.font = 'bold 50px monospace';
-        rCtx.fillStyle = '#f43f5e';
-        rCtx.shadowColor = 'rgba(244, 63, 94, 0.9)';
-        rCtx.shadowBlur = 20;
-        rCtx.fillText(`💥 ${rTargetCrash.toFixed(2)}x`, 250, 110);
-
+        rCtx.fillStyle = '#0284c7';
         rCtx.font = 'bold 20px system-ui';
+        rCtx.fillText('پرتاب موشک در:', 230, 95);
+        rCtx.font = 'bold 50px monospace';
         rCtx.fillStyle = '#f8fafc';
-        rCtx.shadowBlur = 0;
-        rCtx.fillText('آماده‌سازی دور بعدی...', 250, 160);
+        rCtx.fillText(`${secs}s`, 230, 155);
+        rCtx.restore();
+
+        if (rem <= 0) {
+          // Launch!
+          rState = 'FLYING';
+          rMultiplier = 1.00;
+          rFlightStart = Date.now();
+          const r = Math.random();
+          rCrashTarget = r < 0.08 ? 1.05 + Math.random() * 0.15 : Math.min(30.0, Math.max(1.10, 0.98 / (1.0 - r)));
+          userInFlight = userHasBetNext;
+          userCashed = false;
+          userHasBetNext = false;
+          haptic('heavy');
+          updateRocketButton();
+        }
+      } else if (rState === 'FLYING') {
+        const elapsed = (Date.now() - rFlightStart) / 1000;
+        rMultiplier = Math.pow(Math.E, 0.07 * elapsed);
+
+        document.getElementById('rocketStatusText').textContent = 'موشک در اوج 🚀';
+        document.getElementById('rocketTimerText').textContent = `${rMultiplier.toFixed(2)}x`;
+        document.getElementById('rocketBar').style.width = '100%';
+
+        if (rMultiplier >= rCrashTarget) {
+          rState = 'CRASHED';
+          soundCrash();
+          haptic('error');
+          updateRocketButton();
+          setTimeout(() => {
+            rState = 'COUNTDOWN';
+            rTimerEnd = Date.now() + COUNTDOWN_MS;
+            userInFlight = false;
+            userCashed = false;
+            updateRocketButton();
+          }, 2400);
+        } else {
+          updateRocketButton();
+        }
+
+        // Rocket flight line
+        const prog = Math.min(1, (rMultiplier - 1.0) / 7.0);
+        const rx = 50 + prog * 310;
+        const ry = 200 - prog * 150;
+
+        rCtx.save();
+        rCtx.strokeStyle = '#0284c7';
+        rCtx.lineWidth = 3;
+        rCtx.beginPath();
+        rCtx.moveTo(40, 210);
+        rCtx.quadraticCurveTo(150, 200, rx, ry);
+        rCtx.stroke();
+
+        // Vector rocket
+        rCtx.translate(rx, ry);
+        rCtx.rotate(-0.4);
+        rCtx.fillStyle = '#ffffff';
+        rCtx.beginPath();
+        rCtx.ellipse(0, 0, 18, 8, 0, 0, Math.PI * 2);
+        rCtx.fill();
+        rCtx.fillStyle = '#ef4444';
+        rCtx.beginPath();
+        rCtx.moveTo(14, -3); rCtx.lineTo(22, 0); rCtx.lineTo(14, 3); rCtx.fill();
+        rCtx.restore();
+
+        // Multiplier
+        rCtx.save();
+        rCtx.textAlign = 'center';
+        rCtx.font = 'bold 44px monospace';
+        rCtx.fillStyle = '#10b981';
+        rCtx.fillText(`${rMultiplier.toFixed(2)}x`, 230, 80);
+        rCtx.restore();
+
+      } else if (rState === 'CRASHED') {
+        document.getElementById('rocketStatusText').textContent = 'منفجر شد 💥';
+        document.getElementById('rocketTimerText').textContent = `${rCrashTarget.toFixed(2)}x`;
+
+        rCtx.save();
+        rCtx.textAlign = 'center';
+        rCtx.font = 'bold 44px monospace';
+        rCtx.fillStyle = '#ef4444';
+        rCtx.fillText(`💥 ${rCrashTarget.toFixed(2)}x`, 230, 110);
         rCtx.restore();
       }
 
-      // Render & update particles
-      rParticles.forEach((p, idx) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.life -= p.decay;
-        if (p.life > 0) {
-          rCtx.save();
-          rCtx.globalAlpha = Math.max(0, p.life);
-          rCtx.fillStyle = p.color;
-          rCtx.beginPath();
-          rCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          rCtx.fill();
-          rCtx.restore();
-        }
-      });
-      rParticles = rParticles.filter(p => p.life > 0);
-
-      requestAnimationFrame(rocketLoop);
+      requestAnimationFrame(rocketRenderLoop);
     }
 
-    function drawVectorRocket(x, y, angle) {
-      rCtx.save();
-      rCtx.translate(x, y);
-      rCtx.rotate(angle);
-
-      // Rocket body
-      rCtx.fillStyle = '#e2e8f0';
-      rCtx.beginPath();
-      rCtx.ellipse(0, 0, 22, 10, 0, 0, Math.PI * 2);
-      rCtx.fill();
-
-      // Cockpit Window
-      rCtx.fillStyle = '#06b6d4';
-      rCtx.beginPath();
-      rCtx.arc(8, -1, 4, 0, Math.PI * 2);
-      rCtx.fill();
-
-      // Red Tip
-      rCtx.fillStyle = '#ef4444';
-      rCtx.beginPath();
-      rCtx.moveTo(18, -4);
-      rCtx.lineTo(26, 0);
-      rCtx.lineTo(18, 4);
-      rCtx.closePath();
-      rCtx.fill();
-
-      // Tail Fins
-      rCtx.fillStyle = '#f43f5e';
-      rCtx.beginPath();
-      rCtx.moveTo(-12, -8);
-      rCtx.lineTo(-20, -14);
-      rCtx.lineTo(-16, -2);
-      rCtx.closePath();
-      rCtx.fill();
-
-      rCtx.beginPath();
-      rCtx.moveTo(-12, 8);
-      rCtx.lineTo(-20, 14);
-      rCtx.lineTo(-16, 2);
-      rCtx.closePath();
-      rCtx.fill();
-
-      // Flame
-      rCtx.fillStyle = '#fbbf24';
-      rCtx.beginPath();
-      rCtx.moveTo(-20, -5);
-      rCtx.lineTo(-32 - Math.random() * 8, 0);
-      rCtx.lineTo(-20, 5);
-      rCtx.closePath();
-      rCtx.fill();
-
-      rCtx.restore();
-    }
-
-    requestAnimationFrame(rocketLoop);
-
-    /* ========================================================
-       CHICKEN ROAD GAME - HIGHWAY CROSSING WITH MULTIPLIERS
-    ======================================================== */
-    const chCanvas = document.getElementById('chickenCanvas');
-    const chCtx = chCanvas.getContext('2d');
-
-    const TOTAL_LANES = 10;
-    const MULTIPLIERS_EASY = [1.08, 1.22, 1.45, 1.80, 2.30, 3.10, 4.40, 6.50, 10.5, 18.0];
-    const MULTIPLIERS_MEDIUM = [1.18, 1.48, 1.95, 2.70, 3.90, 5.80, 9.20, 15.0, 26.0, 50.0];
-    const MULTIPLIERS_HARD = [1.35, 1.90, 2.80, 4.40, 7.20, 12.5, 23.0, 45.0, 90.0, 200.0];
-
-    let currentDifficulty = 'easy';
-    let activeMultipliers = MULTIPLIERS_EASY;
-    let crashChances = { easy: 0.10, medium: 0.20, hard: 0.33 };
-
-    let chState = 'IDLE'; // IDLE, PLAYING, CRASHED, WON
-    let chCurrentStep = 0; // 0 = start curb, 1 to 10 = lanes
-    let chStake = 100;
-    let chAnimFrame = 0;
-
-    // Traffic cars
-    const trafficCars = [];
-    function initTraffic() {
-      trafficCars.length = 0;
-      for (let lane = 1; lane <= TOTAL_LANES; lane++) {
-        const laneX = 45 + (lane - 1) * 48;
-        const carCount = Math.random() > 0.4 ? 2 : 1;
-        const speed = (lane % 2 === 0 ? 1 : -1) * (1.2 + Math.random() * 1.5);
-        const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#a855f7', '#06b6d4'];
-
-        for (let i = 0; i < carCount; i++) {
-          trafficCars.push({
-            lane: lane,
-            x: laneX,
-            y: Math.random() * 300,
-            speed: speed,
-            color: colors[Math.floor(Math.random() * colors.length)],
-            type: Math.random() > 0.6 ? 'truck' : 'car'
-          });
-        }
-      }
-    }
-    initTraffic();
-
-    function setDifficulty(diff) {
-      if (chState === 'PLAYING') {
-        showToast('در حین بازی امکان تغییر سختی نیست');
-        return;
-      }
-      currentDifficulty = diff;
-      document.getElementById('diffEasy').classList.toggle('active', diff === 'easy');
-      document.getElementById('diffMedium').classList.toggle('active', diff === 'medium');
-      document.getElementById('diffHard').classList.toggle('active', diff === 'hard');
-
-      if (diff === 'easy') {
-        activeMultipliers = MULTIPLIERS_EASY;
-        document.getElementById('chickenDangerLabel').textContent = 'خطر برخورد: ۱۰٪';
-      } else if (diff === 'medium') {
-        activeMultipliers = MULTIPLIERS_MEDIUM;
-        document.getElementById('chickenDangerLabel').textContent = 'خطر برخورد: ۲۰٪';
-      } else {
-        activeMultipliers = MULTIPLIERS_HARD;
-        document.getElementById('chickenDangerLabel').textContent = 'خطر برخورد: ۳۳٪';
-      }
-      renderMultiplierStrip();
-      haptic('light');
-    }
-
-    function renderMultiplierStrip() {
-      const container = document.getElementById('chickenMultStrip');
-      container.innerHTML = '';
-
-      activeMultipliers.forEach((mult, index) => {
-        const laneNum = index + 1;
-        const badge = document.createElement('div');
-        badge.className = 'mult-step-badge';
-        if (laneNum < chCurrentStep) badge.classList.add('passed');
-        if (laneNum === chCurrentStep) badge.classList.add('current');
-        badge.textContent = `لاین ${laneNum}: ${mult.toFixed(2)}x`;
-        container.appendChild(badge);
-      });
-    }
-    renderMultiplierStrip();
-
-    function adjustChickenStake(action) {
-      if (chState === 'PLAYING') return;
-      const input = document.getElementById('chickenStakeInput');
-      let val = parseInt(input.value || '100', 10);
-      if (action === 'minus') val = Math.max(10, val - 50);
-      else if (action === 'plus') val = Math.min(balance, val + 50);
-      else if (action === 'double') val = Math.min(balance, val * 2);
-      input.value = val;
-    }
-
-    function setChickenStake(val) {
-      if (chState === 'PLAYING') return;
-      document.getElementById('chickenStakeInput').value = Math.min(balance, val);
-    }
-
-    function handleChickenGo() {
-      initAudio();
-      const input = document.getElementById('chickenStakeInput');
-
-      if (chState === 'IDLE' || chState === 'CRASHED' || chState === 'WON') {
-        // Start new run
-        chStake = parseInt(input.value || '100', 10);
-        if (chStake > balance) {
-          showToast('سکه کافی نیست! از شارژ رایگان استفاده کنید');
-          return;
-        }
-        if (chStake < 10) {
-          showToast('حداقل مقدار ۱۰ سکه است');
-          return;
-        }
-
-        balance -= chStake;
-        updateBalanceDisplay();
-        chState = 'PLAYING';
-        chCurrentStep = 0;
-      }
-
-      // Step forward to next lane!
-      chCurrentStep++;
-      soundHop();
-      haptic('medium');
-
-      // Check collision chance for this lane
-      const danger = crashChances[currentDifficulty];
-      const isCrashed = Math.random() < danger;
-
-      if (isCrashed) {
-        // Splat!
-        chState = 'CRASHED';
-        soundCrash();
-        haptic('error');
-        updateChickenControlsUI();
-        renderMultiplierStrip();
-        showToast(`💥 تصادف در لاین ${chCurrentStep}! متاسفانه سوختی!`);
-        return;
-      }
-
-      // Safe step!
-      renderMultiplierStrip();
-      updateChickenControlsUI();
-
-      if (chCurrentStep === TOTAL_LANES) {
-        // Completed all lanes!
-        const totalWon = Math.floor(chStake * activeMultipliers[TOTAL_LANES - 1]);
-        balance += totalWon;
-        updateBalanceDisplay();
-        chState = 'WON';
-        soundWin();
-        haptic('success');
-        updateChickenControlsUI();
-        showToast(`🏆 فوق‌العاده! جاده تمام شد و ${totalWon.toLocaleString('fa-IR')} سکه برنده شدی!`);
-      }
-    }
-
-    function handleChickenCashout() {
-      if (chState !== 'PLAYING' || chCurrentStep === 0) return;
-
-      const currentMult = activeMultipliers[chCurrentStep - 1];
-      const winAmount = Math.floor(chStake * currentMult);
-      balance += winAmount;
-      updateBalanceDisplay();
-
-      chState = 'WON';
-      soundWin();
-      haptic('success');
-      updateChickenControlsUI();
-      showToast(`💰 تبریک! ${winAmount.toLocaleString('fa-IR')} سکه در ضریب ${currentMult.toFixed(2)}x برداشت شد!`);
-    }
-
-    function updateChickenControlsUI() {
-      const goBtn = document.getElementById('chickenGoBtn');
-      const cashoutBtn = document.getElementById('chickenCashoutBtn');
-      const stakeInput = document.getElementById('chickenStakeInput');
-
-      if (chState === 'PLAYING') {
-        stakeInput.disabled = true;
-        const currentMult = activeMultipliers[chCurrentStep - 1];
-        const currentWin = Math.floor(chStake * currentMult);
-
-        goBtn.innerHTML = `<span>قدم بعدی (${chCurrentStep + 1}/10) 🐔</span>`;
-        cashoutBtn.disabled = false;
-        cashoutBtn.innerHTML = `<span>برداشت (${currentWin.toLocaleString('fa-IR')} سکه) 💰</span>`;
-      } else {
-        stakeInput.disabled = false;
-        goBtn.innerHTML = `<span>شروع حرکت (GO) 🐔</span>`;
-        cashoutBtn.disabled = true;
-        cashoutBtn.innerHTML = `<span>برداشت (CASH OUT) 💰</span>`;
-      }
-    }
-
-    // Chicken Render Loop
-    function chickenRenderLoop() {
-      chAnimFrame++;
-      chCtx.fillStyle = '#0a0f1d';
-      chCtx.fillRect(0, 0, 540, 300);
-
-      // Start Sidewalk (Left curb)
-      chCtx.fillStyle = '#1e293b';
-      chCtx.fillRect(0, 0, 35, 300);
-      chCtx.fillStyle = '#334155';
-      chCtx.fillRect(32, 0, 3, 300);
-
-      // Highway Lanes
-      for (let l = 1; l <= TOTAL_LANES; l++) {
-        const laneX = 35 + (l - 1) * 48;
-        chCtx.fillStyle = (l % 2 === 0) ? '#0f172a' : '#141e33';
-        chCtx.fillRect(laneX, 0, 48, 300);
-
-        // Dashed lane separator line
-        chCtx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
-        chCtx.lineWidth = 2;
-        chCtx.setLineDash([8, 8]);
-        chCtx.beginPath();
-        chCtx.moveTo(laneX + 48, 0);
-        chCtx.lineTo(laneX + 48, 300);
-        chCtx.stroke();
-        chCtx.setLineDash([]);
-
-        // Multiplier Tag on Road top
-        const mult = activeMultipliers[l - 1];
-        chCtx.save();
-        chCtx.fillStyle = (l < chCurrentStep) ? '#10b981' : (l === chCurrentStep ? '#f59e0b' : '#64748b');
-        chCtx.font = 'bold 11px monospace';
-        chCtx.textAlign = 'center';
-        chCtx.fillText(`${mult.toFixed(2)}x`, laneX + 24, 20);
-        chCtx.restore();
-      }
-
-      // Finish Sidewalk (Right curb)
-      chCtx.fillStyle = '#1e293b';
-      chCtx.fillRect(515, 0, 25, 300);
-      chCtx.fillStyle = '#10b981';
-      chCtx.fillRect(515, 0, 3, 300);
-
-      // Render Traffic
-      trafficCars.forEach(car => {
-        car.y += car.speed;
-        if (car.speed > 0 && car.y > 330) car.y = -40;
-        if (car.speed < 0 && car.y < -40) car.y = 330;
-
-        chCtx.save();
-        chCtx.fillStyle = car.color;
-        const carW = 22;
-        const carH = car.type === 'truck' ? 44 : 32;
-
-        // Rounded body
-        chCtx.beginPath();
-        chCtx.roundRect(car.x - carW / 2 + 12, car.y - carH / 2, carW, carH, 5);
-        chCtx.fill();
-
-        // Windshield
-        chCtx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-        chCtx.fillRect(car.x - carW / 2 + 15, car.y - carH / 4, carW - 6, carH / 3.5);
-
-        // Headlights
-        chCtx.fillStyle = '#fef08a';
-        if (car.speed > 0) {
-          chCtx.fillRect(car.x - carW / 2 + 14, car.y + carH / 2 - 4, 4, 3);
-          chCtx.fillRect(car.x - carW / 2 + 24, car.y + carH / 2 - 4, 4, 3);
-        } else {
-          chCtx.fillRect(car.x - carW / 2 + 14, car.y - carH / 2 + 1, 4, 3);
-          chCtx.fillRect(car.x - carW / 2 + 24, car.y - carH / 2 + 1, 4, 3);
-        }
-
-        chCtx.restore();
-      });
-
-      // Render Chicken
-      let chickX = 18;
-      let chickY = 150;
-      if (chCurrentStep > 0) {
-        chickX = 35 + (chCurrentStep - 1) * 48 + 24;
-      }
-
-      drawVectorChicken(chickX, chickY, chState === 'CRASHED');
-
-      requestAnimationFrame(chickenRenderLoop);
-    }
-
-    function drawVectorChicken(cx, cy, isSplat) {
-      chCtx.save();
-      chCtx.translate(cx, cy);
-
-      if (isSplat) {
-        // Roasted / Splat Chicken
-        chCtx.fillStyle = '#ef4444';
-        chCtx.beginPath();
-        chCtx.arc(0, 0, 16, 0, Math.PI * 2);
-        chCtx.fill();
-
-        chCtx.fillStyle = '#f59e0b';
-        chCtx.font = 'bold 16px system-ui';
-        chCtx.textAlign = 'center';
-        chCtx.fillText('💥', 0, 6);
-        chCtx.restore();
-        return;
-      }
-
-      const bobbing = Math.sin(chAnimFrame * 0.15) * 2;
-
-      // Legs
-      chCtx.strokeStyle = '#f59e0b';
-      chCtx.lineWidth = 3;
-      chCtx.beginPath();
-      chCtx.moveTo(-4, 8);
-      chCtx.lineTo(-4, 15);
-      chCtx.moveTo(4, 8);
-      chCtx.lineTo(4, 15);
-      chCtx.stroke();
-
-      // Plump white body
-      chCtx.fillStyle = '#ffffff';
-      chCtx.beginPath();
-      chCtx.ellipse(0, bobbing, 14, 12, 0, 0, Math.PI * 2);
-      chCtx.fill();
-
-      // Wing
-      chCtx.fillStyle = '#e2e8f0';
-      chCtx.beginPath();
-      chCtx.ellipse(-4, bobbing + 2, 7, 5, -0.3, 0, Math.PI * 2);
-      chCtx.fill();
-
-      // Red Comb on head
-      chCtx.fillStyle = '#ef4444';
-      chCtx.beginPath();
-      chCtx.arc(4, bobbing - 13, 3.5, 0, Math.PI * 2);
-      chCtx.arc(8, bobbing - 15, 3.5, 0, Math.PI * 2);
-      chCtx.arc(12, bobbing - 13, 3, 0, Math.PI * 2);
-      chCtx.fill();
-
-      // Chicken eye
-      chCtx.fillStyle = '#0f172a';
-      chCtx.beginPath();
-      chCtx.arc(8, bobbing - 5, 2.5, 0, Math.PI * 2);
-      chCtx.fill();
-
-      // Yellow Beak
-      chCtx.fillStyle = '#f59e0b';
-      chCtx.beginPath();
-      chCtx.moveTo(12, bobbing - 6);
-      chCtx.lineTo(19, bobbing - 3);
-      chCtx.lineTo(12, bobbing);
-      chCtx.closePath();
-      chCtx.fill();
-
-      // Red Wattle
-      chCtx.fillStyle = '#ef4444';
-      chCtx.beginPath();
-      chCtx.arc(10, bobbing + 2, 2.5, 0, Math.PI * 2);
-      chCtx.fill();
-
-      chCtx.restore();
-    }
-
-    requestAnimationFrame(chickenRenderLoop);
+    requestAnimationFrame(rocketRenderLoop);
   </script>
 </body>
 </html>
