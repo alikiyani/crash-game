@@ -49,7 +49,6 @@
 </nav>
 
 <main>
-    <!-- بخش بازی انفجار -->
     <section id="rocketGame" class="game active">
         <div class="card canvas-wrap">
             <canvas id="rocketCanvas" width="500" height="300"></canvas>
@@ -68,10 +67,9 @@
         <button id="rocketAction" class="btn" onclick="rocketAction()">ثبت شرط و شروع 🚀</button>
     </section>
 
-    <!-- بخش بازی مرغ جاده (اصلاح شده به عمودی) -->
     <section id="chickenGame" class="game">
         <div class="card canvas-wrap">
-            <canvas id="chickenCanvas" width="560" height="400"></canvas>
+            <canvas id="chickenCanvas" width="700" height="400"></canvas>
         </div>
         <div class="card">
             <div class="bet-row">
@@ -84,7 +82,7 @@
                 <button data-difficulty="hard" onclick="setDifficulty('hard')">سخت</button>
                 <button data-difficulty="hardcore" onclick="setDifficulty('hardcore')">خیلی سخت</button>
             </div>
-            <p class="note">جاده عمودی است. ماشین‌ها رفت و آمد می‌کنند. مراقب باش!</p>
+            <p class="note">مرغ از چپ به راست می‌پرد. از بین ماشین‌ها رد شو!</p>
             <input id="chickenBet" type="number" min="10" step="10" value="100">
             <div id="chickenHint" class="muted">مبلغ را وارد کن و شروع کن.</div>
         </div>
@@ -124,9 +122,7 @@ function showGame(g){
 }
 updateBalance();
 
-// ==========================================
-// منطق بازی انفجار (اصلاح تایمر ۱۰ ثانیه)
-// ==========================================
+// بازی انفجار
 let autoPlay=false, rocketState='idle', rocketBet=0, multiplier=1, crashAt=1, startAt=0, countdownVal=10, autoInterval=null;
 
 function toggleAuto(){
@@ -258,13 +254,12 @@ function rocketLoop(){
 }
 requestAnimationFrame(rocketLoop);
 
-
-// ==========================================
-// منطق بازی مرغ جاده (عمودی و سخت‌تر)
-// ==========================================
+// بازی مرغ جاده - دقیقاً مثل Chicken Road اصلی
 const riskByDifficulty = { easy: 0.15, medium: 0.25, hard: 0.35, hardcore: 0.45 };
 let difficulty='medium', chickenState='ready', chickenBet=0, chickenStep=0, crashStep=0;
 const cc=$('chickenCanvas'), cctx=cc.getContext('2d');
+const COLUMN_WIDTH = 100; // عرض هر ستون
+const TOTAL_COLUMNS = 7; // تعداد ستون‌ها
 
 function getPayout(step) {
     let risk = riskByDifficulty[difficulty];
@@ -287,20 +282,19 @@ function beginChickenRound(){
     chickenBet=a; balance-=a; updateBalance();
     chickenStep=0;
     
-    // تعیین نقطه مرگ از قبل
     let currentRisk = riskByDifficulty[difficulty];
     crashStep = 0;
     while(true) {
         crashStep++;
         if(Math.random() < currentRisk) break;
-        if(crashStep > 20) break;
+        if(crashStep > TOTAL_COLUMNS) break;
     }
     
     chickenState='playing';
     $('chickenAction').style.display='none';
     $('chickenGo').style.display='block';
     $('chickenCashout').style.display='none';
-    $('chickenHint').textContent='مواظب ماشین‌ها باش! GO را بزن.';
+    $('chickenHint').textContent='مرغ از چپ به راست می‌پرد. GO را بزن!';
     updateChickenUI();
     drawChicken();
 }
@@ -359,96 +353,108 @@ function updateChickenUI(){
     $('chMultiplier').textContent = chickenStep > 0 ? getPayout(chickenStep)+'x' : '1.00x';
 }
 
-// رسم بازی مرغ (عمودی)
+// رسم بازی مرغ - مثل Chicken Road اصلی
 function drawChicken(){
-    const w=560, h=400;
+    const w=700, h=400;
     cctx.clearRect(0,0,w,h);
     
-    // پس زمینه چمن
-    cctx.fillStyle='#2d6a4f'; cctx.fillRect(0,0,w,h);
+    // پس زمینه جاده
+    cctx.fillStyle='#4a5568';
+    cctx.fillRect(0, 0, w, h);
     
-    // رسم جاده (عمودی در وسط)
-    const roadX = 100;
-    const roadW = 360;
-    cctx.fillStyle='#475569'; cctx.fillRect(roadX, 0, roadW, h);
+    // خط‌کشی ستون‌ها (عمودی)
+    for(let i=0; i<=TOTAL_COLUMNS; i++){
+        cctx.strokeStyle='#fff';
+        cctx.lineWidth=3;
+        cctx.setLineDash([15, 10]);
+        cctx.beginPath();
+        cctx.moveTo(i * COLUMN_WIDTH, 0);
+        cctx.lineTo(i * COLUMN_WIDTH, h);
+        cctx.stroke();
+        cctx.setLineDash([]);
+    }
     
-    // خط کشی جاده
-    cctx.strokeStyle='#fff'; cctx.setLineDash([20, 20]); cctx.lineWidth=4;
-    cctx.beginPath(); cctx.moveTo(roadX + roadW/3, 0); cctx.lineTo(roadX + roadW/3, h); cctx.stroke();
-    cctx.beginPath(); cctx.moveTo(roadX + (roadW/3)*2, 0); cctx.lineTo(roadX + (roadW/3)*2, h); cctx.stroke();
-    cctx.setLineDash([]);
-    
-    // دوربین را بر اساس قدم مرغ پایین میکشیم
-    const stepH = 60;
-    let cameraY = Math.max(0, (chickenStep * stepH) - 200); 
-    
-    cctx.save();
-    cctx.translate(0, -cameraY);
-    
-    // رسم منطقه شروع
-    cctx.fillStyle='#1e293b'; cctx.fillRect(roadX, -60, roadW, 60);
-    cctx.fillStyle='#fff'; cctx.font='20px system-ui'; cctx.textAlign='center';
-    cctx.fillText('START', roadX + roadW/2, -20);
-    
-    // رسم قدم‌ها
-    for(let i=1; i<=25; i++) {
-        let y = (i-1) * stepH;
+    // رسم ماشین‌ها در هر ستون (حرکت عمودی)
+    let time = Date.now() / 1000;
+    for(let col=0; col<TOTAL_COLUMNS; col++){
+        let colCenterX = col * COLUMN_WIDTH + COLUMN_WIDTH/2;
         
-        let isPassed = i <= chickenStep;
-        let isCurrent = i === chickenStep + 1;
+        // جهت حرکت در این ستون (یکی در میان)
+        let dir = col % 2 === 0 ? 1 : -1;
+        let speed = 1.5 + (col * 0.3);
         
-        cctx.fillStyle = isPassed ? '#10b981' : (isCurrent ? '#fbbf24' : '#334155');
-        cctx.globalAlpha = 0.3;
-        cctx.fillRect(roadX, y, roadW, stepH);
-        cctx.globalAlpha = 1.0;
-        
-        if(i <= 20) {
-            cctx.fillStyle = isPassed ? '#fff' : '#94a3b8';
-            cctx.font = 'bold 16px system-ui';
-            cctx.fillText(getPayout(i) + 'x', roadX + roadW/2, y + stepH/2 + 5);
+        // 2 ماشین در هر ستون
+        for(let car=0; car<2; car++){
+            let carY = ((time * speed * 60 + car * 200) % (h + 100)) - 50;
+            if(dir === -1) carY = h - carY;
+            
+            // اگر این ستون محل تصادف است و کاربر باخته
+            if(chickenState === 'lost' && col === chickenStep - 1){
+                carY = h/2 - 30; // ماشین وسط
+            }
+            
+            // فقط ماشین‌های نزدیک را رسم کن
+            if(carY > -100 && carY < h + 100){
+                drawCar(colCenterX - 30, carY, dir);
+            }
         }
     }
     
-    // رسم ماشین‌ها (متحرک افقی در لاین‌های عمودی)
-    let time = Date.now() / 1000;
-    for(let lane=1; lane<=20; lane++) {
-        let y = (lane-1) * stepH + stepH/2;
+    // رسم ضرایب پایین هر ستون
+    for(let col=0; col<TOTAL_COLUMNS; col++){
+        let colCenterX = col * COLUMN_WIDTH + COLUMN_WIDTH/2;
+        let payout = getPayout(col + 1);
         
-        let dir = lane % 2 === 0 ? 1 : -1;
-        let speed = 2 + (lane * 0.2);
-        let carX = roadX + 20 + ((time * speed * 50) % (roadW - 80));
-        if(dir === -1) carX = roadX + roadW - 80 - ((time * speed * 50) % (roadW - 80));
+        // دایره ضریب
+        cctx.beginPath();
+        cctx.arc(colCenterX, h - 50, 35, 0, Math.PI * 2);
+        cctx.fillStyle = col < chickenStep ? '#10b981' : '#2d3748';
+        cctx.fill();
+        cctx.strokeStyle = '#fff';
+        cctx.lineWidth = 3;
+        cctx.stroke();
         
-        if(chickenState === 'lost' && lane === chickenStep) {
-             carX = roadX + roadW/2 - 30;
-        }
-        
-        if(y > cameraY - 100 && y < cameraY + 500) {
-            drawCar(carX, y - 20, dir);
-        }
+        // متن ضریب
+        cctx.fillStyle = '#fff';
+        cctx.font = 'bold 18px system-ui';
+        cctx.textAlign = 'center';
+        cctx.textBaseline = 'middle';
+        cctx.fillText(payout + 'x', colCenterX, h - 50);
     }
     
     // رسم مرغ
-    let chickenY = (chickenStep * stepH) + stepH/2;
-    let chickenX = roadX + roadW/2;
-    drawChickenSprite(chickenX, chickenY);
-    
-    cctx.restore();
+    if(chickenState !== 'ready'){
+        let chickenX = chickenStep * COLUMN_WIDTH + COLUMN_WIDTH/2;
+        let chickenY = h/2;
+        drawChickenSprite(chickenX, chickenY);
+    }
 }
 
 function drawCar(x, y, dir){
     cctx.save();
     cctx.translate(x, y);
-    if(dir === -1) cctx.scale(-1, 1);
+    if(dir === -1){
+        cctx.translate(60, 0);
+        cctx.scale(-1, 1);
+    }
     
-    cctx.fillStyle = '#ef4444'; 
+    // بدنه ماشین
+    cctx.fillStyle = '#ef4444';
     cctx.beginPath();
     cctx.roundRect(0, 0, 60, 35, 5);
     cctx.fill();
     
+    // شیشه
     cctx.fillStyle = '#bae6fd';
     cctx.fillRect(10, 5, 20, 25);
     cctx.fillRect(35, 5, 15, 25);
+    
+    // چرخ‌ها
+    cctx.fillStyle = '#1a202c';
+    cctx.beginPath();
+    cctx.arc(15, 35, 6, 0, Math.PI * 2);
+    cctx.arc(45, 35, 6, 0, Math.PI * 2);
+    cctx.fill();
     
     cctx.restore();
 }
@@ -456,10 +462,56 @@ function drawCar(x, y, dir){
 function drawChickenSprite(x, y){
     cctx.save();
     cctx.translate(x, y);
-    cctx.font = '40px system-ui';
-    cctx.textAlign = 'center';
-    cctx.textBaseline = 'middle';
-    cctx.fillText('🐔', 0, 0);
+    
+    // سایه
+    cctx.fillStyle = 'rgba(0,0,0,0.3)';
+    cctx.beginPath();
+    cctx.ellipse(0, 25, 20, 8, 0, 0, Math.PI * 2);
+    cctx.fill();
+    
+    // بدن مرغ
+    cctx.fillStyle = '#fff';
+    cctx.beginPath();
+    cctx.ellipse(0, 0, 25, 20, 0, 0, Math.PI * 2);
+    cctx.fill();
+    
+    // سر
+    cctx.beginPath();
+    cctx.arc(15, -15, 15, 0, Math.PI * 2);
+    cctx.fill();
+    
+    // تاج قرمز
+    cctx.fillStyle = '#ef4444';
+    cctx.beginPath();
+    cctx.arc(15, -28, 6, 0, Math.PI * 2);
+    cctx.arc(22, -25, 5, 0, Math.PI * 2);
+    cctx.arc(8, -25, 5, 0, Math.PI * 2);
+    cctx.fill();
+    
+    // منقار
+    cctx.fillStyle = '#f59e0b';
+    cctx.beginPath();
+    cctx.moveTo(28, -15);
+    cctx.lineTo(38, -12);
+    cctx.lineTo(28, -9);
+    cctx.fill();
+    
+    // چشم
+    cctx.fillStyle = '#000';
+    cctx.beginPath();
+    cctx.arc(20, -18, 3, 0, Math.PI * 2);
+    cctx.fill();
+    
+    // پاها
+    cctx.strokeStyle = '#f59e0b';
+    cctx.lineWidth = 3;
+    cctx.beginPath();
+    cctx.moveTo(-10, 18);
+    cctx.lineTo(-12, 28);
+    cctx.moveTo(10, 18);
+    cctx.lineTo(12, 28);
+    cctx.stroke();
+    
     cctx.restore();
 }
 
@@ -468,7 +520,6 @@ function animation(){
     requestAnimationFrame(animation);
 }
 requestAnimationFrame(animation);
-
 </script>
 </body>
 </html>
